@@ -1,0 +1,17 @@
+# BrewMarket - English Language File (US)
+# Supports MiniMessage formatting.
+# Use {prefix} to insert the plugin prefix.
+
+prefix: "<gray>[<gold>BrewMarket</gold>]</gray>"
+
+# -- Commands ---------------------------------
+command:
+  only-players: "{prefix} <red>This command can only be used by players.</red>"
+  no-permission: "{prefix} <red>You don't have permission to do that.</red>"
+  reload-success: "{prefix} <green>Configuration reloaded successfully.</green>"
+
+# -- Market -----------------------------------
+market:
+  sell-success: "{prefix} <green>You sold <gold>{sold_amount}</gold> brews for <gold>{money}</gold>!</green>"
+  sell-nothing: "{prefix} <red>There are no valid brews to sell.</red>"
+  sell-error: "{prefix} <red>Transaction failed. Please try again.</red>"

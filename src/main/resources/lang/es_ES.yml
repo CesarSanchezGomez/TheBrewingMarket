@@ -1,0 +1,17 @@
+# BrewMarket - Archivo de idioma en Espanol (Espana)
+# Soporta formato MiniMessage.
+# Usa {prefix} para insertar el prefijo del plugin.
+
+prefix: "<white>[<gradient:#C173FF:#950DFF>BrewMarket</gradient>]</white>"
+
+# -- Comandos ---------------------------------
+command:
+  only-players: "{prefix} <red>Este comando solo puede ser usado por jugadores.</red>"
+  no-permission: "{prefix} <white>No tienes permiso para hacer eso.</white>"
+  reload-success: "{prefix} <white>Configuracion recargada exitosamente.</white>"
+
+# -- Market -----------------------------------
+market:
+  sell-success: "{prefix} <white>Vendiste <#C173FF>{sold_amount}</#C173FF> bebidas por <#C173FF>{money}</#C173FF>!</white>"
+  sell-nothing: "{prefix} <white>No tienes bebidas para vender.</white>"
+  sell-error: "{prefix} <white>La transaccion ha fallado. Intentalo de nuevo.</white>"
