@@ -37,13 +37,33 @@ market:
   # Set it to 0 so a brew cannot be sold.
   prices:
     default: 10
-    beer: 0.1
+    beer: 25
+    darkbeer: 30
+    wheatbeer: 30
+    cidre: 35
     wine: 150
-    whiskey: 200
-    rum: 180
-    vodka: 130
     mead: 120
+    ap_mead: 130
+    vodka: 130
+    g_vodka: 160
+    wiskey: 200
+    fire_whiskey: 250
+    rum: 180
+    tequila: 170
+    gin: 160
+    brandy: 200
     absinthe: 250
+    gr_absinthe: 300
+    apple_liquor: 140
+    shroom_vodka: 220
+    gin_and_tonic: 180
+    red_sangria: 160
+    french_75: 200
+    coffee: 40
+    iced_coffee: 50
+    hot_choc: 35
+    eggnog: 60
+    hangover_detox: 80
 
   # -- Item Slots -----------------------------
   # Symbol for slots where players can place/view brews
