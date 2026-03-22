@@ -1,0 +1,32 @@
+name: BrewMarket
+version: '1.0.0'
+main: com.cesarcosmico.brewmarket.BrewMarketPlugin
+description: Sell your TheBrewingProject brews for money
+api-version: '1.21'
+
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    TheBrewingProject:
+      load: BEFORE
+      required: true
+      join-classpath: true
+
+permissions:
+  brewmarket.*:
+    description: Full access to BrewMarket
+    default: op
+    children:
+      brewmarket.use: true
+      brewmarket.admin: true
+
+  brewmarket.use:
+    description: Allows using the Brew Market
+    default: true
+
+  brewmarket.admin:
+    description: Allows reloading BrewMarket config
+    default: op
