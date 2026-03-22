@@ -30,25 +30,25 @@ public class LangConfig {
     public void load() {
         messages.clear();
 
-        String lang = plugin.getConfig().getString("lang", "en");
+        String lang = plugin.getConfig().getString("lang", "en_US");
         File langFolder = new File(plugin.getDataFolder(), "lang");
 
         if (!langFolder.exists()) {
             langFolder.mkdirs();
         }
 
-        saveDefaultLang("en");
-        saveDefaultLang("es");
+        saveDefaultLang("en_US");
+        saveDefaultLang("es_ES");
 
         File langFile = new File(langFolder, lang + ".yml");
         if (!langFile.exists()) {
-            plugin.getLogger().warning("Language file '" + lang + ".yml' not found. Falling back to 'en'.");
-            langFile = new File(langFolder, "en.yml");
+            plugin.getLogger().warning("Language file '" + lang + ".yml' not found. Falling back to 'en_US'.");
+            langFile = new File(langFolder, "en_US.yml");
         }
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(langFile);
 
-        InputStream defaultStream = plugin.getResource("lang/en.yml");
+        InputStream defaultStream = plugin.getResource("lang/en_US.yml");
         if (defaultStream != null) {
             YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
                     new InputStreamReader(defaultStream, StandardCharsets.UTF_8));
