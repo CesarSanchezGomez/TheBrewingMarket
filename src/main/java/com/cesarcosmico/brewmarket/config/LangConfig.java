@@ -55,7 +55,7 @@ public class LangConfig {
             config.setDefaults(defaults);
         }
 
-        this.prefix = config.getString("prefix", "<gray>[<gold>BrewMarket</gold>]</gray>");
+        this.prefix = config.getString("prefix", "<white>[<gradient:#C173FF:#950DFF>BrewMarket</gradient>]</white>");
 
         for (String key : config.getKeys(true)) {
             if (!config.isConfigurationSection(key)) {

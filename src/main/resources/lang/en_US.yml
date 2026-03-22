@@ -2,16 +2,16 @@
 # Supports MiniMessage formatting.
 # Use {prefix} to insert the plugin prefix.
 
-prefix: "<gray>[<gold>BrewMarket</gold>]</gray>"
+prefix: "<white>[<gradient:#C173FF:#950DFF>BrewMarket</gradient>]</white>"
 
 # -- Commands ---------------------------------
 command:
   only-players: "{prefix} <red>This command can only be used by players.</red>"
-  no-permission: "{prefix} <red>You don't have permission to do that.</red>"
-  reload-success: "{prefix} <green>Configuration reloaded successfully.</green>"
+  no-permission: "{prefix} <white>You don't have permission to do that.</white>"
+  reload-success: "{prefix} <white>Configuration reloaded successfully.</white>"
 
 # -- Market -----------------------------------
 market:
-  sell-success: "{prefix} <green>You sold <gold>{sold_amount}</gold> brews for <gold>{money}</gold>!</green>"
-  sell-nothing: "{prefix} <red>There are no valid brews to sell.</red>"
-  sell-error: "{prefix} <red>Transaction failed. Please try again.</red>"
+  sell-success: "{prefix} <white>You sold <#C173FF>{sold_amount}</#C173FF> brews for <#C173FF>{money}</#C173FF>!</white>"
+  sell-nothing: "{prefix} <white>There are no valid brews to sell.</white>"
+  sell-error: "{prefix} <white>Transaction failed. Please try again.</white>"
