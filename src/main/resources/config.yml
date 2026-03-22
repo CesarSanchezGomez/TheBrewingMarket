@@ -84,7 +84,7 @@ market:
       lore:
         - ''
         - ' <font:uniform><white>Sell all brews from</white></font> '
-        - ' <font:uniform><white>above for <#C173FF>{money}</#C173FF> crowns.</white></font> '
+        - ' <font:uniform><white>above for <#C173FF>{money}</#C173FF> coins.</white></font> '
         - ''
         - ' <font:uniform><gradient:#C173FF:#950DFF><b>> Click to sell</b> 🍺</gradient></font>'
         - ''
@@ -122,7 +122,7 @@ market:
       lore:
         - ''
         - ' <font:uniform><white>Sell all brews from your</white></font> '
-        - ' <font:uniform><white>inventory for <#C173FF>{money}</#C173FF> crowns.</white></font> '
+        - ' <font:uniform><white>inventory for <#C173FF>{money}</#C173FF> coins.</white></font> '
         - ''
         - ' <font:uniform><gradient:#C173FF:#950DFF><b>> Click to sell</b> 🍺</gradient></font>'
         - ''
