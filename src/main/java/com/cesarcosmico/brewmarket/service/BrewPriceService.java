@@ -2,7 +2,6 @@ package com.cesarcosmico.brewmarket.service;
 
 import com.cesarcosmico.brewmarket.config.MarketConfig;
 import dev.jsinco.brewery.api.brew.Brew;
-import dev.jsinco.brewery.api.brew.BrewManager;
 import dev.jsinco.brewery.api.recipe.Recipe;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
 import org.bukkit.NamespacedKey;
@@ -17,6 +16,7 @@ import java.util.function.Supplier;
 public class BrewPriceService {
 
     private static final NamespacedKey SCORE_KEY = new NamespacedKey("brewery", "score");
+    private static final NamespacedKey TAG_KEY = new NamespacedKey("brewery", "tag");
 
     private final MarketConfig marketConfig;
     private final Supplier<TheBrewingProjectApi> apiSupplier;
@@ -34,24 +34,11 @@ public class BrewPriceService {
             return Optional.empty();
         }
 
-        TheBrewingProjectApi api = apiSupplier.get();
-        if (api == null) {
+        String recipeName = resolveRecipeName(itemStack);
+        if (recipeName == null) {
             return Optional.empty();
         }
 
-        BrewManager<ItemStack> brewManager = api.getBrewManager();
-        Optional<Brew> brewOpt = brewManager.fromItem(itemStack);
-        if (brewOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Brew brew = brewOpt.get();
-        Optional<Recipe<ItemStack>> recipeOpt = brew.closestRecipe(api.getRecipeRegistry());
-        if (recipeOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        String recipeName = recipeOpt.get().getRecipeName();
         double score = extractScore(itemStack);
         if (score <= 0) {
             return Optional.empty();
@@ -65,6 +52,21 @@ public class BrewPriceService {
         return Optional.of(new BrewEvaluation(recipeName, score, basePrice * score));
     }
 
+    private String resolveRecipeName(ItemStack itemStack) {
+        TheBrewingProjectApi api = apiSupplier.get();
+        if (api != null) {
+            Optional<Brew> brewOpt = api.getBrewManager().fromItem(itemStack);
+            if (brewOpt.isPresent()) {
+                Optional<Recipe<ItemStack>> recipeOpt = brewOpt.get().closestRecipe(api.getRecipeRegistry());
+                if (recipeOpt.isPresent()) {
+                    return recipeOpt.get().getRecipeName();
+                }
+            }
+        }
+
+        return extractTag(itemStack);
+    }
+
     private double extractScore(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return 0.0;
@@ -75,5 +77,16 @@ public class BrewPriceService {
             return score != null ? score : 0.0;
         }
         return 0.0;
+    }
+
+    private String extractTag(ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) return null;
+
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        if (pdc.has(TAG_KEY, PersistentDataType.STRING)) {
+            return pdc.get(TAG_KEY, PersistentDataType.STRING);
+        }
+        return null;
     }
 }
