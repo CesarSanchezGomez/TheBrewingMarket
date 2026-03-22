@@ -20,7 +20,7 @@ public class ComponentRegistry {
         register(new EnchantmentsApplier(logger));
         register(new CustomModelDataApplier());
         register(new ItemModelApplier(logger));
-        register(new PotionContentsApplier(logger));
+        register(new PotionContentsApplier());
         register(new TooltipDisplayApplier(logger));
         register(new TooltipStyleApplier(logger));
         register(new EnchantmentGlintOverrideApplier());
