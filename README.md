@@ -4,7 +4,7 @@ A Minecraft plugin that lets players sell their [TheBrewingProject](https://hang
 
 ## Requirements
 
-- **Paper** 1.21.1+
+- **Paper** 1.21.11+
 - **Vault** (with an economy provider like EssentialsX)
 - **TheBrewingProject**
 
