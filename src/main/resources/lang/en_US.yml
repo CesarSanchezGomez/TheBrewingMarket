@@ -21,11 +21,11 @@ history:
   empty: "{prefix} <white>{player} has no sell history.</white>"
   display:
     - ''
-    - '<gradient:#C173FF:#950DFF>◤<st>                     </st> <white>[</white><gradient:#C173FF:#950DFF>BrewMarket</gradient><white>]</white> <st>                     </st>◥</gradient>'
+    - '<gradient:#C173FF:#950DFF>◤<st>                     </st></gradient> <white>[</white><gradient:#C173FF:#950DFF>BrewMarket</gradient><white>]</white> <gradient:#950DFF:#C173FF><st>                     </st>◥</gradient>'
     - ''
     - '{entries}'
     - ''
-    - '<gradient:#C173FF:#950DFF>◣<st>                     </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#C173FF:#950DFF><st>                     </st>◢</gradient>'
+    - '<gradient:#C173FF:#950DFF>◣<st>                     </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#950DFF:#C173FF><st>                     </st>◢</gradient>'
     - ''
   entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#C173FF>{quality}</#C173FF><white>]</white> <white>[</white><#C173FF>{total}$</#C173FF><white>]</white>"
   entry_hover: "<gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
