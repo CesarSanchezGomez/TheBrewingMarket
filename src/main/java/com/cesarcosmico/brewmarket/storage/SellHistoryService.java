@@ -33,9 +33,9 @@ public interface SellHistoryService {
 
     CompletableFuture<Void> logEntries(UUID playerUuid, String playerName, List<SellEntry> entries);
 
-    CompletableFuture<List<SellRecord>> getHistory(UUID playerUuid, int limit, int offset);
+    CompletableFuture<List<SellRecord>> getHistory(UUID playerUuid, long since, int limit, int offset);
 
-    CompletableFuture<Integer> countHistory(UUID playerUuid);
+    CompletableFuture<Integer> countHistory(UUID playerUuid, long since);
 
     void initialize() throws SQLException;
 

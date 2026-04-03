@@ -18,6 +18,7 @@ market:
 
 # -- Historial --------------------------------
 history:
+  invalid-time: "{prefix} <red>Formato de tiempo inválido. Usa: 1s, 2m, 3h, 4d, 5w, 6M, 7Y</red>"
   empty: "{prefix} <white>{player} no tiene historial de ventas.</white>"
   display:
     - ''

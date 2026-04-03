@@ -51,11 +51,11 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                 SELECT id, player_uuid, player_name, recipe_name, display_name,
                        quality, price_per, quantity, total, sold_at
                 FROM `%s`
-                WHERE player_uuid = ?
+                WHERE player_uuid = ? AND sold_at >= ?
                 ORDER BY sold_at DESC, id DESC
                 LIMIT ? OFFSET ?""".formatted(table);
 
-        this.countHistorySql = "SELECT COUNT(*) FROM `%s` WHERE player_uuid = ?".formatted(table);
+        this.countHistorySql = "SELECT COUNT(*) FROM `%s` WHERE player_uuid = ? AND sold_at >= ?".formatted(table);
 
         this.executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "BrewMarket-DB-" + providerName);
@@ -115,14 +115,15 @@ public final class JdbcSellHistoryService implements SellHistoryService {
     }
 
     @Override
-    public CompletableFuture<List<SellRecord>> getHistory(UUID playerUuid, int limit, int offset) {
+    public CompletableFuture<List<SellRecord>> getHistory(UUID playerUuid, long since, int limit, int offset) {
         return CompletableFuture.supplyAsync(() -> {
             List<SellRecord> records = new ArrayList<>();
             try (Connection conn = connectionProvider.getConnection();
                  PreparedStatement ps = conn.prepareStatement(selectHistorySql)) {
                 ps.setString(1, playerUuid.toString());
-                ps.setInt(2, limit);
-                ps.setInt(3, offset);
+                ps.setLong(2, since);
+                ps.setInt(3, limit);
+                ps.setInt(4, offset);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         String displayName = rs.getString("display_name");
@@ -148,11 +149,12 @@ public final class JdbcSellHistoryService implements SellHistoryService {
     }
 
     @Override
-    public CompletableFuture<Integer> countHistory(UUID playerUuid) {
+    public CompletableFuture<Integer> countHistory(UUID playerUuid, long since) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = connectionProvider.getConnection();
                  PreparedStatement ps = conn.prepareStatement(countHistorySql)) {
                 ps.setString(1, playerUuid.toString());
+                ps.setLong(2, since);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) return rs.getInt(1);
                 }
