@@ -70,6 +70,7 @@ public final class BrewMarketPlugin extends JavaPlugin {
                 this::getMarketConfig,
                 this::getSellService,
                 this::getLangConfig,
+                this,
                 this::reload
         );
 
