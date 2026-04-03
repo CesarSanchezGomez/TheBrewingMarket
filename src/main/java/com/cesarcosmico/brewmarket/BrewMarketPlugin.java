@@ -1,18 +1,27 @@
 package com.cesarcosmico.brewmarket;
 
 import com.cesarcosmico.brewmarket.command.CommandManager;
+import com.cesarcosmico.brewmarket.config.DatabaseConfig;
 import com.cesarcosmico.brewmarket.config.LangConfig;
 import com.cesarcosmico.brewmarket.config.MarketConfig;
 import com.cesarcosmico.brewmarket.listener.MarketGUIListener;
 import com.cesarcosmico.brewmarket.service.BrewPriceService;
 import com.cesarcosmico.brewmarket.service.EconomyService;
 import com.cesarcosmico.brewmarket.service.SellService;
+import com.cesarcosmico.brewmarket.storage.SellHistoryService;
+import com.cesarcosmico.brewmarket.storage.StorageFactory;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.logging.Level;
 
 public final class BrewMarketPlugin extends JavaPlugin {
 
@@ -21,6 +30,7 @@ public final class BrewMarketPlugin extends JavaPlugin {
     private SellService sellService;
     private MarketConfig marketConfig;
     private LangConfig langConfig;
+    private SellHistoryService historyService;
 
     @Override
     public void onEnable() {
@@ -45,15 +55,38 @@ public final class BrewMarketPlugin extends JavaPlugin {
         this.brewPriceService = new BrewPriceService(marketConfig, this::resolveBreweryApi);
         this.sellService = new SellService(brewPriceService, economyService);
 
+        File dbFile = new File(getDataFolder(), "database.yml");
+        if (!dbFile.exists()) {
+            saveResource("database.yml", false);
+        }
+        FileConfiguration dbYml = YamlConfiguration.loadConfiguration(
+                new File(getDataFolder(), "database.yml"));
+        DatabaseConfig dbConfig = new DatabaseConfig(dbYml);
+        try {
+            this.historyService = StorageFactory.create(dbConfig, getDataFolder().toPath(), getLogger());
+            this.historyService.initialize();
+        } catch (IllegalArgumentException e) {
+            getLogger().severe("Invalid data-storage-method in database.yml: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        } catch (SQLException e) {
+            getLogger().log(Level.SEVERE, "Failed to initialize database", e);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         registerCommands();
         getServer().getPluginManager().registerEvents(
-                new MarketGUIListener(this, langConfig), this);
+                new MarketGUIListener(this, langConfig, historyService), this);
 
         getLogger().info("BrewMarket enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (historyService != null) {
+            historyService.shutdown();
+        }
         getLogger().info("BrewMarket disabled.");
     }
 
@@ -70,6 +103,7 @@ public final class BrewMarketPlugin extends JavaPlugin {
                 this::getMarketConfig,
                 this::getSellService,
                 this::getLangConfig,
+                this::getHistoryService,
                 this,
                 this::reload
         );
@@ -105,5 +139,9 @@ public final class BrewMarketPlugin extends JavaPlugin {
 
     public LangConfig getLangConfig() {
         return langConfig;
+    }
+
+    public SellHistoryService getHistoryService() {
+        return historyService;
     }
 }
