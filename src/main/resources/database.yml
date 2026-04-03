@@ -11,7 +11,7 @@ SQLite:
   # Name of the .db file (without extension) inside the plugin's data folder
   file: 'BrewMarket'
   # Leave empty to keep the legacy table name 'sell_history' (no prefix)
-  table-prefix: ''
+  table-prefix: 'brewmarket'
 
 MySQL:
   host: 'localhost'
