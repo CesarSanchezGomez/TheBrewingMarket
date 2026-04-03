@@ -32,11 +32,13 @@ public class MarketConfig {
     private final IconConfig sellAllDeny;
 
     private final boolean shulkerSelling;
+    private final int historyPerPage;
 
     private final Map<String, Double> prices;
     private final double defaultPrice;
 
     public MarketConfig(ConfigurationSection root, Logger logger) {
+        this.historyPerPage = Math.clamp(root.getInt("history-per-page", 8), 1, 32);
 
         ConfigurationSection market = root.getConfigurationSection("market");
 
@@ -117,6 +119,10 @@ public class MarketConfig {
 
     public boolean isShulkerSellingEnabled() {
         return shulkerSelling;
+    }
+
+    public int getHistoryPerPage() {
+        return historyPerPage;
     }
 
     public double getBasePrice(String recipeName) {

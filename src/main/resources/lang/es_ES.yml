@@ -1,4 +1,4 @@
-# BrewMarket - Archivo de idioma en Espanol (Espana)
+# BrewMarket - Archivo de idioma en Español (España)
 # Soporta formato MiniMessage.
 # Usa {prefix} para insertar el prefijo del plugin.
 
@@ -8,10 +8,31 @@ prefix: "<white>[<gradient:#C173FF:#950DFF>BrewMarket</gradient>]</white>"
 command:
   only-players: "{prefix} <red>Este comando solo puede ser usado por jugadores.</red>"
   no-permission: "{prefix} <white>No tienes permiso para hacer eso.</white>"
-  reload-success: "{prefix} <white>Configuracion recargada exitosamente.</white>"
+  reload-success: "{prefix} <white>Configuración recargada exitosamente.</white>"
 
 # -- Market -----------------------------------
 market:
   sell-success: "{prefix} <white>Vendiste <#C173FF>{sold_amount}</#C173FF> bebidas por <#C173FF>{money}</#C173FF>!</white>"
   sell-nothing: "{prefix} <white>No tienes bebidas para vender.</white>"
-  sell-error: "{prefix} <white>La transaccion ha fallado. Intentalo de nuevo.</white>"
+  sell-error: "{prefix} <white>La transacción ha fallado. Inténtalo de nuevo.</white>"
+
+# -- Historial --------------------------------
+history:
+  empty: "{prefix} <white>{player} no tiene historial de ventas.</white>"
+  display:
+    - ''
+    - '<gradient:#C173FF:#950DFF>◤<st>                     </st> <white>[</white><gradient:#C173FF:#950DFF>BrewMarket</gradient><white>]</white> <st>                     </st>◥</gradient>'
+    - ''
+    - '{entries}'
+    - ''
+    - '<gradient:#C173FF:#950DFF>◣<st>                     </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#C173FF:#950DFF><st>                     </st>◢</gradient>'
+    - ''
+  entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#C173FF>{quality}</#C173FF><white>]</white> <white>[</white><#C173FF>{total}$</#C173FF><white>]</white>"
+  entry_hover: "<gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
+  navigation:
+    previous: '<gradient:#C173FF:#950DFF>«</gradient>'
+    previous_disabled: '<dark_gray>«</dark_gray>'
+    previous_hover: '<gray>Clic para ir a la página {page}</gray>'
+    next: '<gradient:#C173FF:#950DFF>»</gradient>'
+    next_disabled: '<dark_gray>»</dark_gray>'
+    next_hover: '<gray>Clic para ir a la página {page}</gray>'

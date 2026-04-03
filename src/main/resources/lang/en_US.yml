@@ -15,3 +15,24 @@ market:
   sell-success: "{prefix} <white>You sold <#C173FF>{sold_amount}</#C173FF> brews for <#C173FF>{money}</#C173FF>!</white>"
   sell-nothing: "{prefix} <white>There are no valid brews to sell.</white>"
   sell-error: "{prefix} <white>Transaction failed. Please try again.</white>"
+
+# -- History ----------------------------------
+history:
+  empty: "{prefix} <white>{player} has no sell history.</white>"
+  display:
+    - ''
+    - '<gradient:#C173FF:#950DFF>◤<st>                     </st> <white>[</white><gradient:#C173FF:#950DFF>BrewMarket</gradient><white>]</white> <st>                     </st>◥</gradient>'
+    - ''
+    - '{entries}'
+    - ''
+    - '<gradient:#C173FF:#950DFF>◣<st>                     </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#C173FF:#950DFF><st>                     </st>◢</gradient>'
+    - ''
+  entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#C173FF>{quality}</#C173FF><white>]</white> <white>[</white><#C173FF>{total}$</#C173FF><white>]</white>"
+  entry_hover: "<gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
+  navigation:
+    previous: '<gradient:#C173FF:#950DFF>«</gradient>'
+    previous_disabled: '<dark_gray>«</dark_gray>'
+    previous_hover: '<gray>Click to go to page {page}</gray>'
+    next: '<gradient:#C173FF:#950DFF>»</gradient>'
+    next_disabled: '<dark_gray>»</dark_gray>'
+    next_hover: '<gray>Click to go to page {page}</gray>'

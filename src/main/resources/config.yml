@@ -21,6 +21,10 @@
 # Language file to use from the lang/ folder (without .yml)
 # Available: en_US, es_ES (or create your own)
 lang: 'en_US'
+
+# Number of records shown per page in /bm history (1-32)
+history-per-page: 8
+
 market:
   # Allow selling brews from inside shulker boxes via "Sell All".
   # Set to false to disable for everyone. When true, individual

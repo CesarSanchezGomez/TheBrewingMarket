@@ -10,6 +10,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -26,7 +28,7 @@ public class BrewPriceService {
         this.apiSupplier = apiSupplier;
     }
 
-    public record BrewEvaluation(String recipeName, double score, double price) {
+    public record BrewEvaluation(String recipeName, double score, double price, Component displayName) {
     }
 
     public Optional<BrewEvaluation> evaluate(ItemStack itemStack) {
@@ -49,7 +51,12 @@ public class BrewPriceService {
             return Optional.empty();
         }
 
-        return Optional.of(new BrewEvaluation(recipeName, score, basePrice * score));
+        ItemMeta meta = itemStack.getItemMeta();
+        Component displayName = (meta != null && meta.hasDisplayName())
+                ? meta.displayName()
+                : Component.text(recipeName);
+
+        return Optional.of(new BrewEvaluation(recipeName, score, basePrice * score, displayName));
     }
 
     private String resolveRecipeName(ItemStack itemStack) {

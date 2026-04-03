@@ -2,6 +2,7 @@ package com.cesarcosmico.brewmarket.config;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -58,12 +59,13 @@ public class LangConfig {
         this.prefix = config.getString("prefix", "<white>[<gradient:#C173FF:#950DFF>BrewMarket</gradient>]</white>");
 
         for (String key : config.getKeys(true)) {
-            if (!config.isConfigurationSection(key)) {
+            if (config.isConfigurationSection(key)) continue;
+            if (config.isList(key)) {
+                messages.put(key, String.join("\n", config.getStringList(key)));
+            } else {
                 messages.put(key, config.getString(key, key));
             }
         }
-
-        plugin.getLogger().info("Loaded language: " + lang);
     }
 
     public String getRaw(String key) {
@@ -80,8 +82,28 @@ public class LangConfig {
         return MINI.deserialize(raw);
     }
 
+    public Component get(String key, TagResolver resolver,
+                         String[] componentKeys, String... placeholders) {
+        String raw = getRaw(key).replace("{prefix}", prefix);
+
+        for (int i = 0; i + 1 < placeholders.length; i += 2) {
+            raw = raw.replace(placeholders[i], placeholders[i + 1]);
+        }
+
+        for (String componentKey : componentKeys) {
+            raw = raw.replace("{" + componentKey + "}", "<" + componentKey + ">");
+        }
+
+        return MINI.deserialize(raw, resolver);
+    }
+
     public void send(CommandSender sender, String key, String... placeholders) {
         sender.sendMessage(get(key, placeholders));
+    }
+
+    public void send(CommandSender sender, String key, TagResolver resolver,
+                     String[] componentKeys, String... placeholders) {
+        sender.sendMessage(get(key, resolver, componentKeys, placeholders));
     }
 
     private void saveDefaultLang(String lang) {
