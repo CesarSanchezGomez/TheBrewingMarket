@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 public class BrewMarketGUI implements InventoryHolder {
@@ -15,11 +17,15 @@ public class BrewMarketGUI implements InventoryHolder {
     private final MarketConfig config;
     private final SellService sellService;
     private final Player owner;
+    private final boolean shulkerEnabled;
+    private BukkitTask refreshTask;
 
-    public BrewMarketGUI(MarketConfig config, SellService sellService, Player player) {
+    public BrewMarketGUI(MarketConfig config, SellService sellService, Player player,
+                         boolean shulkerEnabled) {
         this.config = config;
         this.sellService = sellService;
         this.owner = player;
+        this.shulkerEnabled = shulkerEnabled;
 
         this.inventory = Bukkit.createInventory(this, config.getInventorySize(), config.getTitle());
 
@@ -29,6 +35,18 @@ public class BrewMarketGUI implements InventoryHolder {
 
     public void open(Player player) {
         player.openInventory(inventory);
+    }
+
+    public void startAutoRefresh(JavaPlugin plugin) {
+        this.refreshTask = plugin.getServer().getScheduler()
+                .runTaskTimer(plugin, this::refreshSellButtons, 20L, 20L);
+    }
+
+    public void stopAutoRefresh() {
+        if (refreshTask != null) {
+            refreshTask.cancel();
+            refreshTask = null;
+        }
     }
 
     @Override
@@ -44,15 +62,19 @@ public class BrewMarketGUI implements InventoryHolder {
         return sellService;
     }
 
+    public boolean isShulkerEnabled() {
+        return shulkerEnabled;
+    }
+
     public void refreshSellButtons() {
-        double guiValue = sellService.calculateValue(inventory, config);
-        double totalValue = sellService.calculateTotalValue(inventory, config, owner);
+        double guiValue = sellService.calculateValue(inventory, config, shulkerEnabled);
+        double totalValue = sellService.calculateTotalValue(inventory, config, owner, shulkerEnabled);
 
         String guiMoney = sellService.format(guiValue);
         String totalMoney = sellService.format(totalValue);
 
-        int guiBrewCount = sellService.countBrews(inventory, config);
-        int totalBrewCount = guiBrewCount + sellService.countBrewsInPlayerInventory(owner);
+        int guiBrewCount = sellService.countBrews(inventory, config, shulkerEnabled);
+        int totalBrewCount = guiBrewCount + sellService.countBrewsInPlayerInventory(owner, shulkerEnabled);
 
         for (int slot = 0; slot < config.getInventorySize(); slot++) {
             if (config.isSellSlot(slot)) {

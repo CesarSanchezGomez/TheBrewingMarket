@@ -6,7 +6,9 @@ import com.cesarcosmico.brewmarket.gui.BrewMarketGUI;
 import com.cesarcosmico.brewmarket.service.SellService;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,9 +38,12 @@ public class MarketCommand {
         }
 
         MarketConfig config = configSupplier.get();
+        boolean shulkerEnabled = config.isShulkerSellingEnabled()
+                && player.hasPermission("brewmarket.shulker");
 
-        BrewMarketGUI gui = new BrewMarketGUI(config, sellServiceSupplier.get(), player);
+        BrewMarketGUI gui = new BrewMarketGUI(config, sellServiceSupplier.get(), player, shulkerEnabled);
         gui.open(player);
+        gui.startAutoRefresh(plugin);
         return Command.SINGLE_SUCCESS;
     }
 }

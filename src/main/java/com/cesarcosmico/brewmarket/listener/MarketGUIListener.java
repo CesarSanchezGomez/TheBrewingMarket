@@ -4,6 +4,8 @@ import com.cesarcosmico.brewmarket.config.LangConfig;
 import com.cesarcosmico.brewmarket.config.MarketConfig;
 import com.cesarcosmico.brewmarket.gui.BrewMarketGUI;
 import com.cesarcosmico.brewmarket.service.SellService;
+import com.cesarcosmico.brewmarket.storage.SellHistoryService;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,17 +15,21 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class MarketGUIListener implements Listener {
 
     private final JavaPlugin plugin;
     private final LangConfig langConfig;
+    private final SellHistoryService historyService;
     private final Logger logger;
 
-    public MarketGUIListener(JavaPlugin plugin, LangConfig langConfig) {
+    public MarketGUIListener(JavaPlugin plugin, LangConfig langConfig,
+                             SellHistoryService historyService) {
         this.plugin = plugin;
         this.langConfig = langConfig;
+        this.historyService = historyService;
         this.logger = plugin.getLogger();
     }
 
@@ -79,6 +85,7 @@ public class MarketGUIListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getInventory().getHolder() instanceof BrewMarketGUI gui)) return;
+        gui.stopAutoRefresh();
         gui.returnItems((Player) event.getPlayer());
     }
 
@@ -102,14 +109,16 @@ public class MarketGUIListener implements Listener {
         SellService sellService = gui.getSellService();
         MarketConfig config = gui.getConfig();
 
-        double previewValue = sellService.calculateValue(gui.getInventory(), config);
+        double previewValue = sellService.calculateValue(
+                gui.getInventory(), config, gui.isShulkerEnabled());
         if (previewValue <= 0) {
             langConfig.send(player, "market.sell-nothing");
             playSound(player, config.getActionSound(config.getSellDeny()));
             return;
         }
 
-        SellService.SellResult result = sellService.sellFromGui(gui.getInventory(), config);
+        SellService.DetailedSellResult result = sellService.detailedSellFromGui(
+                gui.getInventory(), config, gui.isShulkerEnabled());
 
         if (result.money() > 0 && sellService.deposit(player, result.money())) {
             String money = sellService.format(result.money());
@@ -117,6 +126,7 @@ public class MarketGUIListener implements Listener {
                     "{money}", money,
                     "{sold_amount}", String.valueOf(result.itemCount()));
             playSound(player, config.getActionSound(config.getSellAllow()));
+            logHistory(player, result);
         } else {
             langConfig.send(player, "market.sell-error");
             playSound(player, config.getActionSound(config.getSellDeny()));
@@ -129,14 +139,16 @@ public class MarketGUIListener implements Listener {
         SellService sellService = gui.getSellService();
         MarketConfig config = gui.getConfig();
 
-        double previewValue = sellService.calculateTotalValue(gui.getInventory(), config, player);
+        double previewValue = sellService.calculateTotalValue(
+                gui.getInventory(), config, player, gui.isShulkerEnabled());
         if (previewValue <= 0) {
             langConfig.send(player, "market.sell-nothing");
             playSound(player, config.getActionSound(config.getSellAllDeny()));
             return;
         }
 
-        SellService.SellResult result = sellService.sellAll(gui.getInventory(), config, player);
+        SellService.DetailedSellResult result = sellService.detailedSellAll(
+                gui.getInventory(), config, player, gui.isShulkerEnabled());
 
         if (result.money() > 0 && sellService.deposit(player, result.money())) {
             String money = sellService.format(result.money());
@@ -144,12 +156,31 @@ public class MarketGUIListener implements Listener {
                     "{money}", money,
                     "{sold_amount}", String.valueOf(result.itemCount()));
             playSound(player, config.getActionSound(config.getSellAllAllow()));
+            logHistory(player, result);
         } else {
             langConfig.send(player, "market.sell-error");
             playSound(player, config.getActionSound(config.getSellAllDeny()));
         }
 
         gui.refreshSellButtons();
+    }
+
+    private void logHistory(Player player, SellService.DetailedSellResult result) {
+        if (historyService == null || result.details().isEmpty()) return;
+
+        MiniMessage mini = MiniMessage.miniMessage();
+        List<SellHistoryService.SellEntry> entries = result.details().stream()
+                .map(d -> new SellHistoryService.SellEntry(
+                        d.recipeName(),
+                        d.displayName() != null ? mini.serialize(d.displayName()) : d.recipeName(),
+                        d.score(), d.pricePerUnit(), d.quantity(), d.total()))
+                .toList();
+
+        historyService.logEntries(player.getUniqueId(), player.getName(), entries)
+                .exceptionally(ex -> {
+                    logger.warning("Failed to log sell history: " + ex.getMessage());
+                    return null;
+                });
     }
 
     private void playSound(Player player, String soundKey) {

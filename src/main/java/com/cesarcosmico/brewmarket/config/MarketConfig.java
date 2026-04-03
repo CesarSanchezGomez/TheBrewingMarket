@@ -31,13 +31,17 @@ public class MarketConfig {
     private final IconConfig sellAllAllow;
     private final IconConfig sellAllDeny;
 
+    private final boolean shulkerSelling;
+
     private final Map<String, Double> prices;
     private final double defaultPrice;
 
     public MarketConfig(ConfigurationSection root, Logger logger) {
+
         ConfigurationSection market = root.getConfigurationSection("market");
 
         this.title = MINI.deserialize(market.getString("title", "<gold><b>Brew Market</b></gold>"));
+        this.shulkerSelling = market.getBoolean("shulker-selling", false);
 
         this.iconFactory = new IconFactory(logger);
 
@@ -109,6 +113,10 @@ public class MarketConfig {
 
     public String getActionSound(IconConfig config) {
         return config.sound();
+    }
+
+    public boolean isShulkerSellingEnabled() {
+        return shulkerSelling;
     }
 
     public double getBasePrice(String recipeName) {
