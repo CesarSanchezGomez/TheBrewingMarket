@@ -32,12 +32,12 @@ market:
   shulker-selling: true
   title: '<white>🍺 <gradient:#FCBDE3:#F973C4><b>Liquor Store</b></gradient> 🍺</white>'
   layout:
-    - 'JJMLTLMJJ'
+    - 'JJLKTKLJJ'
     - 'IIIIIIIII'
     - 'IIIIIIIII'
     - 'IIIIIIIII'
     - 'IIIIIIIII'
-    - 'JJMBCSMJJ'
+    - 'JJLBCSLJJ'
 
   # -- Prices --------------------------------
   # final_price = base_price * brewery:score
@@ -179,12 +179,12 @@ market:
       tooltip_display:
         hide_tooltip: true
     amethyst_cluster:
-      symbol: 'L'
+      symbol: 'K'
       material: 'BRAIN_CORAL'
       tooltip_display:
         hide_tooltip: true
     large_amethyst_bud:
-      symbol: 'M'
+      symbol: 'L'
       material: 'BRAIN_CORAL_FAN'
       tooltip_display:
         hide_tooltip: true
