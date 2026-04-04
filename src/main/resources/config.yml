@@ -1,5 +1,5 @@
 # =============================================
-#          BrewMarket Configuration
+#          TheBrewingMarket Configuration
 # =============================================
 # Supports MiniMessage format for all text fields.
 # The layout uses symbols to define the GUI structure.
@@ -22,22 +22,22 @@
 # Available: en_US, es_ES (or create your own)
 lang: 'en_US'
 
-# Number of records shown per page in /bm history (1-32)
+# Number of records shown per page in /tbm history (1-32)
 history-per-page: 8
 
 market:
   # Allow selling brews from inside shulker boxes via "Sell All".
   # Set to false to disable for everyone. When true, individual
-  # players can be excluded by negating the brewmarket.shulker permission.
+  # players can be excluded by negating the thebrewingmarket.shulker permission.
   shulker-selling: true
-  title: '<white>🍺 <gradient:#C173FF:#950DFF><b>Liquor Store</b></gradient> 🍺</white>'
+  title: '<white>🍺 <gradient:#FCBDE3:#F973C4><b>Liquor Store</b></gradient> 🍺</white>'
   layout:
-    - 'JKMLTLMKJ'
+    - 'JJMLTLMJJ'
     - 'IIIIIIIII'
     - 'IIIIIIIII'
     - 'IIIIIIIII'
     - 'IIIIIIIII'
-    - 'JKMBCSMKJ'
+    - 'JJMBCSMJJ'
 
   # -- Prices --------------------------------
   # final_price = base_price * brewery:score
@@ -84,31 +84,28 @@ market:
     allow-icon:
       material: 'POTION'
       potion_contents:
-        custom_color: 9768447
+        custom_color: 16679863
       tooltip_display:
         hidden_components:
           - 'potion_contents'
-      custom_name: '<gradient:#C173FF:#950DFF>● <b>Sell drink</b></gradient>'
+      custom_name: '<gradient:#FCBDE3:#F973C4>● <b>Sell drink</b></gradient>'
       lore:
         - ''
         - ' <font:uniform><white>Sell all brews from</white></font> '
-        - ' <font:uniform><white>above for <#C173FF>{money}</#C173FF> coins.</white></font> '
+        - ' <font:uniform><white>above for <#FCBDE3>{money}</#FCBDE3> coins.</white></font> '
         - ''
-        - ' <font:uniform><gradient:#C173FF:#950DFF><b>> Click to sell</b> 🍺</gradient></font>'
+        - ' <font:uniform><gradient:#FCBDE3:#F973C4><b>> Click to sell</b> 🍺</gradient></font>'
         - ''
       action:
         sound:
           type: 'sound'
           value: 'minecraft:block.amethyst_block.place'
-        message:
-          type: 'message'
-          value: '<green>You sold <gold>{sold_amount}</gold> brews for <gold>{money}</gold> coins!</green>'
     deny-icon:
       material: 'GLASS_BOTTLE'
       custom_name: '<gradient:#FF7373:#FF0D0D><b>Nothing to sell!</b></gradient>'
       lore:
         - ''
-        - '   <#FF7373>❌</#FF7373> <white><font:uniform>Nothing to sell!</font></white> <#FF0D0D>❌</#FF0D0D>  '
+        - '  <#FF7373>❌</#FF7373> <white><font:uniform>Nothing to sell!</font></white> <#FF0D0D>❌</#FF0D0D>  '
         - ''
       action:
         sound:
@@ -121,32 +118,29 @@ market:
     allow-icon:
       material: 'POTION'
       potion_contents:
-        custom_color: 9768447
+        custom_color: 16679863
       enchantment_glint_override: true
       tooltip_display:
         hidden_components:
           - 'potion_contents'
-      custom_name: '<gradient:#C173FF:#950DFF>● <b>Sell everything!</b></gradient>'
+      custom_name: '<gradient:#FCBDE3:#F973C4>● <b>Sell all!</b></gradient>'
       lore:
         - ''
         - ' <font:uniform><white>Sell all brews from your</white></font> '
-        - ' <font:uniform><white>inventory for <#C173FF>{money}</#C173FF> coins.</white></font> '
+        - ' <font:uniform><white>inventory for <#FCBDE3>{money}</#FCBDE3> coins.</white></font> '
         - ''
-        - ' <font:uniform><gradient:#C173FF:#950DFF><b>> Click to sell</b> 🍺</gradient></font>'
+        - ' <font:uniform><gradient:#FCBDE3:#F973C4><b>> Click to sell</b> 🍺</gradient></font>'
         - ''
       action:
         sound:
           type: 'sound'
           value: 'minecraft:block.amethyst_block.place'
-        message:
-          type: 'message'
-          value: '<green>You sold <gold>{sold_amount}</gold> brews for <gold>{money}</gold> coins!</green>'
     deny-icon:
       material: 'GLASS_BOTTLE'
       custom_name: '<gradient:#FF7373:#FF0D0D><b>Nothing to sell!</b></gradient>'
       lore:
         - ''
-        - '   <#FF7373>❌</#FF7373> <white><font:uniform>Nothing to sell!</font></white> <#FF0D0D>❌</#FF0D0D>  '
+        - '  <#FF7373>❌</#FF7373> <white><font:uniform>Nothing to sell!</font></white> <#FF0D0D>❌</#FF0D0D>  '
         - ''
       action:
         sound:
@@ -158,8 +152,8 @@ market:
     symbol: 'T'
     material: 'PLAYER_HEAD'
     profile:
-      textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTAzMjdmYjM0MzE5Zjg5YWM1YWI0OGI0ZDc5MjUxZjEzZjA2N2ViZWE3ZGE1Zjg4Yjc1ZjQ3OWE3Mzg5OTI0ZSJ9fX0='
-    custom_name: '<white>🍺 <gradient:#C173FF:#950DFF><b>Liquor Store</b></gradient> 🍺</white>'
+      textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTg4NzZjZTFiY2VjMmI5MjI0ZjRkNjhlZTA0ZjdjNjNiZjM1NGJhOTY2ZmE2YTVjYjg4ZDFiNWMwNTA0ZGRjMyJ9fX0='
+    custom_name: '<white>🍺 <gradient:#FCBDE3:#F973C4><b>Liquor Store</b></gradient> 🍺</white>'
     lore:
       - ''
       - ' <white>Place your brews below and...</white> '
@@ -174,28 +168,23 @@ market:
     symbol: 'C'
     material: 'PLAYER_HEAD'
     profile:
-      textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTAzMjdmYjM0MzE5Zjg5YWM1YWI0OGI0ZDc5MjUxZjEzZjA2N2ViZWE3ZGE1Zjg4Yjc1ZjQ3OWE3Mzg5OTI0ZSJ9fX0='
-    custom_name: '<gradient:#C173FF:#950DFF><b>Close</b></gradient>'
+      textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTg4NzZjZTFiY2VjMmI5MjI0ZjRkNjhlZTA0ZjdjNjNiZjM1NGJhOTY2ZmE2YTVjYjg4ZDFiNWMwNTA0ZGRjMyJ9fX0='
+    custom_name: '<gradient:#FCBDE3:#F973C4><b>Close</b></gradient>'
 
   # -- Decorative Icons -----------------------
   decorative-icons:
-    purple-glass:
+    pink-glass:
       symbol: 'J'
-      material: 'PURPLE_STAINED_GLASS_PANE'
-      tooltip_display:
-        hide_tooltip: true
-    magenta-glass:
-      symbol: 'K'
-      material: 'MAGENTA_STAINED_GLASS_PANE'
+      material: 'PINK_STAINED_GLASS_PANE'
       tooltip_display:
         hide_tooltip: true
     amethyst_cluster:
       symbol: 'L'
-      material: 'AMETHYST_CLUSTER'
+      material: 'BRAIN_CORAL'
       tooltip_display:
         hide_tooltip: true
     large_amethyst_bud:
       symbol: 'M'
-      material: 'LARGE_AMETHYST_BUD'
+      material: 'BRAIN_CORAL_FAN'
       tooltip_display:
         hide_tooltip: true

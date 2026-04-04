@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.cesarcosmico"
-version = "1.1.0"
+version = "2.0.0"
 
 java {
     toolchain {
@@ -29,6 +29,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.github.BreweryTeam:TheBrewingProject:v3.0.0-beta.0")
 
+    // Bundled via shadowJar
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("com.mysql:mysql-connector-j:8.0.33")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.7")
@@ -45,9 +46,9 @@ tasks.test {
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveClassifier.set("")
 
-    relocate("com.zaxxer.hikari", "com.cesarcosmico.brewmarket.lib.hikari")
-    relocate("com.mysql", "com.cesarcosmico.brewmarket.lib.mysql")
-    relocate("org.mariadb", "com.cesarcosmico.brewmarket.lib.mariadb")
+    relocate("com.zaxxer.hikari", "com.cesarcosmico.thebrewingmarket.lib.hikari")
+    relocate("com.mysql", "com.cesarcosmico.thebrewingmarket.lib.mysql")
+    relocate("org.mariadb", "com.cesarcosmico.thebrewingmarket.lib.mariadb")
 
     mergeServiceFiles()
 }

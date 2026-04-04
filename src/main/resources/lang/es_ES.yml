@@ -1,8 +1,8 @@
-# BrewMarket - Archivo de idioma en Español (España)
+# TheBrewingMarket - Archivo de idioma en Español (España)
 # Soporta formato MiniMessage.
 # Usa {prefix} para insertar el prefijo del plugin.
 
-prefix: "<white>[<gradient:#C173FF:#950DFF>BrewMarket</gradient>]</white>"
+prefix: "<white>[<gradient:#FCBDE3:#F973C4>BrewingMarket</gradient>]</white>"
 
 # -- Comandos ---------------------------------
 command:
@@ -12,28 +12,28 @@ command:
 
 # -- Market -----------------------------------
 market:
-  sell-success: "{prefix} <white>Vendiste <#C173FF>{sold_amount}</#C173FF> bebidas por <#C173FF>{money}</#C173FF>!</white>"
+  sell-success: "{prefix} <white>Vendiste <#FCBDE3>{sold_amount}</#FCBDE3> bebidas por <#FCBDE3>{money}</#FCBDE3>!</white>"
   sell-nothing: "{prefix} <white>No tienes bebidas para vender.</white>"
   sell-error: "{prefix} <white>La transacción ha fallado. Inténtalo de nuevo.</white>"
 
 # -- Historial --------------------------------
 history:
-  invalid-time: "{prefix} <red>Formato de tiempo inválido. Usa: 1s, 2m, 3h, 4d, 5w, 6M, 7Y</red>"
+  invalid-time: "{prefix} <red>Formato de tiempo inválido. Usa: 1s, 1m, 1h, 1d, 1w, 1M, 1Y</red>"
   empty: "{prefix} <white>{player} no tiene historial de ventas.</white>"
   display:
     - ''
-    - '<gradient:#C173FF:#950DFF>◤<st>                     </st></gradient> <white>[</white><gradient:#C173FF:#950DFF>BrewMarket</gradient><white>]</white> <gradient:#950DFF:#C173FF><st>                     </st>◥</gradient>'
+    - '<gradient:#FCBDE3:#F973C4>◤<st>                 </st></gradient> <white>[</white><gradient:#FCBDE3:#F973C4>BrewingMarket</gradient><white>]</white> <gradient:#F973C4:#FCBDE3><st>                 </st>◥</gradient>'
     - ''
     - '{entries}'
     - ''
-    - '<gradient:#C173FF:#950DFF>◣<st>                     </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#950DFF:#C173FF><st>                     </st>◢</gradient>'
+    - '<gradient:#FCBDE3:#F973C4>◣<st>                   </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#F973C4:#FCBDE3><st>                   </st>◢</gradient>'
     - ''
-  entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#C173FF>{quality}</#C173FF><white>]</white> <white>[</white><#C173FF>{total}$</#C173FF><white>]</white>"
+  entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#FCBDE3>{quality}</#FCBDE3><white>]</white> <white>[</white><#FCBDE3>{total}$</#FCBDE3><white>]</white>"
   entry_hover: "<gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
   navigation:
-    previous: '<gradient:#C173FF:#950DFF>«</gradient>'
+    previous: '<gradient:#FCBDE3:#F973C4>«</gradient>'
     previous_disabled: '<dark_gray>«</dark_gray>'
     previous_hover: '<gray>Clic para ir a la página {page}</gray>'
-    next: '<gradient:#C173FF:#950DFF>»</gradient>'
+    next: '<gradient:#FCBDE3:#F973C4>»</gradient>'
     next_disabled: '<dark_gray>»</dark_gray>'
     next_hover: '<gray>Clic para ir a la página {page}</gray>'

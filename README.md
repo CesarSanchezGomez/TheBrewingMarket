@@ -1,4 +1,4 @@
-# BrewMarket
+# TheBrewingMarket
 
 A Minecraft plugin that lets players sell their [TheBrewingProject](https://hangar.papermc.io/BreeweryTeam/TheBrewingProject) brews for money through a customizable GUI.
 
@@ -10,31 +10,27 @@ A Minecraft plugin that lets players sell their [TheBrewingProject](https://hang
 
 ## Installation
 
-1. Drop `BrewMarket.jar` into your server's `plugins/` folder.
+1. Drop `TheBrewingMarket.jar` into your server's `plugins/` folder.
 2. Restart the server.
-3. Edit `plugins/BrewMarket/config.yml` to your liking.
-4. Use `/brewmarket reload` to apply changes without restarting.
+3. Edit `plugins/TheBrewingMarket/config.yml` to your liking.
+4. Use `/thebrewingmarket reload` to apply changes without restarting.
 
 ## Commands & Permissions
 
 | Command | Alias | Permission | Description |
 |---|---|---|---|
-| `/brewmarket` | `/bm` | `brewmarket.use` | Opens the sell GUI |
-| `/brewmarket reload` | `/bm reload` | `brewmarket.admin` | Reloads configuration |
+| `/thebrewingmarket` | `/tbm` | `thebrewingmarket.use` | Opens the sell GUI |
+| `/thebrewingmarket reload` | `/tbm reload` | `thebrewingmarket.admin` | Reloads configuration |
+| `/thebrewingmarket history` | `/tbm history` | `thebrewingmarket.history` | View sell history |
 
 | Permission | Default | Description |
 |---|---|---|
-| `brewmarket.*` | op | Full access |
-| `brewmarket.use` | true | Use the sell GUI |
-| `brewmarket.admin` | op | Reload config |
+| `thebrewingmarket.*` | op | Full access |
+| `thebrewingmarket.admin` | op | Reload config |
+| `thebrewingmarket.history` | op | View sell history |
+| `thebrewingmarket.use` | true | Use the sell GUI |
+| `thebrewingmarket.shulker` | true | Sell brews from shulker boxes |
 
 ## Documentation
 
-For full configuration details, see the **[Wiki](../../wiki)**.
-
-- [Home](../../wiki/Home)
-- [Prices](../../wiki/Prices)
-- [Layout](../../wiki/Layout)
-- [Icons](../../wiki/Icons)
-- [Sell Buttons](../../wiki/Sell-Buttons)
-- [Language](../../wiki/Language)
+For full configuration details, see the **[WIP]()**.

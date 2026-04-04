@@ -9,9 +9,9 @@ data-storage-method: SQLite
 
 SQLite:
   # Name of the .db file (without extension) inside the plugin's data folder
-  file: 'BrewMarket'
+  file: 'TheBrewingMarket'
   # Leave empty to keep the legacy table name 'sell_history' (no prefix)
-  table-prefix: 'brewmarket'
+  table-prefix: 'tbm'
 
 MySQL:
   host: 'localhost'
@@ -26,7 +26,7 @@ MySQL:
     max-lifetime: 180000
     keep-alive-time: 60000
     time-out: 20000
-  table-prefix: brewmarket
+  table-prefix: tbm
 
 MariaDB:
   host: 'localhost'
@@ -41,4 +41,4 @@ MariaDB:
     max-lifetime: 180000
     keep-alive-time: 60000
     time-out: 20000
-  table-prefix: brewmarket
+  table-prefix: tbm

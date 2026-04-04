@@ -1,8 +1,8 @@
-name: BrewMarket
-version: '1.1.0'
+name: TheBrewingMarket
+version: '2.0.0'
 authors:
   - CesarCosmico
-main: com.cesarcosmico.brewmarket.BrewMarketPlugin
+main: com.cesarcosmico.thebrewingmarket.TheBrewingMarketPlugin
 description: Sell your TheBrewingProject brews for money
 api-version: '1.21'
 
@@ -18,27 +18,27 @@ dependencies:
       join-classpath: true
 
 permissions:
-  brewmarket.*:
-    description: Full access to BrewMarket
+  thebrewingmarket.*:
+    description: Full access to TheBrewingMarket
     default: op
     children:
-      brewmarket.use: true
-      brewmarket.admin: true
-      brewmarket.shulker: true
-      brewmarket.history: true
+      thebrewingmarket.use: true
+      thebrewingmarket.admin: true
+      thebrewingmarket.shulker: true
+      thebrewingmarket.history: true
 
-  brewmarket.admin:
-    description: Allows reloading BrewMarket config
+  thebrewingmarket.admin:
+    description: Allows reloading TheBrewingMarket config
     default: op
 
-  brewmarket.history:
+  thebrewingmarket.history:
     description: Allows viewing sell history of any player
     default: op
 
-  brewmarket.use:
-    description: Allows using the Brew Market
+  thebrewingmarket.use:
+    description: Allows using TheBrewingMarket
     default: true
 
-  brewmarket.shulker:
+  thebrewingmarket.shulker:
     description: Allows selling brews from inside shulker boxes
     default: true
