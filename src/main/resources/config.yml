@@ -54,7 +54,7 @@ market:
     ap_mead: 130
     vodka: 130
     g_vodka: 160
-    wiskey: 200
+    whiskey: 200
     fire_whiskey: 250
     rum: 180
     tequila: 170
@@ -178,12 +178,12 @@ market:
       material: 'PINK_STAINED_GLASS_PANE'
       tooltip_display:
         hide_tooltip: true
-    amethyst_cluster:
+    brain-coral:
       symbol: 'K'
       material: 'BRAIN_CORAL'
       tooltip_display:
         hide_tooltip: true
-    large_amethyst_bud:
+    brain-coral-fan:
       symbol: 'L'
       material: 'BRAIN_CORAL_FAN'
       tooltip_display:
