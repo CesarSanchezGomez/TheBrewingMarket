@@ -33,15 +33,15 @@ public final class MySqlSchemaManager implements SchemaManager {
                     PRIMARY KEY (id)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;""".formatted(table);
 
-        String createIndexPlayer = "CREATE INDEX idx_%s_player ON `%s`(player_uuid)"
-                .formatted(table, table);
         String createIndexTime = "CREATE INDEX idx_%s_time ON `%s`(sold_at)"
+                .formatted(table, table);
+        String createIndexPlayerName = "CREATE INDEX idx_%s_player_name ON `%s`(player_name)"
                 .formatted(table, table);
 
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createTable);
-            tryExecute(stmt, createIndexPlayer);
             tryExecute(stmt, createIndexTime);
+            tryExecute(stmt, createIndexPlayerName);
         }
     }
 

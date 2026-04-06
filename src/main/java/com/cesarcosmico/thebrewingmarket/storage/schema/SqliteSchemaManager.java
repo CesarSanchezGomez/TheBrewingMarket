@@ -31,15 +31,15 @@ public final class SqliteSchemaManager implements SchemaManager {
                     sold_at      INTEGER NOT NULL
                 )""".formatted(table);
 
-        String createIndexPlayer = "CREATE INDEX IF NOT EXISTS idx_%s_player ON %s(player_uuid)"
-                .formatted(table, table);
         String createIndexTime = "CREATE INDEX IF NOT EXISTS idx_%s_time ON %s(sold_at)"
+                .formatted(table, table);
+        String createIndexPlayerName = "CREATE INDEX IF NOT EXISTS idx_%s_player_name ON %s(player_name)"
                 .formatted(table, table);
 
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createTable);
-            stmt.execute(createIndexPlayer);
             stmt.execute(createIndexTime);
+            stmt.execute(createIndexPlayerName);
         }
     }
 

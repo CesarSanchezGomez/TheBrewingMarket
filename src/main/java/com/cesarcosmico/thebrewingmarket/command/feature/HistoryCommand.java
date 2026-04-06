@@ -21,7 +21,6 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,6 +33,7 @@ import java.util.function.Supplier;
 public class HistoryCommand {
 
     private static final String[] TIME_SUGGESTIONS = {"1s", "1m", "1h", "1d", "1w", "1M", "1Y"};
+    private static final String DEFAULT_HEAD = "entity/player/wide/steve";
 
     private final Supplier<MarketConfig> configSupplier;
     private final Supplier<SellService> sellServiceSupplier;
@@ -91,14 +91,12 @@ public class HistoryCommand {
         return builder.buildFuture();
     }
 
-    @SuppressWarnings("deprecation")
     private int execute(CommandContext<CommandSourceStack> context, int page) {
         SellHistoryService historyService = historySupplier.get();
         if (historyService == null) return Command.SINGLE_SUCCESS;
 
         String targetName = StringArgumentType.getString(context, "player");
         String timeArg = StringArgumentType.getString(context, "time");
-        OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
 
         long since;
         try {
@@ -110,12 +108,12 @@ public class HistoryCommand {
 
         int recordsPerPage = configSupplier.get().getHistoryPerPage();
 
-        historyService.countHistory(target.getUniqueId(), since).thenCompose(totalCount -> {
+        historyService.countHistory(targetName, since).thenCompose(totalCount -> {
             int maxPage = Math.max(1, (int) Math.ceil((double) totalCount / recordsPerPage));
             int safePage = Math.min(page, maxPage);
             int offset = (safePage - 1) * recordsPerPage;
 
-            return historyService.getHistory(target.getUniqueId(), since, recordsPerPage, offset)
+            return historyService.getHistory(targetName, since, recordsPerPage, offset)
                     .thenAccept(records ->
                             plugin.getServer().getScheduler().runTask(plugin, () ->
                                     renderHistory(context, records, targetName, timeArg, safePage, maxPage))
@@ -142,10 +140,17 @@ public class HistoryCommand {
         SellService sellService = sellServiceSupplier.get();
         List<Component> entryComponents = new ArrayList<>();
 
+        boolean isConsoleSender = !(context.getSource().getSender() instanceof Player);
+
         for (SellHistoryService.SellRecord record : records) {
-            String headTag = isBedrockPlayer(record.playerUuid())
-                    ? "<head:" + record.playerName() + ">"
-                    : "<head:" + record.playerUuid() + ">";
+            String headTag;
+            if (isConsoleSender) {
+                headTag = record.playerName();
+            } else if (isMojangUuid(record.playerUuid())) {
+                headTag = "<head:" + record.playerUuid() + ">";
+            } else {
+                headTag = "<head:" + DEFAULT_HEAD + ">";
+            }
 
             Component entryComponent = lang.get("history.entry",
                     "{player_head}", headTag,
@@ -156,6 +161,7 @@ public class HistoryCommand {
             );
 
             Component hoverComponent = lang.get("history.entry_hover",
+                    "{player}", record.playerName(),
                     "{time_ago}", TimeUtil.relativeTime(record.soldAt()),
                     "{exact_date}", TimeUtil.exactTime(record.soldAt())
             );
@@ -206,7 +212,7 @@ public class HistoryCommand {
         return lang.get("history.navigation.next_disabled");
     }
 
-    private boolean isBedrockPlayer(UUID uuid) {
-        return uuid.toString().startsWith("00000000-0000-0000");
+    private boolean isMojangUuid(UUID uuid) {
+        return uuid.version() == 4;
     }
 }

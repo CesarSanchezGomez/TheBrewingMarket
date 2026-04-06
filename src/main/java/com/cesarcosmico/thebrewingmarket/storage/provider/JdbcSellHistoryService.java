@@ -51,11 +51,11 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                 SELECT id, player_uuid, player_name, recipe_name, display_name,
                        quality, price_per, quantity, total, sold_at
                 FROM `%s`
-                WHERE player_uuid = ? AND sold_at >= ?
+                WHERE player_name = ? AND sold_at >= ?
                 ORDER BY sold_at DESC, id DESC
                 LIMIT ? OFFSET ?""".formatted(table);
 
-        this.countHistorySql = "SELECT COUNT(*) FROM `%s` WHERE player_uuid = ? AND sold_at >= ?".formatted(table);
+        this.countHistorySql = "SELECT COUNT(*) FROM `%s` WHERE player_name = ? AND sold_at >= ?".formatted(table);
 
         this.executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "TheBrewingMarket-DB-" + providerName);
@@ -115,12 +115,12 @@ public final class JdbcSellHistoryService implements SellHistoryService {
     }
 
     @Override
-    public CompletableFuture<List<SellRecord>> getHistory(UUID playerUuid, long since, int limit, int offset) {
+    public CompletableFuture<List<SellRecord>> getHistory(String playerName, long since, int limit, int offset) {
         return CompletableFuture.supplyAsync(() -> {
             List<SellRecord> records = new ArrayList<>();
             try (Connection conn = connectionProvider.getConnection();
                  PreparedStatement ps = conn.prepareStatement(selectHistorySql)) {
-                ps.setString(1, playerUuid.toString());
+                ps.setString(1, playerName);
                 ps.setLong(2, since);
                 ps.setInt(3, limit);
                 ps.setInt(4, offset);
@@ -142,24 +142,24 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                     }
                 }
             } catch (SQLException e) {
-                logger.log(Level.WARNING, "Failed to retrieve sell history", e);
+                logger.log(Level.WARNING, "Failed to retrieve sell history by name", e);
             }
             return records;
         }, executor);
     }
 
     @Override
-    public CompletableFuture<Integer> countHistory(UUID playerUuid, long since) {
+    public CompletableFuture<Integer> countHistory(String playerName, long since) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = connectionProvider.getConnection();
                  PreparedStatement ps = conn.prepareStatement(countHistorySql)) {
-                ps.setString(1, playerUuid.toString());
+                ps.setString(1, playerName);
                 ps.setLong(2, since);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) return rs.getInt(1);
                 }
             } catch (SQLException e) {
-                logger.log(Level.WARNING, "Failed to count sell history", e);
+                logger.log(Level.WARNING, "Failed to count sell history by name", e);
             }
             return 0;
         }, executor);

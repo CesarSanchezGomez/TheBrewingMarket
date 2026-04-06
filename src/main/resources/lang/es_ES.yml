@@ -29,7 +29,7 @@ history:
     - '<gradient:#FCBDE3:#F973C4>◣<st>                   </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#F973C4:#FCBDE3><st>                   </st>◢</gradient>'
     - ''
   entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#FCBDE3>{quality}</#FCBDE3><white>]</white> <white>[</white><#FCBDE3>{total}$</#FCBDE3><white>]</white>"
-  entry_hover: "<gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
+  entry_hover: "<gray>{player} {time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
   navigation:
     previous: '<gradient:#FCBDE3:#F973C4>«</gradient>'
     previous_disabled: '<dark_gray>«</dark_gray>'
