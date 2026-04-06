@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Supplier;
 
-public class MarketCommand {
+public final class MarketCommand {
 
     private final Supplier<MarketConfig> configSupplier;
     private final Supplier<SellService> sellServiceSupplier;

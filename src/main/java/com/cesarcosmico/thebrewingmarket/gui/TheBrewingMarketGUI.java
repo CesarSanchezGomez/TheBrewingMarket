@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public class TheBrewingMarketGUI implements InventoryHolder {
+public final class TheBrewingMarketGUI implements InventoryHolder {
 
     private final Inventory inventory;
     private final MarketConfig config;
@@ -76,25 +76,23 @@ public class TheBrewingMarketGUI implements InventoryHolder {
         int guiBrewCount = sellService.countBrews(inventory, config, shulkerEnabled);
         int totalBrewCount = guiBrewCount + sellService.countBrewsInPlayerInventory(owner, shulkerEnabled);
 
-        for (int slot = 0; slot < config.getInventorySize(); slot++) {
-            if (config.isSellSlot(slot)) {
-                if (guiBrewCount > 0) {
-                    inventory.setItem(slot, config.buildSellButton(
-                            config.getSellAllow(), guiMoney, String.valueOf(guiBrewCount)));
-                } else {
-                    inventory.setItem(slot, config.buildSellButton(
-                            config.getSellDeny(), "0", "0"));
-                }
+        for (int slot : config.getSellSlots()) {
+            if (guiBrewCount > 0) {
+                inventory.setItem(slot, config.buildSellButton(
+                        config.getSellAllow(), guiMoney, String.valueOf(guiBrewCount)));
+            } else {
+                inventory.setItem(slot, config.buildSellButton(
+                        config.getSellDeny(), "0", "0"));
             }
+        }
 
-            if (config.isSellAllSlot(slot)) {
-                if (totalBrewCount > 0) {
-                    inventory.setItem(slot, config.buildSellButton(
-                            config.getSellAllAllow(), totalMoney, String.valueOf(totalBrewCount)));
-                } else {
-                    inventory.setItem(slot, config.buildSellButton(
-                            config.getSellAllDeny(), "0", "0"));
-                }
+        for (int slot : config.getSellAllSlots()) {
+            if (totalBrewCount > 0) {
+                inventory.setItem(slot, config.buildSellButton(
+                        config.getSellAllAllow(), totalMoney, String.valueOf(totalBrewCount)));
+            } else {
+                inventory.setItem(slot, config.buildSellButton(
+                        config.getSellAllDeny(), "0", "0"));
             }
         }
     }

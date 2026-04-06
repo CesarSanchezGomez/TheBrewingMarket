@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class MarketConfig {
+public final class MarketConfig {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
@@ -89,12 +89,20 @@ public class MarketConfig {
         return getItemSlots().contains(slot);
     }
 
+    public Set<Integer> getSellSlots() {
+        return layout.getSlotsForSymbol(sellSymbol);
+    }
+
     public boolean isSellSlot(int slot) {
-        return layout.getSlotsForSymbol(sellSymbol).contains(slot);
+        return getSellSlots().contains(slot);
+    }
+
+    public Set<Integer> getSellAllSlots() {
+        return layout.getSlotsForSymbol(sellAllSymbol);
     }
 
     public boolean isSellAllSlot(int slot) {
-        return layout.getSlotsForSymbol(sellAllSymbol).contains(slot);
+        return getSellAllSlots().contains(slot);
     }
 
     public boolean isCloseSlot(int slot) {

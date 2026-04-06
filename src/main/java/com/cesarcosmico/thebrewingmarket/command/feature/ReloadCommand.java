@@ -9,7 +9,7 @@ import io.papermc.paper.command.brigadier.Commands;
 
 import java.util.function.Supplier;
 
-public class ReloadCommand {
+public final class ReloadCommand {
 
     private final Supplier<LangConfig> langSupplier;
     private final Runnable reloadAction;

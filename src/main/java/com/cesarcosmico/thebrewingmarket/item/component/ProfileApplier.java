@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class ProfileApplier implements ComponentApplier {
+public final class ProfileApplier implements ComponentApplier {
 
     private final Logger logger;
 

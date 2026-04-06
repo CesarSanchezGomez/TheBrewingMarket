@@ -3,11 +3,10 @@ package com.cesarcosmico.thebrewingmarket.item.component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.logging.Logger;
 
-public class ItemModelApplier implements ComponentApplier {
+public final class ItemModelApplier extends BaseComponentApplier {
 
     private final Logger logger;
 
@@ -32,9 +31,7 @@ public class ItemModelApplier implements ComponentApplier {
                 return;
             }
 
-            ItemMeta meta = item.getItemMeta();
-            meta.setItemModel(modelKey);
-            item.setItemMeta(meta);
+            editMeta(item, meta -> meta.setItemModel(modelKey));
         } catch (Exception e) {
             logger.warning("Failed to apply item_model '" + value + "': " + e.getMessage());
         }

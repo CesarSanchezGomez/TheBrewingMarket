@@ -4,7 +4,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.entity.Player;
 
-public class EconomyService {
+public final class EconomyService {
 
     private final Economy economy;
 

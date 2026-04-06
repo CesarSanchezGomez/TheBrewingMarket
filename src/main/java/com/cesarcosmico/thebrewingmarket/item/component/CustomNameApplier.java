@@ -4,9 +4,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public class CustomNameApplier implements ComponentApplier {
+public final class CustomNameApplier extends BaseComponentApplier {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
@@ -20,8 +19,7 @@ public class CustomNameApplier implements ComponentApplier {
         String raw = section.getString(key());
         if (raw == null) return;
 
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(MINI.deserialize(raw).decoration(TextDecoration.ITALIC, false));
-        item.setItemMeta(meta);
+        editMeta(item, meta ->
+                meta.displayName(MINI.deserialize(raw).decoration(TextDecoration.ITALIC, false)));
     }
 }

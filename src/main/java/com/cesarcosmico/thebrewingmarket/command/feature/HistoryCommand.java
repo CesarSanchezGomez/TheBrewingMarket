@@ -30,10 +30,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class HistoryCommand {
+public final class HistoryCommand {
 
     private static final String[] TIME_SUGGESTIONS = {"1s", "1m", "1h", "1d", "1w", "1M", "1Y"};
-    private static final String DEFAULT_HEAD = "entity/player/wide/steve";
+    private static final String DEFAULT_HEAD_UUID = "entity/player/wide/steve";
 
     private final Supplier<MarketConfig> configSupplier;
     private final Supplier<SellService> sellServiceSupplier;
@@ -149,7 +149,7 @@ public class HistoryCommand {
             } else if (isMojangUuid(record.playerUuid())) {
                 headTag = "<head:" + record.playerUuid() + ">";
             } else {
-                headTag = "<head:" + DEFAULT_HEAD + ">";
+                headTag = "<head:" + DEFAULT_HEAD_UUID + ">";
             }
 
             Component entryComponent = lang.get("history.entry",
@@ -189,27 +189,30 @@ public class HistoryCommand {
     }
 
     private Component buildPreviousPage(LangConfig lang, String targetName, String timeArg, int currentPage) {
-        if (currentPage > 1) {
-            Component text = lang.get("history.navigation.previous");
-            Component hover = lang.get("history.navigation.previous_hover",
-                    "{page}", String.valueOf(currentPage - 1));
-            return text
-                    .hoverEvent(HoverEvent.showText(hover))
-                    .clickEvent(ClickEvent.runCommand("/tbm history " + targetName + " " + timeArg + " " + (currentPage - 1)));
-        }
-        return lang.get("history.navigation.previous_disabled");
+        return buildPageButton(lang, targetName, timeArg,
+                currentPage > 1, currentPage - 1,
+                "history.navigation.previous", "history.navigation.previous_hover",
+                "history.navigation.previous_disabled");
     }
 
     private Component buildNextPage(LangConfig lang, String targetName, String timeArg, int currentPage, int maxPage) {
-        if (currentPage < maxPage) {
-            Component text = lang.get("history.navigation.next");
-            Component hover = lang.get("history.navigation.next_hover",
-                    "{page}", String.valueOf(currentPage + 1));
-            return text
-                    .hoverEvent(HoverEvent.showText(hover))
-                    .clickEvent(ClickEvent.runCommand("/tbm history " + targetName + " " + timeArg + " " + (currentPage + 1)));
+        return buildPageButton(lang, targetName, timeArg,
+                currentPage < maxPage, currentPage + 1,
+                "history.navigation.next", "history.navigation.next_hover",
+                "history.navigation.next_disabled");
+    }
+
+    private Component buildPageButton(LangConfig lang, String targetName, String timeArg,
+                                      boolean enabled, int targetPage,
+                                      String textKey, String hoverKey, String disabledKey) {
+        if (!enabled) {
+            return lang.get(disabledKey);
         }
-        return lang.get("history.navigation.next_disabled");
+        Component text = lang.get(textKey);
+        Component hover = lang.get(hoverKey, "{page}", String.valueOf(targetPage));
+        return text
+                .hoverEvent(HoverEvent.showText(hover))
+                .clickEvent(ClickEvent.runCommand("/tbm history " + targetName + " " + timeArg + " " + targetPage));
     }
 
     private boolean isMojangUuid(UUID uuid) {

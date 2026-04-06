@@ -5,11 +5,10 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class LoreApplier implements ComponentApplier {
+public final class LoreApplier extends BaseComponentApplier {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
@@ -27,8 +26,6 @@ public class LoreApplier implements ComponentApplier {
                 .map(line -> MINI.deserialize(line).decoration(TextDecoration.ITALIC, false))
                 .toList();
 
-        ItemMeta meta = item.getItemMeta();
-        meta.lore(lore);
-        item.setItemMeta(meta);
+        editMeta(item, meta -> meta.lore(lore));
     }
 }

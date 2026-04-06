@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class LayoutParser {
+public final class LayoutParser {
 
     private final String[] rows;
     private final int inventorySize;

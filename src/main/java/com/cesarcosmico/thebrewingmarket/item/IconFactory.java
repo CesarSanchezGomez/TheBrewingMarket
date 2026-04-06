@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class IconFactory {
+public final class IconFactory {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
@@ -41,29 +41,27 @@ public class IconFactory {
             return new IconConfig(new ItemStack(Material.BARRIER), null, List.of(), " ");
         }
 
-        Material material = resolveMaterial(section);
-        ItemStack baseItem = new ItemStack(material);
-
-        componentRegistry.applyAll(baseItem, section);
+        ItemStack baseItem = buildStaticIcon(section);
 
         String displayNameRaw = section.getString("custom_name", " ");
         List<String> loreRaw = section.getStringList("lore");
-
-        String sound = null;
-
-        ConfigurationSection actionSection = section.getConfigurationSection("action");
-        if (actionSection != null) {
-            for (String actionKey : actionSection.getKeys(false)) {
-                ConfigurationSection action = actionSection.getConfigurationSection(actionKey);
-                if (action == null) continue;
-                String type = action.getString("type", "");
-                if ("sound".equals(type)) {
-                    sound = action.getString("value", "");
-                }
-            }
-        }
+        String sound = extractSound(section);
 
         return new IconConfig(baseItem, sound, loreRaw, displayNameRaw);
+    }
+
+    private String extractSound(ConfigurationSection section) {
+        ConfigurationSection actionSection = section.getConfigurationSection("action");
+        if (actionSection == null) return null;
+
+        for (String actionKey : actionSection.getKeys(false)) {
+            ConfigurationSection action = actionSection.getConfigurationSection(actionKey);
+            if (action == null) continue;
+            if ("sound".equals(action.getString("type", ""))) {
+                return action.getString("value", "");
+            }
+        }
+        return null;
     }
 
     public ItemStack buildDynamicIcon(IconConfig config, String money, String soldAmount) {

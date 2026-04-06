@@ -3,11 +3,10 @@ package com.cesarcosmico.thebrewingmarket.item.component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.logging.Logger;
 
-public class TooltipStyleApplier implements ComponentApplier {
+public final class TooltipStyleApplier extends BaseComponentApplier {
 
     private final Logger logger;
 
@@ -32,9 +31,7 @@ public class TooltipStyleApplier implements ComponentApplier {
                 return;
             }
 
-            ItemMeta meta = item.getItemMeta();
-            meta.setTooltipStyle(styleKey);
-            item.setItemMeta(meta);
+            editMeta(item, meta -> meta.setTooltipStyle(styleKey));
         } catch (Exception e) {
             logger.warning("Failed to apply tooltip_style '" + value + "': " + e.getMessage());
         }

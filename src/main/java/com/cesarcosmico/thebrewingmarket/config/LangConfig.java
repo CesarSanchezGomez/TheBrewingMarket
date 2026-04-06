@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LangConfig {
+public final class LangConfig {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 

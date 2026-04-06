@@ -15,7 +15,7 @@ import net.kyori.adventure.text.Component;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class BrewingPriceService {
+public final class BrewingPriceService {
 
     private static final NamespacedKey SCORE_KEY = new NamespacedKey("brewery", "score");
     private static final NamespacedKey TAG_KEY = new NamespacedKey("brewery", "tag");
@@ -61,39 +61,28 @@ public class BrewingPriceService {
 
     private String resolveRecipeName(ItemStack itemStack) {
         TheBrewingProjectApi api = apiSupplier.get();
-        if (api != null) {
-            Optional<Brew> brewOpt = api.getBrewManager().fromItem(itemStack);
-            if (brewOpt.isPresent()) {
-                Optional<Recipe<ItemStack>> recipeOpt = brewOpt.get().closestRecipe(api.getRecipeRegistry());
-                if (recipeOpt.isPresent()) {
-                    return recipeOpt.get().getRecipeName();
-                }
-            }
+        if (api == null) {
+            return extractTag(itemStack);
         }
 
-        return extractTag(itemStack);
+        return api.getBrewManager().fromItem(itemStack)
+                .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry()))
+                .map(Recipe::getRecipeName)
+                .orElseGet(() -> extractTag(itemStack));
     }
 
     private double extractScore(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return 0.0;
 
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if (pdc.has(SCORE_KEY, PersistentDataType.DOUBLE)) {
-            Double score = pdc.get(SCORE_KEY, PersistentDataType.DOUBLE);
-            return score != null ? score : 0.0;
-        }
-        return 0.0;
+        Double score = meta.getPersistentDataContainer().get(SCORE_KEY, PersistentDataType.DOUBLE);
+        return score != null ? score : 0.0;
     }
 
     private String extractTag(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return null;
 
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if (pdc.has(TAG_KEY, PersistentDataType.STRING)) {
-            return pdc.get(TAG_KEY, PersistentDataType.STRING);
-        }
-        return null;
+        return meta.getPersistentDataContainer().get(TAG_KEY, PersistentDataType.STRING);
     }
 }

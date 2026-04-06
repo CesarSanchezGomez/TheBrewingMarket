@@ -2,9 +2,8 @@ package com.cesarcosmico.thebrewingmarket.item.component;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public class EnchantmentGlintOverrideApplier implements ComponentApplier {
+public final class EnchantmentGlintOverrideApplier extends BaseComponentApplier {
 
     @Override
     public String key() {
@@ -15,8 +14,6 @@ public class EnchantmentGlintOverrideApplier implements ComponentApplier {
     public void apply(ItemStack item, ConfigurationSection section) {
         if (!section.contains(key())) return;
 
-        ItemMeta meta = item.getItemMeta();
-        meta.setEnchantmentGlintOverride(section.getBoolean(key()));
-        item.setItemMeta(meta);
+        editMeta(item, meta -> meta.setEnchantmentGlintOverride(section.getBoolean(key())));
     }
 }

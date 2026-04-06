@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Supplier;
 
-public class CommandManager {
+public final class CommandManager {
 
     private final MarketCommand marketCommand;
     private final ReloadCommand reloadCommand;
@@ -33,16 +33,15 @@ public class CommandManager {
     }
 
     public LiteralCommandNode<CommandSourceStack> createCommand() {
-        return Commands.literal("thebrewingmarket")
-                .requires(source -> source.getSender().hasPermission("thebrewingmarket.use"))
-                .executes(marketCommand::execute)
-                .then(reloadCommand.create())
-                .then(historyCommand.create())
-                .build();
+        return buildCommandTree("thebrewingmarket");
     }
 
     public LiteralCommandNode<CommandSourceStack> createAliasCommand() {
-        return Commands.literal("tbm")
+        return buildCommandTree("tbm");
+    }
+
+    private LiteralCommandNode<CommandSourceStack> buildCommandTree(String name) {
+        return Commands.literal(name)
                 .requires(source -> source.getSender().hasPermission("thebrewingmarket.use"))
                 .executes(marketCommand::execute)
                 .then(reloadCommand.create())

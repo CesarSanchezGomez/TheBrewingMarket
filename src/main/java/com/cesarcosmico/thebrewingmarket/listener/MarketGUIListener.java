@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.listener;
 
+import com.cesarcosmico.thebrewingmarket.config.IconConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.gui.TheBrewingMarketGUI;
@@ -18,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MarketGUIListener implements Listener {
+public final class MarketGUIListener implements Listener {
 
     private final JavaPlugin plugin;
     private final LangConfig langConfig;
@@ -111,28 +112,10 @@ public class MarketGUIListener implements Listener {
 
         double previewValue = sellService.calculateValue(
                 gui.getInventory(), config, gui.isShulkerEnabled());
-        if (previewValue <= 0) {
-            langConfig.send(player, "market.sell-nothing");
-            playSound(player, config.getActionSound(config.getSellDeny()));
-            return;
-        }
 
-        SellService.DetailedSellResult result = sellService.detailedSellFromGui(
-                gui.getInventory(), config, gui.isShulkerEnabled());
-
-        if (result.money() > 0 && sellService.deposit(player, result.money())) {
-            String money = sellService.format(result.money());
-            langConfig.send(player, "market.sell-success",
-                    "{money}", money,
-                    "{sold_amount}", String.valueOf(result.itemCount()));
-            playSound(player, config.getActionSound(config.getSellAllow()));
-            logHistory(player, result);
-        } else {
-            langConfig.send(player, "market.sell-error");
-            playSound(player, config.getActionSound(config.getSellDeny()));
-        }
-
-        gui.refreshSellButtons();
+        executeSell(gui, player, previewValue,
+                () -> sellService.detailedSellFromGui(gui.getInventory(), config, gui.isShulkerEnabled()),
+                config.getSellAllow(), config.getSellDeny());
     }
 
     private void handleSellAll(TheBrewingMarketGUI gui, Player player) {
@@ -141,25 +124,36 @@ public class MarketGUIListener implements Listener {
 
         double previewValue = sellService.calculateTotalValue(
                 gui.getInventory(), config, player, gui.isShulkerEnabled());
+
+        executeSell(gui, player, previewValue,
+                () -> sellService.detailedSellAll(gui.getInventory(), config, player, gui.isShulkerEnabled()),
+                config.getSellAllAllow(), config.getSellAllDeny());
+    }
+
+    private void executeSell(TheBrewingMarketGUI gui, Player player, double previewValue,
+                             java.util.function.Supplier<SellService.DetailedSellResult> sellAction,
+                             IconConfig allowSound, IconConfig denySound) {
+        MarketConfig config = gui.getConfig();
+        SellService sellService = gui.getSellService();
+
         if (previewValue <= 0) {
             langConfig.send(player, "market.sell-nothing");
-            playSound(player, config.getActionSound(config.getSellAllDeny()));
+            playSound(player, config.getActionSound(denySound));
             return;
         }
 
-        SellService.DetailedSellResult result = sellService.detailedSellAll(
-                gui.getInventory(), config, player, gui.isShulkerEnabled());
+        SellService.DetailedSellResult result = sellAction.get();
 
         if (result.money() > 0 && sellService.deposit(player, result.money())) {
             String money = sellService.format(result.money());
             langConfig.send(player, "market.sell-success",
                     "{money}", money,
                     "{sold_amount}", String.valueOf(result.itemCount()));
-            playSound(player, config.getActionSound(config.getSellAllAllow()));
+            playSound(player, config.getActionSound(allowSound));
             logHistory(player, result);
         } else {
             langConfig.send(player, "market.sell-error");
-            playSound(player, config.getActionSound(config.getSellAllDeny()));
+            playSound(player, config.getActionSound(denySound));
         }
 
         gui.refreshSellButtons();

@@ -5,7 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 
-public class PotionContentsApplier implements ComponentApplier {
+public final class PotionContentsApplier implements ComponentApplier {
 
     @Override
     public String key() {

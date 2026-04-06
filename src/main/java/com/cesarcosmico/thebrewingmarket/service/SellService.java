@@ -13,8 +13,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public class SellService {
+public final class SellService {
 
     private final BrewingPriceService priceService;
     private final EconomyService economyService;
@@ -176,33 +177,37 @@ public class SellService {
 
     // ── Shulker helpers (private) ────────────────────────────────
 
-    private double calculateShulkerValue(ItemStack shulkerItem) {
-        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return 0;
-        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return 0;
+    private Optional<ShulkerBox> openShulker(ItemStack shulkerItem) {
+        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return Optional.empty();
+        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return Optional.empty();
+        return Optional.of(shulker);
+    }
 
-        double total = 0;
-        for (ItemStack item : shulker.getInventory().getContents()) {
-            if (item == null) continue;
-            var eval = priceService.evaluate(item);
-            if (eval.isPresent()) {
-                total += eval.get().price() * item.getAmount();
+    private double calculateShulkerValue(ItemStack shulkerItem) {
+        return openShulker(shulkerItem).map(shulker -> {
+            double total = 0;
+            for (ItemStack item : shulker.getInventory().getContents()) {
+                if (item == null) continue;
+                var eval = priceService.evaluate(item);
+                if (eval.isPresent()) {
+                    total += eval.get().price() * item.getAmount();
+                }
             }
-        }
-        return total;
+            return total;
+        }).orElse(0.0);
     }
 
     private int countBrewsInShulker(ItemStack shulkerItem) {
-        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return 0;
-        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return 0;
-
-        int count = 0;
-        for (ItemStack item : shulker.getInventory().getContents()) {
-            if (item == null) continue;
-            if (priceService.evaluate(item).isPresent()) {
-                count += item.getAmount();
+        return openShulker(shulkerItem).map(shulker -> {
+            int count = 0;
+            for (ItemStack item : shulker.getInventory().getContents()) {
+                if (item == null) continue;
+                if (priceService.evaluate(item).isPresent()) {
+                    count += item.getAmount();
+                }
             }
-        }
-        return count;
+            return count;
+        }).orElse(0);
     }
 
     private SellResult processShulker(ItemStack shulkerItem, Map<String, SoldBrewDetail> detailMap) {

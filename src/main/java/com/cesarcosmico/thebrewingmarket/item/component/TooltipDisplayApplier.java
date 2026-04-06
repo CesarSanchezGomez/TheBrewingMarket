@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class TooltipDisplayApplier implements ComponentApplier {
+public final class TooltipDisplayApplier implements ComponentApplier {
 
     private static final Map<String, DataComponentType> TYPE_REGISTRY = buildTypeRegistry();
 
@@ -56,13 +56,16 @@ public class TooltipDisplayApplier implements ComponentApplier {
     private static Map<String, DataComponentType> buildTypeRegistry() {
         Map<String, DataComponentType> map = new HashMap<>();
         for (Field field : DataComponentTypes.class.getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers())
-                    && Modifier.isPublic(field.getModifiers())
-                    && DataComponentType.class.isAssignableFrom(field.getType())) {
-                try {
-                    map.put(field.getName().toLowerCase(), (DataComponentType) field.get(null));
-                } catch (IllegalAccessException ignored) {
-                }
+            if (!Modifier.isStatic(field.getModifiers())
+                    || !Modifier.isPublic(field.getModifiers())
+                    || !DataComponentType.class.isAssignableFrom(field.getType())) {
+                continue;
+            }
+            try {
+                map.put(field.getName().toLowerCase(), (DataComponentType) field.get(null));
+            } catch (IllegalAccessException e) {
+                System.getLogger("TooltipDisplayApplier")
+                        .log(System.Logger.Level.WARNING, "Failed to access field: " + field.getName(), e);
             }
         }
         return map;
