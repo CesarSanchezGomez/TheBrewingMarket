@@ -396,6 +396,7 @@ code {
 
 table {
   width: 100%;
+  min-width: 420px;
   border-collapse: collapse;
   font-size: 13.5px;
 }
@@ -418,6 +419,8 @@ tbody td {
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
   color: var(--text-sec);
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 tbody tr:last-child td {
@@ -437,6 +440,7 @@ th code {
   font-size: 11.5px;
   color: var(--accent-soft);
   border: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 /* ---- Code Blocks ---- */
