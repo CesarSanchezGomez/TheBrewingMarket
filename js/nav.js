@@ -30,8 +30,20 @@
     }
   ];
 
+  var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   var raw = location.pathname.replace(/\/$/, '').split('/').pop();
   var current = (raw || 'index').replace(/\.html$/, '');
+
+  // On local dev servers add .html back to nav hrefs so Live Server works.
+  if (isLocal) {
+    NAV.forEach(function (section) {
+      section.links.forEach(function (link) {
+        if (link.href && !link.href.endsWith('.html')) {
+          link.href = link.href + '.html';
+        }
+      });
+    });
+  }
 
   // Find current page name for breadcrumb
   var pageName = 'Home';
@@ -162,13 +174,16 @@
     span.style.animationDelay = '-' + (elapsed % dur).toFixed(2) + 's';
   });
 
-  // Strip .html from all internal links (page-nav, cards, etc.)
-  // so GitHub Pages serves clean URLs without touching each HTML file.
-  var allLinks = document.querySelectorAll('a[href$=".html"]');
-  Array.prototype.forEach.call(allLinks, function (a) {
-    var h = a.getAttribute('href');
-    if (h && !/^https?:\/\//.test(h)) {
-      a.setAttribute('href', h.replace(/\.html$/, ''));
-    }
-  });
+  // Strip .html from all internal links only on GitHub Pages.
+  // Local dev servers (Live Server, etc.) don't support extensionless URLs.
+  var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (!isLocal) {
+    var allLinks = document.querySelectorAll('a[href$=".html"]');
+    Array.prototype.forEach.call(allLinks, function (a) {
+      var h = a.getAttribute('href');
+      if (h && !/^https?:\/\//.test(h)) {
+        a.setAttribute('href', h.replace(/\.html$/, ''));
+      }
+    });
+  }
 })();
