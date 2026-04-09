@@ -98,4 +98,29 @@
       overlay.classList.remove('show');
     });
   }
+
+  // Favicon
+  var favicon = document.createElement('link');
+  favicon.rel = 'icon';
+  favicon.href = 'assets/images/TBM_Icon.ico';
+  document.head.appendChild(favicon);
+
+  // Background particles
+  var flaskSVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15 2a1 1 0 0 1 0 2v5.674l0.062 0.03a7 7 0 0 1 3.85 5.174l0.037 0.262a7 7 0 0 1 -3.078 6.693 1 1 0 0 1 -0.553 0.167H8.683a1 1 0 0 1 -0.552 -0.166A7 7 0 0 1 8.938 9.7L9 9.672V4a1 1 0 1 1 0 -2h6zm-2 2h-2v6.34a1 1 0 0 1 -0.551 0.894l-0.116 0.049A5 5 0 0 0 7.413 14h9.172a5 5 0 0 0 -2.918 -2.715 1 1 0 0 1 -0.667 -0.943V4z" stroke-width="1"/></svg>';
+
+  var bubbleIcons = [
+    flaskSVG, '$', flaskSVG, '$', flaskSVG,
+    '$', flaskSVG, '$', flaskSVG, '$',
+    flaskSVG
+  ];
+
+  var bubblesDiv = document.createElement('div');
+  bubblesDiv.className = 'bg-bubbles';
+  bubbleIcons.forEach(function (icon) {
+    var span = document.createElement('span');
+    span.innerHTML = icon;
+    bubblesDiv.appendChild(span);
+  });
+  document.body.insertAdjacentElement('afterbegin', bubblesDiv);
 })();

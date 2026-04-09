@@ -71,6 +71,8 @@ img {
 
 /* ---- Layout ---- */
 .wrapper {
+  position: relative;
+  z-index: 1;
   display: flex;
   min-height: 100vh;
 }
@@ -846,6 +848,60 @@ th code {
 ::-webkit-scrollbar-track  { background: transparent; }
 ::-webkit-scrollbar-thumb  { background: var(--border-light); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ---- Background Bubbles ---- */
+.bg-bubbles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-bubbles span {
+  position: absolute;
+  display: block;
+  bottom: -60px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 700;
+  color: rgba(249, 115, 196, 0.12);
+  user-select: none;
+  animation: bubble-rise linear infinite;
+}
+
+.bg-bubbles span svg {
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+@keyframes bubble-rise {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+}
+
+.bg-bubbles span:nth-child(1)  { left: 5%;   font-size: 36px; animation-delay: 0s;  animation-duration: 10s; }
+.bg-bubbles span:nth-child(2)  { left: 15%;  font-size: 56px; animation-delay: 1s;  animation-duration: 13s; }
+.bg-bubbles span:nth-child(3)  { left: 25%;  font-size: 28px; animation-delay: 3s;  animation-duration: 11s; }
+.bg-bubbles span:nth-child(4)  { left: 35%;  font-size: 48px; animation-delay: 0s;  animation-duration: 9s;  }
+.bg-bubbles span:nth-child(5)  { left: 45%;  font-size: 32px; animation-delay: 2s;  animation-duration: 12s; }
+.bg-bubbles span:nth-child(6)  { left: 55%;  font-size: 52px; animation-delay: 4s;  animation-duration: 14s; }
+.bg-bubbles span:nth-child(7)  { left: 65%;  font-size: 40px; animation-delay: 6s;  animation-duration: 10s; }
+.bg-bubbles span:nth-child(8)  { left: 75%;  font-size: 30px; animation-delay: 3s;  animation-duration: 11s; }
+.bg-bubbles span:nth-child(9)  { left: 85%;  font-size: 44px; animation-delay: 5s;  animation-duration: 15s; }
+.bg-bubbles span:nth-child(10) { left: 92%;  font-size: 34px; animation-delay: 1s;  animation-duration: 9s;  }
+.bg-bubbles span:nth-child(11) { left: 20%;  font-size: 24px; animation-delay: 0s;  animation-duration: 12s; }
+.bg-bubbles span:nth-child(12) { left: 48%;  font-size: 38px; animation-delay: 2s;  animation-duration: 10s; }
+.bg-bubbles span:nth-child(13) { left: 60%;  font-size: 30px; animation-delay: 7s;  animation-duration: 13s; }
+.bg-bubbles span:nth-child(14) { left: 8%;   font-size: 50px; animation-delay: 4s;  animation-duration: 11s; }
+.bg-bubbles span:nth-child(15) { left: 78%;  font-size: 26px; animation-delay: 1s;  animation-duration: 8s;  }
 
 /* ---- Sidebar Footer ---- */
 .sidebar-footer {
