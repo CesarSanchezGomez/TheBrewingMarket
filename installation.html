@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Installation</h1>
+            <p class="subtitle">Set up TheBrewingMarket on your server in minutes.</p>
+
+            <div class="info-box note">
+                <strong>Note:</strong> TheBrewingMarket requires Paper 1.21.11+, Vault, and TheBrewingProject to be installed first. It will not work on Spigot or CraftBukkit. See the <a href="index.html">home page</a> for the full requirements list.
+            </div>
+
+            <h2>Steps</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>Download</h3>
+                    <p>Get the latest <code>TheBrewingMarket.jar</code> from the releases page.</p>
+                </div>
+                <div class="step">
+                    <h3>Place the JAR</h3>
+                    <p>Move it into your server's <code>plugins/</code> directory.</p>
+                </div>
+                <div class="step">
+                    <h3>Start the server</h3>
+                    <p>TheBrewingMarket generates its default config files automatically on first run.</p>
+                </div>
+                <div class="step">
+                    <h3>Verify</h3>
+                    <p>Check the console for the TheBrewingMarket startup message. No errors = ready to go.</p>
+                </div>
+            </div>
+
+            <h2>Generated Files</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>File</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>config.yml</code></td><td>Market layout, prices, icons, general settings</td></tr>
+                    <tr><td><code>database.yml</code></td><td>Database connection (SQLite/MySQL/MariaDB)</td></tr>
+                    <tr><td><code>lang/en_US.yml</code></td><td>English messages</td></tr>
+                    <tr><td><code>lang/es_ES.yml</code></td><td>Spanish messages</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box tip">
+                <strong>Tip:</strong> Use <code>/thebrewingmarket reload</code> to apply config changes without restarting.
+            </div>
+
+            <div class="page-nav">
+                <a href="index.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Home</span>
+                </a>
+                <a href="commands.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Commands &amp; Permissions</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Database</h1>
+            <p class="subtitle">Configure storage for sell history records.</p>
+
+            <h2>Choosing a Backend</h2>
+            <p>Pick based on your setup:</p>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>SQLite</h3>
+                    <p>File-based, zero config. <strong>Default.</strong> Best for single servers — no external database needed.</p>
+                </div>
+                <div class="card">
+                    <h3>MySQL / MariaDB</h3>
+                    <p>Remote database. Use this if you run a <strong>network of servers</strong> and want shared history, or need external tools (dashboards, scripts) to query sell data.</p>
+                </div>
+            </div>
+            <div class="info-box tip">
+                <strong>Not sure?</strong> Use SQLite. You can always switch later — just be aware that <strong>history data is not migrated</strong> when changing backends.
+            </div>
+
+            <h2>SQLite</h2>
+            <div class="code-block">
+                <div class="code-header"><span>database.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">data-storage-method: SQLite
+
+SQLite:
+  file: 'TheBrewingMarket'
+  table-prefix: 'tbm'</pre>
+            </div>
+
+            <h2>MySQL</h2>
+            <div class="code-block">
+                <div class="code-header"><span>database.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">data-storage-method: MySQL
+
+MySQL:
+  host: 'localhost'
+  port: '3306'
+  user: 'root'
+  password: 'password'
+  database: 'minecraft'
+  connection-parameters: '?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8'
+  table-prefix: 'tbm'
+  Pool-Settings:
+    max-pool-size: 10
+    min-idle: 10
+    max-lifetime: 180000
+    keep-alive-time: 60000
+    time-out: 20000</pre>
+            </div>
+
+            <h3>Pool Settings</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>max-pool-size</code></td><td>10</td><td>Max connections</td></tr>
+                    <tr><td><code>min-idle</code></td><td>10</td><td>Min idle connections</td></tr>
+                    <tr><td><code>max-lifetime</code></td><td>180000</td><td>Max connection lifetime (ms)</td></tr>
+                    <tr><td><code>keep-alive-time</code></td><td>60000</td><td>Keep-alive interval (ms)</td></tr>
+                    <tr><td><code>time-out</code></td><td>20000</td><td>Connection timeout (ms)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>MariaDB</h2>
+            <p>Same structure as MySQL. Just change the storage method:</p>
+            <div class="code-block">
+                <div class="code-header"><span>database.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">data-storage-method: MariaDB</pre>
+            </div>
+
+            <h2>Table Schema</h2>
+            <p>TheBrewingMarket creates <code>{prefix}_sell_history</code> with:</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>id</code></td><td>INTEGER</td><td>Auto-increment PK</td></tr>
+                    <tr><td><code>player_uuid</code></td><td>VARCHAR</td><td>Player UUID</td></tr>
+                    <tr><td><code>player_name</code></td><td>VARCHAR</td><td>Player name</td></tr>
+                    <tr><td><code>recipe_name</code></td><td>VARCHAR</td><td>Recipe identifier</td></tr>
+                    <tr><td><code>display_name</code></td><td>VARCHAR</td><td>Brew display name</td></tr>
+                    <tr><td><code>quality</code></td><td>DOUBLE</td><td>Quality score</td></tr>
+                    <tr><td><code>price_per</code></td><td>DOUBLE</td><td>Price per unit</td></tr>
+                    <tr><td><code>quantity</code></td><td>INTEGER</td><td>Items sold</td></tr>
+                    <tr><td><code>total</code></td><td>DOUBLE</td><td>Total amount</td></tr>
+                    <tr><td><code>sold_at</code></td><td>BIGINT</td><td>Timestamp (epoch ms)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box warning">
+                <strong>Note:</strong> Switching storage method does not migrate data between backends.
+            </div>
+
+            <div class="page-nav">
+                <a href="icons.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Icons &amp; Items</span>
+                </a>
+                <a href="language.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Language</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commands &amp; Permissions — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Commands &amp; Permissions</h1>
+            <p class="subtitle">All available commands and their required permissions.</p>
+
+            <h2>Commands</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Command</th><th>Alias</th><th>Description</th><th>Permission</th></tr></thead>
+                    <tbody>
+                    <tr>
+                        <td><code>/thebrewingmarket</code></td>
+                        <td><code>/tbm</code></td>
+                        <td>Opens the sell GUI</td>
+                        <td><code>thebrewingmarket.use</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>/thebrewingmarket reload</code></td>
+                        <td><code>/tbm reload</code></td>
+                        <td>Reloads configuration</td>
+                        <td><code>thebrewingmarket.admin</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>/thebrewingmarket history &lt;player&gt; &lt;time&gt; [page]</code></td>
+                        <td><code>/tbm history</code></td>
+                        <td>View sell history</td>
+                        <td><code>thebrewingmarket.history</code></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>History Arguments</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Argument</th><th>Status</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>&lt;player&gt;</code></td><td><span class="badge badge-required">Required</span></td><td>Target player name</td></tr>
+                    <tr><td><code>&lt;time&gt;</code></td><td><span class="badge badge-required">Required</span></td><td>Time range: <code>{number}{unit}</code></td></tr>
+                    <tr><td><code>[page]</code></td><td><span class="badge badge-optional">Optional</span></td><td>Page number (default: 1)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Time Units</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Unit</th><th>Meaning</th><th>Example</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>s</code></td><td>Seconds</td><td><code>30s</code></td></tr>
+                    <tr><td><code>m</code></td><td>Minutes</td><td><code>15m</code></td></tr>
+                    <tr><td><code>h</code></td><td>Hours</td><td><code>6h</code></td></tr>
+                    <tr><td><code>d</code></td><td>Days</td><td><code>7d</code></td></tr>
+                    <tr><td><code>w</code></td><td>Weeks</td><td><code>2w</code></td></tr>
+                    <tr><td><code>M</code></td><td>Months (30d)</td><td><code>3M</code></td></tr>
+                    <tr><td><code>Y</code></td><td>Years (365d)</td><td><code>1Y</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box tip">
+                <strong>Example:</strong> <code>/tbm history Steve 7d 2</code> — page 2 of Steve's last 7 days.
+            </div>
+
+            <div class="img-placeholder">
+                <img src="assets/images/TBM_History.webp" alt="History command output">
+            </div>
+
+            <h2>Permissions</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Permission</th><th>Description</th><th>Default</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>thebrewingmarket.*</code></td><td>Full access</td><td><span class="badge badge-op">op</span></td></tr>
+                    <tr><td><code>thebrewingmarket.admin</code></td><td>Reload configuration</td><td><span class="badge badge-op">op</span></td></tr>
+                    <tr><td><code>thebrewingmarket.history</code></td><td>View sell history</td><td><span class="badge badge-op">op</span></td></tr>
+                    <tr><td><code>thebrewingmarket.use</code></td><td>Open the sell GUI</td><td><span class="badge badge-true">true</span></td></tr>
+                    <tr><td><code>thebrewingmarket.shulker</code></td><td>Sell from shulker boxes</td><td><span class="badge badge-true">true</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="page-nav">
+                <a href="installation.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Installation</span>
+                </a>
+                <a href="configuration.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Configuration</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

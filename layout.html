@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUI Layout — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>GUI Layout</h1>
+            <p class="subtitle">Design the market interface with the symbol grid system.</p>
+
+            <h2>How It Works</h2>
+            <p>The GUI is a 6-row &times; 9-column chest inventory (54 slots). Each character in the layout maps to a slot type.</p>
+
+            <h2>Default Layout</h2>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">market:
+  layout:
+    - 'JJLKTKLJJ'
+    - 'IIIIIIIII'
+    - 'IIIIIIIII'
+    - 'IIIIIIIII'
+    - 'IIIIIIIII'
+    - 'JJLBCSLJJ'</pre>
+            </div>
+
+            <h2>Visual Preview</h2>
+            <div class="gui-grid">
+                <div class="gui-cell slot-deco">J</div><div class="gui-cell slot-deco">J</div><div class="gui-cell slot-deco">L</div><div class="gui-cell slot-deco">K</div><div class="gui-cell slot-T">T</div><div class="gui-cell slot-deco">K</div><div class="gui-cell slot-deco">L</div><div class="gui-cell slot-deco">J</div><div class="gui-cell slot-deco">J</div>
+                <div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div>
+                <div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div>
+                <div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div>
+                <div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div><div class="gui-cell slot-I">I</div>
+                <div class="gui-cell slot-deco">J</div><div class="gui-cell slot-deco">J</div><div class="gui-cell slot-deco">L</div><div class="gui-cell slot-B">B</div><div class="gui-cell slot-C">C</div><div class="gui-cell slot-S">S</div><div class="gui-cell slot-deco">L</div><div class="gui-cell slot-deco">J</div><div class="gui-cell slot-deco">J</div>
+            </div>
+
+            <div class="img-placeholder">
+                <img src="assets/images/TBM_Layout.webp">
+            </div>
+
+            <h2>Symbols</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Symbol</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>I</code></td><td><span style="color:var(--accent);">Item Slot</span></td><td>Where players place brews to sell</td></tr>
+                    <tr><td><code>B</code></td><td><span style="color:var(--green);">Sell</span></td><td>Sells brews in GUI only</td></tr>
+                    <tr><td><code>S</code></td><td><span style="color:var(--blue);">Sell All</span></td><td>Sells GUI + inventory brews</td></tr>
+                    <tr><td><code>T</code></td><td><span style="color:var(--yellow);">Title</span></td><td>Decorative title icon</td></tr>
+                    <tr><td><code>C</code></td><td><span style="color:var(--red);">Close</span></td><td>Closes the GUI</td></tr>
+                    <tr><td><code>J, K, L...</code></td><td><span style="color:var(--text-muted);">Decorative</span></td><td>Visual filler (glass panes, coral, etc.)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Rules</h2>
+            <ul>
+                <li>Exactly <strong>6 rows</strong>, each with <strong>9 characters</strong>.</li>
+                <li>Every symbol must be mapped to an icon config.</li>
+                <li>Any single character works as a symbol.</li>
+            </ul>
+
+            <div class="page-nav">
+                <a href="prices.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Prices</span>
+                </a>
+                <a href="sell-buttons.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Sell Buttons</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

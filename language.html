@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Language</h1>
+            <p class="subtitle">Customize messages and add translations.</p>
+
+            <h2>Selecting a Language</h2>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">lang: 'en_US'</pre>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>File</th><th>Language</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>lang/en_US.yml</code></td><td>English</td></tr>
+                    <tr><td><code>lang/es_ES.yml</code></td><td>Spanish</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Message Keys</h2>
+
+            <h3>General</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>prefix</code></td><td>Plugin prefix</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Commands</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>command.only-players</code></td><td>Non-player runs player-only command</td></tr>
+                    <tr><td><code>command.no-permission</code></td><td>Missing permission</td></tr>
+                    <tr><td><code>command.reload-success</code></td><td>Config reloaded</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Market</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>market.sell-success</code></td><td>Successful sale</td><td><code>{sold_amount}</code>, <code>{money}</code></td></tr>
+                    <tr><td><code>market.sell-nothing</code></td><td>Nothing to sell</td><td>&mdash;</td></tr>
+                    <tr><td><code>market.sell-error</code></td><td>Transaction error</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>History</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>history.invalid-time</code></td><td>Invalid time format</td><td>&mdash;</td></tr>
+                    <tr><td><code>history.empty</code></td><td>No records found</td><td><code>{player}</code></td></tr>
+                    <tr><td><code>history.display</code></td><td>Page layout (list)</td><td><code>{entries}</code>, <code>{previous_page}</code>, <code>{next_page}</code>, <code>{player}</code>, <code>{page}</code>, <code>{max_page}</code></td></tr>
+                    <tr><td><code>history.entry</code></td><td>Single record line</td><td><code>{player_head}</code>, <code>{recipe}</code>, <code>{quantity}</code>, <code>{quality}</code>, <code>{total}</code></td></tr>
+                    <tr><td><code>history.entry_hover</code></td><td>Hover tooltip on a record</td><td><code>{player}</code>, <code>{time_ago}</code>, <code>{exact_date}</code></td></tr>
+                    <tr><td><code>history.navigation.*</code></td><td>Prev/Next buttons</td><td><code>{page}</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box note">
+                <strong>Note:</strong> All messages use MiniMessage formatting. See the Adventure documentation for the full tag reference.
+            </div>
+
+            <h2>Adding a Language</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>Copy a file</h3>
+                    <p>Duplicate <code>lang/en_US.yml</code> and rename it (e.g., <code>fr_FR.yml</code>).</p>
+                </div>
+                <div class="step">
+                    <h3>Translate</h3>
+                    <p>Translate the values. Keep keys and placeholders unchanged.</p>
+                </div>
+                <div class="step">
+                    <h3>Set in config</h3>
+                    <p>Set <code>lang: 'fr_FR'</code> in <code>config.yml</code> and reload.</p>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <a href="database.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Database</span>
+                </a>
+                <a href="troubleshooting.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Troubleshooting</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Troubleshooting</h1>
+            <p class="subtitle">Common problems and how to fix them.</p>
+
+            <h2>Plugin does not load</h2>
+            <p>Check the server console for errors on startup. TheBrewingMarket logs its initialization under the prefix <code>[TheBrewingMarket]</code>. Common causes:</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Error in console</th><th>Cause</th><th>Fix</th></tr></thead>
+                    <tbody>
+                    <tr>
+                        <td><code>Could not load plugin: Vault</code></td>
+                        <td>Vault is missing or loaded after TheBrewingMarket</td>
+                        <td>Install <strong>Vault</strong> and make sure it is in <code>plugins/</code> before starting</td>
+                    </tr>
+                    <tr>
+                        <td><code>Could not load plugin: TheBrewingProject</code></td>
+                        <td>TheBrewingProject is missing or wrong version</td>
+                        <td>Install <strong>TheBrewingProject v3.0.0-beta+</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>Unsupported Java version</code> or class file errors</td>
+                        <td>Java version below 21</td>
+                        <td>Upgrade your server JDK to <strong>Java 21+</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>Unknown dependency</code> or plugin ignored</td>
+                        <td>Running on Spigot or CraftBukkit</td>
+                        <td>Switch to <strong>Paper 1.21.11+</strong> — Spigot is not supported</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>No economy provider found</h2>
+            <p>Vault is installed but the sell command does nothing or returns an economy error. This means Vault cannot find an economy plugin to connect to.</p>
+            <div class="info-box tip">
+                <strong>Fix:</strong> Install an economy plugin that hooks into Vault, such as <strong>EssentialsX</strong> or <strong>CMI</strong>. Vault itself does not provide economy — it is a bridge.
+            </div>
+
+            <h2>Brews are not recognized / wrong price</h2>
+            <p>A player tries to sell a brew but gets an error, or it sells at the <code>default</code> fallback price instead of the expected one.</p>
+            <ul>
+                <li>Open <code>config.yml</code> and check the recipe name under <code>market.prices</code>. It must match the recipe identifier in TheBrewingProject <strong>exactly</strong> (lowercase, underscores, no spaces).</li>
+                <li>The item must be a valid brew crafted by TheBrewingProject. Regular potions or other items cannot be sold.</li>
+                <li>If the recipe name is correct but the price is still wrong, confirm the brew has a <code>brewery:score</code> NBT value — brews that failed fermentation may have a very low quality score.</li>
+            </ul>
+
+            <h2>GUI does not open</h2>
+            <p>Running <code>/thebrewingmarket</code> does nothing or returns "no permission".</p>
+            <ul>
+                <li>The player needs the <code>thebrewingmarket.use</code> permission (granted to everyone by default). Check your permissions plugin for an accidental negation (<code>-thebrewingmarket.use</code>).</li>
+                <li>Confirm the plugin loaded successfully — run <code>/plugins</code> and look for <strong>TheBrewingMarket</strong> in green.</li>
+            </ul>
+
+            <h2>Config changes not applying</h2>
+            <p>You edited <code>config.yml</code> but the server still uses the old values.</p>
+            <div class="info-box tip">
+                <strong>Fix:</strong> Run <code>/thebrewingmarket reload</code> (requires <code>thebrewingmarket.admin</code>). A full server restart also works.
+            </div>
+
+            <h2>Database connection error (MySQL / MariaDB)</h2>
+            <p>The plugin loads but logs a database error and sell history does not record.</p>
+            <ul>
+                <li>Double-check <code>host</code>, <code>port</code>, <code>user</code>, <code>password</code>, and <code>database</code> in <code>database.yml</code>.</li>
+                <li>Make sure the database server is reachable from the Minecraft server (firewall, bind address).</li>
+                <li>The database user must have <code>CREATE</code>, <code>INSERT</code>, and <code>SELECT</code> privileges on the target database.</li>
+                <li>If you recently switched from SQLite to MySQL, remember that <strong>history data is not migrated automatically</strong>.</li>
+            </ul>
+
+            <h2>Still stuck?</h2>
+            <p>Open an issue on the <a href="https://github.com/CesarSanchezGomez/BreweryMarket" target="_blank">GitHub repository</a> and include the relevant lines from your server console and your <code>database.yml</code> (remove passwords before posting).</p>
+
+            <div class="page-nav">
+                <a href="language.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Language</span>
+                </a>
+                <span></span>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

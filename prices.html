@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prices — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Prices</h1>
+            <p class="subtitle">How brew pricing works.</p>
+
+            <h2>Formula</h2>
+            <div class="formula">final_price = base_price &times; quality_score</div>
+            <ul>
+                <li><strong>base_price</strong> &mdash; configured per recipe in <code>config.yml</code></li>
+                <li><strong>quality_score</strong> &mdash; <code>0.01</code> to <code>1.0</code>, from the brew's <code>brewery:score</code> NBT data</li>
+            </ul>
+
+            <h3>What is quality_score?</h3>
+            <p>Quality is assigned by <strong>TheBrewingProject</strong> during the brewing process. It reflects how well the brew was crafted — fermentation time, distillation runs, and aging in barrels all influence it. A perfectly crafted brew reaches <code>1.0</code>; a rushed or failed one sits near <code>0.01</code>.</p>
+            <p>Players can see a brew's quality by hovering over it in their inventory — it is displayed as stars or a numeric score depending on the TBP configuration. TheBrewingMarket reads this value automatically at sell time; you do not need to configure anything for it to work.</p>
+
+            <div class="info-box note">
+                <strong>Example:</strong> Whiskey (base 200) with quality 0.85 = <code>200 &times; 0.85 = 170 coins</code>.
+            </div>
+
+            <div class="img-placeholder">
+                <img src="assets/images/TBP_Formula.webp">
+            </div>
+
+            <h2>Default Prices</h2>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">market:
+  prices:
+    default: 10
+    beer: 25
+    darkbeer: 30
+    wine: 150
+    mead: 120
+    vodka: 130
+    whiskey: 200
+    fire_whiskey: 250
+    rum: 200
+    absinthe: 250
+    coffee: 30
+    hot_chocolate: 40
+    apple_cider: 100
+    apple_liquor: 110
+    eggnog: 60
+    table_wine: 80
+    champagne: 200
+    sake: 180
+    tequila: 130
+    gin: 190
+    grape_spirit: 300
+    mushroom_vodka: 140
+    potato_soup: 5
+    corn_beer: 35
+    golden_mead: 200
+    spiced_rum: 210</pre>
+            </div>
+
+            <p>The <code>default</code> key is used as fallback when a recipe is not listed.</p>
+
+            <div class="info-box warning">
+                <strong>Important:</strong> Recipe names must match TheBrewingProject exactly (lowercase, underscores).
+            </div>
+
+            <h2>Adding Custom Recipes</h2>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">market:
+  prices:
+    my_custom_brew: 175</pre>
+            </div>
+
+            <div class="page-nav">
+                <a href="configuration.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Configuration</span>
+                </a>
+                <a href="layout.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">GUI Layout</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

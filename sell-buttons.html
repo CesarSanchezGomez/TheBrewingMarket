@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Buttons — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>Sell Buttons</h1>
+            <p class="subtitle">How Sell and Sell All work, and how to configure them.</p>
+
+            <h2>Overview</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Sell (B)</h3>
+                    <p>Sells <strong>only</strong> brews placed in the GUI item slots.</p>
+                </div>
+                <div class="card">
+                    <h3>Sell All (S)</h3>
+                    <p>Sells GUI slots <strong>+</strong> all brews in the player's inventory.</p>
+                </div>
+            </div>
+
+            <div class="img-placeholder">
+                <img src="assets/images/TBM_SellButtons.webp">
+            </div>
+
+            <h2>States</h2>
+            <p>Each button has two visual states, refreshed every 20 ticks:</p>
+            <ul>
+                <li><strong>Allow</strong> &mdash; brews available. Shows value and count.</li>
+                <li><strong>Deny</strong> &mdash; nothing to sell. Non-clickable.</li>
+            </ul>
+
+            <h2>Configuration</h2>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml — sell-icons</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">sell-icons:
+  symbol: 'B'
+  allow-icon:
+    material: 'POTION'
+    custom_name: '&lt;gradient:#FCBDE3:#F973C4&gt;Sell drink&lt;/gradient&gt;'
+    lore:
+      - ''
+      - '&lt;gray&gt;Sell for &lt;white&gt;{money}&lt;/white&gt; coins.&lt;/gray&gt;'
+      - '&lt;gray&gt;Items: &lt;white&gt;{amount}&lt;/white&gt;&lt;/gray&gt;'
+      - ''
+      - '&lt;gradient:#FCBDE3:#F973C4&gt;Click to sell!&lt;/gradient&gt;'
+    potion_contents:
+      potion-type: 'minecraft:strong_healing'
+      custom-color: '#FCBDE3'
+    action:
+      sound:
+        type: 'sound'
+        value: 'minecraft:block.amethyst_block.place'
+  deny-icon:
+    material: 'GLASS_BOTTLE'
+    custom_name: '&lt;gradient:#FCBDE3:#F973C4&gt;Nothing to sell!&lt;/gradient&gt;'</pre>
+            </div>
+
+            <h2>Placeholders</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Placeholder</th><th>Context</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>{money}</code></td><td>Lore &amp; Action</td><td>Formatted total value</td></tr>
+                    <tr><td><code>{amount}</code></td><td>Lore</td><td>Number of sellable brews</td></tr>
+                    <tr><td><code>{sold_amount}</code></td><td>Language file</td><td>Brews actually sold</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Actions</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Type</th><th>Description</th><th>Example</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>sound</code></td><td>Plays a sound</td><td><code>minecraft:block.amethyst_block.place</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box tip">
+                <strong>Tip:</strong> Action key names are arbitrary &mdash; only <code>type</code> and <code>value</code> matter.
+            </div>
+
+            <div class="page-nav">
+                <a href="layout.html">
+                    <span class="label">Previous</span>
+                    <span class="title">GUI Layout</span>
+                </a>
+                <a href="icons.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Icons &amp; Items</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

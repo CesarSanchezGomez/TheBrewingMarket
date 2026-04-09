@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>General Configuration</h1>
+            <p class="subtitle">Overview of <code>config.yml</code> and its main settings.</p>
+
+            <p>After the first server start, TheBrewingMarket generates <code>plugins/TheBrewingMarket/config.yml</code>. The file is organized into a few top-level keys and a large <code>market:</code> block that controls everything from the GUI layout to prices and icons. Each section is documented on its own page below.</p>
+
+            <h2>Top-Level Settings</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>lang</code></td><td>String</td><td><code>en_US</code></td><td>Language file to load from <code>lang/</code></td></tr>
+                    <tr><td><code>history-per-page</code></td><td>Integer</td><td><code>8</code></td><td>Sell history entries shown per page (1–32)</td></tr>
+                    <tr><td><code>market.shulker-selling</code></td><td>Boolean</td><td><code>true</code></td><td>Allow selling brews inside shulker boxes (also requires <code>thebrewingmarket.shulker</code>)</td></tr>
+                    <tr><td><code>market.title</code></td><td>String</td><td>Gradient text</td><td>GUI window title — supports MiniMessage formatting</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box tip">
+                <strong>Tip:</strong> Run <code>/thebrewingmarket reload</code> after any change to apply it without restarting the server.
+            </div>
+
+            <h2>Config Sections</h2>
+            <p>The <code>market:</code> block is split across these pages:</p>
+            <div class="card-grid">
+                <a href="prices.html" class="card" style="text-decoration:none;">
+                    <h3>Prices</h3>
+                    <p>Base price per recipe and the pricing formula.</p>
+                </a>
+                <a href="layout.html" class="card" style="text-decoration:none;">
+                    <h3>GUI Layout</h3>
+                    <p>Symbol-based grid system for the market GUI.</p>
+                </a>
+                <a href="sell-buttons.html" class="card" style="text-decoration:none;">
+                    <h3>Sell Buttons</h3>
+                    <p>Sell and Sell All button config and actions.</p>
+                </a>
+                <a href="icons.html" class="card" style="text-decoration:none;">
+                    <h3>Icons &amp; Items</h3>
+                    <p>Icon data components for GUI customization.</p>
+                </a>
+                <a href="database.html" class="card" style="text-decoration:none;">
+                    <h3>Database</h3>
+                    <p>Storage backend for sell history.</p>
+                </a>
+                <a href="language.html" class="card" style="text-decoration:none;">
+                    <h3>Language</h3>
+                    <p>Message customization and localization.</p>
+                </a>
+            </div>
+
+            <div class="page-nav">
+                <a href="commands.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Commands</span>
+                </a>
+                <a href="prices.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Prices</span>
+                </a>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
