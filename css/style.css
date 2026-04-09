@@ -1021,14 +1021,14 @@ th code {
     flex-direction: column;
   }
 
-  /* Bubbles: 6 visible (flask + $ alternating), ~2× slower */
+  /* Bubbles: 6 visible (flask + $ alternating), ~2× slower, spread full width */
   .bg-bubbles span:nth-child(n+7) { display: none; }
-  .bg-bubbles span:nth-child(1)  { animation-duration: 20s; }
-  .bg-bubbles span:nth-child(2)  { animation-duration: 22s; }
-  .bg-bubbles span:nth-child(3)  { animation-duration: 24s; }
-  .bg-bubbles span:nth-child(4)  { animation-duration: 21s; }
-  .bg-bubbles span:nth-child(5)  { animation-duration: 23s; }
-  .bg-bubbles span:nth-child(6)  { animation-duration: 20s; }
+  .bg-bubbles span:nth-child(1)  { animation-duration: 20s; left: 5%;  }
+  .bg-bubbles span:nth-child(2)  { animation-duration: 22s; left: 22%; }
+  .bg-bubbles span:nth-child(3)  { animation-duration: 24s; left: 40%; }
+  .bg-bubbles span:nth-child(4)  { animation-duration: 21s; left: 58%; }
+  .bg-bubbles span:nth-child(5)  { animation-duration: 23s; left: 75%; }
+  .bg-bubbles span:nth-child(6)  { animation-duration: 20s; left: 90%; }
 }
 
 /* ---- Very small screens (≤480px) ---- */
@@ -1054,6 +1054,9 @@ th code {
     font-size: 13px;
   }
 
-  /* Only 3 bubbles on very small screens */
+  /* Only 3 bubbles on very small screens, spread full width */
   .bg-bubbles span:nth-child(n+4) { display: none; }
+  .bg-bubbles span:nth-child(1)   { left: 10%; }
+  .bg-bubbles span:nth-child(2)   { left: 50%; }
+  .bg-bubbles span:nth-child(3)   { left: 82%; }
 }
