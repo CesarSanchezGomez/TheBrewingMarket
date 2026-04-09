@@ -67,7 +67,7 @@
     '</div>' +
     '<nav class=sidebar-nav>' + sections + '</nav>' +
     '<div class=sidebar-footer>' +
-      '<a href="https://github.com/CesarSanchezGomez/BreweryMarket" target="_blank" class=github-link>' +
+      '<a href="https://github.com/CesarSanchezGomez/TheBrewingMarket" target="_blank" class=github-link>' +
         '<span class=github-icon>' + githubSVG + '</span>GitHub' +
       '</a>' +
     '</div>';
@@ -142,4 +142,11 @@
     bubblesDiv.appendChild(span);
   });
   document.body.insertAdjacentElement('afterbegin', bubblesDiv);
+
+  // Start every bubble at a random point in its cycle so they appear
+  // already mid-flight on page load (no restart effect between pages).
+  Array.prototype.forEach.call(bubblesDiv.querySelectorAll('span'), function (span) {
+    var dur = parseFloat(window.getComputedStyle(span).animationDuration) || 15;
+    span.style.animationDelay = '-' + (Math.random() * dur).toFixed(2) + 's';
+  });
 })();

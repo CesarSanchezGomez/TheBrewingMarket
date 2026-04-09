@@ -879,6 +879,7 @@ th code {
   color: rgba(249, 115, 196, 0.12);
   user-select: none;
   animation: bubble-rise linear infinite;
+  animation-fill-mode: backwards;
 }
 
 .bg-bubbles span svg {
