@@ -86,6 +86,14 @@
   var toggle = document.querySelector('.menu-toggle');
   var overlay = document.querySelector('.sidebar-overlay');
 
+  // Move overlay inside .wrapper so it shares the same stacking context as
+  // the sidebar. Without this, .wrapper (z-index:1) is below the overlay
+  // (z-index:90 in root), making the overlay paint over the sidebar too.
+  var wrapper = document.querySelector('.wrapper');
+  if (overlay && wrapper) {
+    wrapper.insertBefore(overlay, wrapper.firstChild);
+  }
+
   if (toggle && sidebar) {
     toggle.addEventListener('click', function () {
       sidebar.classList.toggle('open');
@@ -96,6 +104,17 @@
     overlay.addEventListener('click', function () {
       sidebar.classList.remove('open');
       overlay.classList.remove('show');
+    });
+  }
+
+  // Close sidebar when a nav link is tapped on mobile (let href navigate normally)
+  if (sidebar) {
+    var navLinks = sidebar.querySelectorAll('.sidebar-nav a');
+    Array.prototype.forEach.call(navLinks, function (a) {
+      a.addEventListener('click', function () {
+        sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('show');
+      });
     });
   }
 
