@@ -1,4 +1,4 @@
-package com.cesarcosmico.thebrewingmarket.service;
+package com.cesarcosmico.thebrewingmarket.brew;
 
 import dev.jsinco.brewery.api.recipe.Recipe;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;

@@ -17,10 +17,10 @@ import java.util.Optional;
 
 public final class SellService {
 
-    private final BrewingPriceService priceService;
+    private final BrewEvaluator priceService;
     private final EconomyService economyService;
 
-    public SellService(BrewingPriceService priceService, EconomyService economyService) {
+    public SellService(BrewEvaluator priceService, EconomyService economyService) {
         this.priceService = priceService;
         this.economyService = economyService;
     }
@@ -244,7 +244,7 @@ public final class SellService {
     // ── Detail accumulation ──────────────────────────────────────
 
     private void accumulateDetail(Map<String, SoldBrewDetail> map,
-                                  BrewingPriceService.BrewEvaluation eval, int amount) {
+                                  BrewEvaluator.BrewEvaluation eval, int amount) {
         String key = detailKey(eval.recipeId(), eval.score());
         map.merge(key, new SoldBrewDetail(eval.recipeId(), eval.score(),
                         eval.price() / eval.score(), amount, eval.displayName()),

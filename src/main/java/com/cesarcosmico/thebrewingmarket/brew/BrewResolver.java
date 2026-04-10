@@ -1,4 +1,4 @@
-package com.cesarcosmico.thebrewingmarket.service;
+package com.cesarcosmico.thebrewingmarket.brew;
 
 import org.bukkit.inventory.ItemStack;
 

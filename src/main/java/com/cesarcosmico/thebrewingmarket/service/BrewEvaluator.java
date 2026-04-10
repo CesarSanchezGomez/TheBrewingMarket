@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.service;
 
+import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -7,12 +8,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Optional;
 
-public final class BrewingPriceService {
+public final class BrewEvaluator {
 
     private final MarketConfig marketConfig;
     private final BrewResolver brewResolver;
 
-    public BrewingPriceService(final MarketConfig marketConfig, final BrewResolver brewResolver) {
+    public BrewEvaluator(final MarketConfig marketConfig, final BrewResolver brewResolver) {
         this.marketConfig = marketConfig;
         this.brewResolver = brewResolver;
     }

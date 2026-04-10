@@ -5,12 +5,12 @@ import com.cesarcosmico.thebrewingmarket.config.DatabaseConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.listener.MarketGUIListener;
-import com.cesarcosmico.thebrewingmarket.service.BrewResolver;
-import com.cesarcosmico.thebrewingmarket.service.BreweryXBrewResolver;
-import com.cesarcosmico.thebrewingmarket.service.BrewingPriceService;
+import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
+import com.cesarcosmico.thebrewingmarket.brew.BreweryXBrewResolver;
+import com.cesarcosmico.thebrewingmarket.service.BrewEvaluator;
 import com.cesarcosmico.thebrewingmarket.service.EconomyService;
 import com.cesarcosmico.thebrewingmarket.service.SellService;
-import com.cesarcosmico.thebrewingmarket.service.TBPBrewResolver;
+import com.cesarcosmico.thebrewingmarket.brew.TBPBrewResolver;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import com.cesarcosmico.thebrewingmarket.storage.StorageFactory;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
@@ -29,7 +29,7 @@ import java.util.logging.Level;
 public final class TheBrewingMarketPlugin extends JavaPlugin {
 
     private EconomyService economyService;
-    private BrewingPriceService brewPriceService;
+    private BrewEvaluator brewPriceService;
     private SellService sellService;
     private MarketConfig marketConfig;
     private LangConfig langConfig;
@@ -67,7 +67,7 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         this.langConfig = new LangConfig(this);
         this.economyService = new EconomyService(economy);
         this.marketConfig = new MarketConfig(getConfig(), getLogger());
-        this.brewPriceService = new BrewingPriceService(marketConfig, brewResolver);
+        this.brewPriceService = new BrewEvaluator(marketConfig, brewResolver);
         this.sellService = new SellService(brewPriceService, economyService);
 
         final File dbFile = new File(getDataFolder(), "database.yml");
@@ -109,7 +109,7 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         reloadConfig();
         this.langConfig.load();
         this.marketConfig = new MarketConfig(getConfig(), getLogger());
-        this.brewPriceService = new BrewingPriceService(marketConfig, brewResolver);
+        this.brewPriceService = new BrewEvaluator(marketConfig, brewResolver);
         this.sellService = new SellService(brewPriceService, economyService);
     }
 

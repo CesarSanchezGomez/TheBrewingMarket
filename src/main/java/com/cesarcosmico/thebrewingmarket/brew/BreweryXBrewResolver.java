@@ -1,4 +1,4 @@
-package com.cesarcosmico.thebrewingmarket.service;
+package com.cesarcosmico.thebrewingmarket.brew;
 
 import com.dre.brewery.Brew;
 import com.dre.brewery.recipe.BRecipe;
