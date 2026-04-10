@@ -165,8 +165,8 @@ public final class MarketGUIListener implements Listener {
         MiniMessage mini = MiniMessage.miniMessage();
         List<SellHistoryService.SellEntry> entries = result.details().stream()
                 .map(d -> new SellHistoryService.SellEntry(
-                        d.recipeName(),
-                        d.displayName() != null ? mini.serialize(d.displayName()) : d.recipeName(),
+                        d.recipeId(),
+                        d.displayName() != null ? mini.serialize(d.displayName()) : d.recipeId(),
                         d.score(), d.pricePerUnit(), d.quantity(), d.total()))
                 .toList();
 

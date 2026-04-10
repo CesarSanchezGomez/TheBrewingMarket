@@ -28,7 +28,7 @@ public final class SellService {
     public record SellResult(double money, int itemCount) {
     }
 
-    public record SoldBrewDetail(String recipeName, double score, double pricePerUnit, int quantity,
+    public record SoldBrewDetail(String recipeId, double score, double pricePerUnit, int quantity,
                                  Component displayName) {
         public double total() {
             return pricePerUnit * score * quantity;
@@ -138,7 +138,7 @@ public final class SellService {
         double inventoryTotal = 0;
         int inventoryCount = 0;
         Map<String, SoldBrewDetail> detailMap = new LinkedHashMap<>();
-        guiResult.details().forEach(d -> detailMap.put(detailKey(d.recipeName(), d.score()), d));
+        guiResult.details().forEach(d -> detailMap.put(detailKey(d.recipeId(), d.score()), d));
 
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
@@ -245,16 +245,16 @@ public final class SellService {
 
     private void accumulateDetail(Map<String, SoldBrewDetail> map,
                                   BrewingPriceService.BrewEvaluation eval, int amount) {
-        String key = detailKey(eval.recipeName(), eval.score());
-        map.merge(key, new SoldBrewDetail(eval.recipeName(), eval.score(),
+        String key = detailKey(eval.recipeId(), eval.score());
+        map.merge(key, new SoldBrewDetail(eval.recipeId(), eval.score(),
                         eval.price() / eval.score(), amount, eval.displayName()),
                 (existing, incoming) -> new SoldBrewDetail(
-                        existing.recipeName(), existing.score(), existing.pricePerUnit(),
+                        existing.recipeId(), existing.score(), existing.pricePerUnit(),
                         existing.quantity() + incoming.quantity(), existing.displayName()
                 ));
     }
 
-    private static String detailKey(String recipeName, double score) {
-        return recipeName + ":" + score;
+    private static String detailKey(final String recipeId, final double score) {
+        return recipeId + ":" + score;
     }
 }

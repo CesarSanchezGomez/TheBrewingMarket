@@ -2,13 +2,14 @@ package com.cesarcosmico.thebrewingmarket.storage;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface SellHistoryService {
 
     record SellEntry(
-            String recipeName,
+            String recipeId,
             String displayName,
             double quality,
             double pricePerUnit,
@@ -21,7 +22,7 @@ public interface SellHistoryService {
             long id,
             UUID playerUuid,
             String playerName,
-            String recipeName,
+            String recipeId,
             String displayName,
             double quality,
             double pricePerUnit,
@@ -33,9 +34,11 @@ public interface SellHistoryService {
 
     CompletableFuture<Void> logEntries(UUID playerUuid, String playerName, List<SellEntry> entries);
 
-    CompletableFuture<List<SellRecord>> getHistory(String playerName, long since, int limit, int offset);
+    CompletableFuture<Optional<UUID>> findPlayerUuid(String playerName);
 
-    CompletableFuture<Integer> countHistory(String playerName, long since);
+    CompletableFuture<List<SellRecord>> getHistory(UUID playerUuid, long since, int limit, int offset);
+
+    CompletableFuture<Integer> countHistory(UUID playerUuid, long since);
 
     void initialize() throws SQLException;
 

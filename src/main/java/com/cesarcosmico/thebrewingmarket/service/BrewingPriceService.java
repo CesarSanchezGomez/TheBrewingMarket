@@ -17,7 +17,7 @@ public final class BrewingPriceService {
         this.brewResolver = brewResolver;
     }
 
-    public record BrewEvaluation(String recipeName, double score, double price, Component displayName) {
+    public record BrewEvaluation(String recipeId, double score, double price, Component displayName) {
     }
 
     public Optional<BrewEvaluation> evaluate(final ItemStack itemStack) {
@@ -25,8 +25,8 @@ public final class BrewingPriceService {
             return Optional.empty();
         }
 
-        final Optional<String> recipeName = brewResolver.resolveRecipeName(itemStack);
-        if (recipeName.isEmpty()) {
+        final Optional<String> recipeId = brewResolver.resolveRecipeName(itemStack);
+        if (recipeId.isEmpty()) {
             return Optional.empty();
         }
 
@@ -35,7 +35,7 @@ public final class BrewingPriceService {
             return Optional.empty();
         }
 
-        final double basePrice = marketConfig.getBasePrice(recipeName.get());
+        final double basePrice = marketConfig.getBasePrice(recipeId.get());
         if (basePrice <= 0) {
             return Optional.empty();
         }
@@ -43,8 +43,8 @@ public final class BrewingPriceService {
         final ItemMeta meta = itemStack.getItemMeta();
         final Component displayName = (meta != null && meta.hasDisplayName())
                 ? meta.displayName()
-                : Component.text(recipeName.get());
+                : Component.text(recipeId.get());
 
-        return Optional.of(new BrewEvaluation(recipeName.get(), score, basePrice * score, displayName));
+        return Optional.of(new BrewEvaluation(recipeId.get(), score, basePrice * score, displayName));
     }
 }
