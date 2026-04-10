@@ -5,9 +5,12 @@ import com.cesarcosmico.thebrewingmarket.config.DatabaseConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.listener.MarketGUIListener;
+import com.cesarcosmico.thebrewingmarket.service.BrewResolver;
+import com.cesarcosmico.thebrewingmarket.service.BreweryXBrewResolver;
 import com.cesarcosmico.thebrewingmarket.service.BrewingPriceService;
 import com.cesarcosmico.thebrewingmarket.service.EconomyService;
 import com.cesarcosmico.thebrewingmarket.service.SellService;
+import com.cesarcosmico.thebrewingmarket.service.TBPBrewResolver;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import com.cesarcosmico.thebrewingmarket.storage.StorageFactory;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
@@ -31,20 +34,32 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
     private MarketConfig marketConfig;
     private LangConfig langConfig;
     private SellHistoryService historyService;
+    private BrewResolver brewResolver;
 
     @Override
     public void onEnable() {
-        Economy economy = setupEconomy();
+        final Economy economy = setupEconomy();
         if (economy == null) {
             getLogger().severe("Vault economy not found. Disabling TheBrewingMarket.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        if (getServer().getPluginManager().getPlugin("TheBrewingProject") == null) {
-            getLogger().severe("TheBrewingProject not found. Disabling TheBrewingMarket.");
+        final boolean hasTBP      = getServer().getPluginManager().getPlugin("TheBrewingProject") != null;
+        final boolean hasBreweryX = getServer().getPluginManager().getPlugin("BreweryX") != null;
+
+        if (!hasTBP && !hasBreweryX) {
+            getLogger().severe("Neither TheBrewingProject nor BreweryX found. Disabling TheBrewingMarket.");
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        if (hasTBP) {
+            getLogger().info("Hooked into TheBrewingProject.");
+            this.brewResolver = new TBPBrewResolver(this::resolveBreweryApi);
+        } else {
+            getLogger().info("Hooked into BreweryX.");
+            this.brewResolver = new BreweryXBrewResolver();
         }
 
         saveDefaultConfig();
@@ -52,16 +67,16 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         this.langConfig = new LangConfig(this);
         this.economyService = new EconomyService(economy);
         this.marketConfig = new MarketConfig(getConfig(), getLogger());
-        this.brewPriceService = new BrewingPriceService(marketConfig, this::resolveBreweryApi);
+        this.brewPriceService = new BrewingPriceService(marketConfig, brewResolver);
         this.sellService = new SellService(brewPriceService, economyService);
 
-        File dbFile = new File(getDataFolder(), "database.yml");
+        final File dbFile = new File(getDataFolder(), "database.yml");
         if (!dbFile.exists()) {
             saveResource("database.yml", false);
         }
-        FileConfiguration dbYml = YamlConfiguration.loadConfiguration(
+        final FileConfiguration dbYml = YamlConfiguration.loadConfiguration(
                 new File(getDataFolder(), "database.yml"));
-        DatabaseConfig dbConfig = new DatabaseConfig(dbYml);
+        final DatabaseConfig dbConfig = new DatabaseConfig(dbYml);
         try {
             this.historyService = StorageFactory.create(dbConfig, getDataFolder().toPath(), getLogger());
             this.historyService.initialize();
@@ -94,12 +109,12 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         reloadConfig();
         this.langConfig.load();
         this.marketConfig = new MarketConfig(getConfig(), getLogger());
-        this.brewPriceService = new BrewingPriceService(marketConfig, this::resolveBreweryApi);
+        this.brewPriceService = new BrewingPriceService(marketConfig, brewResolver);
         this.sellService = new SellService(brewPriceService, economyService);
     }
 
     private void registerCommands() {
-        CommandManager commandManager = new CommandManager(
+        final CommandManager commandManager = new CommandManager(
                 this::getMarketConfig,
                 this::getSellService,
                 this::getLangConfig,
@@ -118,13 +133,13 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return null;
         }
-        RegisteredServiceProvider<Economy> rsp =
+        final RegisteredServiceProvider<Economy> rsp =
                 getServer().getServicesManager().getRegistration(Economy.class);
         return rsp != null ? rsp.getProvider() : null;
     }
 
     private TheBrewingProjectApi resolveBreweryApi() {
-        RegisteredServiceProvider<TheBrewingProjectApi> provider =
+        final RegisteredServiceProvider<TheBrewingProjectApi> provider =
                 Bukkit.getServicesManager().getRegistration(TheBrewingProjectApi.class);
         return provider != null ? provider.getProvider() : null;
     }

@@ -22,12 +22,17 @@ repositories {
         name = "jitpack"
         setUrl("https://jitpack.io")
     }
+    maven {
+        name = "jsinco-releases"
+        setUrl("https://repo.jsinco.dev/releases")
+    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.github.BreweryTeam:TheBrewingProject:v3.0.0-beta.0")
+    compileOnly("com.dre.brewery:BreweryX:3.6.5")
 
     // Bundled via shadowJar
     implementation("com.zaxxer:HikariCP:7.0.2")
