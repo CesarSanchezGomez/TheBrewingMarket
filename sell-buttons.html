@@ -53,12 +53,11 @@
     lore:
       - ''
       - '&lt;gray&gt;Sell for &lt;white&gt;{money}&lt;/white&gt; coins.&lt;/gray&gt;'
-      - '&lt;gray&gt;Items: &lt;white&gt;{amount}&lt;/white&gt;&lt;/gray&gt;'
+      - '&lt;gray&gt;Brews: &lt;white&gt;{sold_amount}&lt;/white&gt;&lt;/gray&gt;'
       - ''
       - '&lt;gradient:#FCBDE3:#F973C4&gt;Click to sell!&lt;/gradient&gt;'
     potion_contents:
-      potion-type: 'minecraft:strong_healing'
-      custom-color: '#FCBDE3'
+      custom_color: 16679863
     action:
       sound:
         type: 'sound'
@@ -73,9 +72,8 @@
                 <table>
                     <thead><tr><th>Placeholder</th><th>Context</th><th>Description</th></tr></thead>
                     <tbody>
-                    <tr><td><code>{money}</code></td><td>Lore &amp; Action</td><td>Formatted total value</td></tr>
-                    <tr><td><code>{amount}</code></td><td>Lore</td><td>Number of sellable brews</td></tr>
-                    <tr><td><code>{sold_amount}</code></td><td>Language file</td><td>Brews actually sold</td></tr>
+                    <tr><td><code>{money}</code></td><td>Lore</td><td>Formatted value of available brews</td></tr>
+                    <tr><td><code>{sold_amount}</code></td><td>Lore</td><td>Number of available brews (in GUI / inventory)</td></tr>
                     </tbody>
                 </table>
             </div>

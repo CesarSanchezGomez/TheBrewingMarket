@@ -77,8 +77,7 @@
             <div class="code-block">
                 <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
                 <pre data-lang="yaml">potion_contents:
-  potion-type: 'minecraft:strong_healing'
-  custom-color: '#FCBDE3'</pre>
+  custom_color: 16679863</pre>
             </div>
 
             <h3>tooltip_display</h3>
@@ -86,12 +85,12 @@
                 <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
                 <pre data-lang="yaml"># Hide entire tooltip
 tooltip_display:
-  hide-tooltip: true
+  hide_tooltip: true
 
 # Or hide specific parts
 tooltip_display:
-  hide-tooltip: false
-  hidden-components:
+  hide_tooltip: false
+  hidden_components:
     - 'potion_contents'
     - 'enchantments'</pre>
             </div>
@@ -107,7 +106,7 @@ tooltip_display:
             </div>
 
             <h2>Decorative Icons</h2>
-            <p>Decorative icons fill the non-functional slots in your GUI layout — the ones marked with symbols like <code>J</code>, <code>K</code>, or <code>L</code> in <code>market.layout</code>. They are purely visual: players cannot interact with them, and they have no sell behavior. Their main purpose is to frame the item slots and sell buttons, making the market GUI look polished instead of leaving empty grey slots.</p>
+            <p>Decorative icons fill the non-functional slots in your GUI layout — the ones marked with symbols like <code>J</code>, <code>L</code>, or <code>M</code> in <code>market.layout</code>. They are purely visual: players cannot interact with them, and they have no sell behavior. Their main purpose is to frame the item slots and sell buttons, making the market GUI look polished instead of leaving empty grey slots.</p>
             <p>It is good practice to set <code>hide-tooltip: true</code> on decorative icons so players do not see a floating item name when hovering over them.</p>
             <div class="code-block">
                 <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
@@ -116,17 +115,17 @@ tooltip_display:
     symbol: 'J'
     material: 'PINK_STAINED_GLASS_PANE'
     tooltip_display:
-      hide-tooltip: true
+      hide_tooltip: true
   brain-coral:
-    symbol: 'K'
+    symbol: 'L'
     material: 'BRAIN_CORAL'
     tooltip_display:
-      hide-tooltip: true
+      hide_tooltip: true
   brain-coral-fan:
-    symbol: 'L'
+    symbol: 'M'
     material: 'BRAIN_CORAL_FAN'
     tooltip_display:
-      hide-tooltip: true</pre>
+      hide_tooltip: true</pre>
             </div>
 
             <div class="page-nav">

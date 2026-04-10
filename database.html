@@ -91,20 +91,37 @@ MySQL:
             <p>TheBrewingMarket creates <code>{prefix}_sell_history</code> with:</p>
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+                    <thead><tr><th>Column</th><th>Type (MySQL)</th><th>Description</th></tr></thead>
                     <tbody>
-                    <tr><td><code>id</code></td><td>INTEGER</td><td>Auto-increment PK</td></tr>
-                    <tr><td><code>player_uuid</code></td><td>VARCHAR</td><td>Player UUID</td></tr>
-                    <tr><td><code>player_name</code></td><td>VARCHAR</td><td>Player name</td></tr>
-                    <tr><td><code>recipe_name</code></td><td>VARCHAR</td><td>Recipe identifier</td></tr>
-                    <tr><td><code>display_name</code></td><td>VARCHAR</td><td>Brew display name</td></tr>
+                    <tr><td><code>id</code></td><td>BIGINT</td><td>Auto-increment PK</td></tr>
+                    <tr><td><code>player_uuid</code></td><td>VARCHAR(36)</td><td>Player UUID</td></tr>
+                    <tr><td><code>player_name</code></td><td>VARCHAR(32)</td><td>Player name</td></tr>
+                    <tr><td><code>recipe_id</code></td><td>TEXT</td><td>Recipe identifier</td></tr>
+                    <tr><td><code>display_name</code></td><td>TEXT</td><td>Brew display name (nullable)</td></tr>
                     <tr><td><code>quality</code></td><td>DOUBLE</td><td>Quality score</td></tr>
                     <tr><td><code>price_per</code></td><td>DOUBLE</td><td>Price per unit</td></tr>
-                    <tr><td><code>quantity</code></td><td>INTEGER</td><td>Items sold</td></tr>
+                    <tr><td><code>quantity</code></td><td>INT</td><td>Items sold</td></tr>
                     <tr><td><code>total</code></td><td>DOUBLE</td><td>Total amount</td></tr>
                     <tr><td><code>sold_at</code></td><td>BIGINT</td><td>Timestamp (epoch ms)</td></tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="info-box note">
+                <strong>SQLite:</strong> Uses <code>TEXT</code>, <code>REAL</code>, and <code>INTEGER</code> equivalents instead of the MySQL types shown above.
+            </div>
+
+            <h2>Schema Migrations</h2>
+            <p>TheBrewingMarket automatically migrates the database schema on startup. You do not need to run any SQL manually — existing data is always preserved.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Version</th><th>Change</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>v0 → v1</code></td><td>Column <code>recipe_name</code> renamed to <code>recipe_id</code>. Separate indexes replaced with a single composite index on <code>(player_uuid, sold_at DESC)</code>.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="info-box tip">
+                <strong>Upgrading from an older version?</strong> Just restart the server — the migration runs automatically and your history data stays intact.
             </div>
 
             <div class="info-box warning">

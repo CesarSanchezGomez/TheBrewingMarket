@@ -27,8 +27,19 @@
             </ul>
 
             <h3>What is quality_score?</h3>
-            <p>Quality is assigned by <strong>TheBrewingProject</strong> during the brewing process. It reflects how well the brew was crafted — fermentation time, distillation runs, and aging in barrels all influence it. A perfectly crafted brew reaches <code>1.0</code>; a rushed or failed one sits near <code>0.01</code>.</p>
-            <p>Players can see a brew's quality by hovering over it in their inventory — it is displayed as stars or a numeric score depending on the TBP configuration. TheBrewingMarket reads this value automatically at sell time; you do not need to configure anything for it to work.</p>
+            <p>Quality is assigned by the brewing plugin during the brewing process. It reflects how well the brew was crafted — fermentation time, distillation runs, and aging in barrels all influence it. A perfectly crafted brew reaches <code>1.0</code>; a rushed or failed one sits near <code>0.01</code>.</p>
+            <p>TheBrewingMarket reads this value automatically at sell time from whichever plugin is active — you do not need to configure anything for it to work.</p>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>TheBrewingProject</h3>
+                    <p>Quality comes from the brew's <code>brewery:score</code> NBT tag. Range: <code>0.01</code>–<code>1.0</code>.</p>
+                </div>
+                <div class="card">
+                    <h3>BreweryX</h3>
+                    <p>Quality is read via <code>brew.getQuality()</code> (max 10) and normalized to <code>0.0</code>–<code>1.0</code> automatically.</p>
+                </div>
+            </div>
+            <p style="margin-top:1.2rem">Players can see a brew's quality by hovering over it in their inventory — it is displayed as stars or a numeric score depending on the plugin configuration.</p>
 
             <div class="info-box note">
                 <strong>Example:</strong> Whiskey (base 200) with quality 0.85 = <code>200 &times; 0.85 = 170 coins</code>.
@@ -46,35 +57,37 @@
     default: 10
     beer: 25
     darkbeer: 30
+    wheatbeer: 30
+    cidre: 35
     wine: 150
     mead: 120
+    ap_mead: 130
     vodka: 130
+    g_vodka: 160
     whiskey: 200
     fire_whiskey: 250
-    rum: 200
+    rum: 180
+    tequila: 170
+    gin: 160
+    brandy: 200
     absinthe: 250
-    coffee: 30
-    hot_chocolate: 40
-    apple_cider: 100
-    apple_liquor: 110
+    gr_absinthe: 300
+    apple_liquor: 140
+    shroom_vodka: 220
+    gin_and_tonic: 180
+    red_sangria: 160
+    french_75: 200
+    coffee: 40
+    iced_coffee: 50
+    hot_choc: 35
     eggnog: 60
-    table_wine: 80
-    champagne: 200
-    sake: 180
-    tequila: 130
-    gin: 190
-    grape_spirit: 300
-    mushroom_vodka: 140
-    potato_soup: 5
-    corn_beer: 35
-    golden_mead: 200
-    spiced_rum: 210</pre>
+    hangover_detox: 80</pre>
             </div>
 
             <p>The <code>default</code> key is used as fallback when a recipe is not listed.</p>
 
             <div class="info-box warning">
-                <strong>Important:</strong> Recipe names must match TheBrewingProject exactly (lowercase, underscores).
+                <strong>Important:</strong> Recipe IDs must match the brewing plugin exactly (lowercase, underscores). For BreweryX, use the recipe's internal ID as defined in its configuration.
             </div>
 
             <h2>Adding Custom Recipes</h2>
