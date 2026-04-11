@@ -49,7 +49,7 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         final boolean hasBreweryX = getServer().getPluginManager().getPlugin("BreweryX") != null;
 
         if (!hasTBP && !hasBreweryX) {
-            getLogger().severe("Neither TheBrewingProject nor BreweryX found. Disabling TheBrewingMarket.");
+            getLogger().severe("Missing TBP/BreweryX. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
