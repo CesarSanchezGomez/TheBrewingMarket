@@ -31,9 +31,9 @@
                         <td>Install <strong>Vault</strong> and make sure it is in <code>plugins/</code> before starting</td>
                     </tr>
                     <tr>
-                        <td><code>Could not load plugin: TheBrewingProject</code></td>
-                        <td>TheBrewingProject is missing or wrong version</td>
-                        <td>Install <strong>TheBrewingProject v3.0.0-beta+</strong></td>
+                        <td><code>[TheBrewingMarket] Neither TheBrewingProject nor BreweryX found. Disabling TheBrewingMarket.</code></td>
+                        <td>Neither brewing plugin is installed (at least one is required)</td>
+                        <td>Install <strong>TheBrewingProject</strong> or <strong>BreweryX</strong> (or both)</td>
                     </tr>
                     <tr>
                         <td><code>Unsupported Java version</code> or class file errors</td>
@@ -58,9 +58,10 @@
             <h2>Brews are not recognized / wrong price</h2>
             <p>A player tries to sell a brew but gets an error, or it sells at the <code>default</code> fallback price instead of the expected one.</p>
             <ul>
-                <li>Open <code>config.yml</code> and check the recipe name under <code>market.prices</code>. It must match the recipe identifier in TheBrewingProject <strong>exactly</strong> (lowercase, underscores, no spaces).</li>
-                <li>The item must be a valid brew crafted by TheBrewingProject. Regular potions or other items cannot be sold.</li>
-                <li>If the recipe name is correct but the price is still wrong, confirm the brew has a <code>brewery:score</code> NBT value — brews that failed fermentation may have a very low quality score.</li>
+                <li>Open <code>config.yml</code> and check the recipe ID under <code>market.prices</code>. It must match the recipe identifier in your brewing plugin <strong>exactly</strong> (lowercase, underscores, no spaces).</li>
+                <li>The item must be a valid brew crafted by TheBrewingProject or BreweryX. Regular potions or other items cannot be sold.</li>
+                <li>If the recipe ID is correct but the price is still wrong, the brew may have a very low quality score — brews that failed fermentation or distillation often have quality near <code>0.01</code>, which multiplies the base price down significantly.</li>
+                <li>If both TheBrewingProject and BreweryX are installed, TheBrewingMarket uses <strong>TheBrewingProject</strong> exclusively. Brews from BreweryX will not be recognized in that case.</li>
             </ul>
 
             <h2>GUI does not open</h2>
@@ -86,7 +87,7 @@
             </ul>
 
             <h2>Still stuck?</h2>
-            <p>Open an issue on the <a href="https://github.com/CesarSanchezGomez/BreweryMarket" target="_blank">GitHub repository</a> and include the relevant lines from your server console and your <code>database.yml</code> (remove passwords before posting).</p>
+            <p>Open an issue on the <a href="https://github.com/CesarSanchezGomez/TheBrewingMarket" target="_blank">GitHub repository</a> and include the relevant lines from your server console and your <code>database.yml</code> (remove passwords before posting).</p>
 
             <div class="page-nav">
                 <a href="language.html">
