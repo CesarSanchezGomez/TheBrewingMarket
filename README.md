@@ -1,12 +1,12 @@
 # TheBrewingMarket
 
-A Minecraft plugin that lets players sell their [TheBrewingProject](https://hangar.papermc.io/BreeweryTeam/TheBrewingProject) brews for money through a customizable GUI.
+A Minecraft plugin that lets players sell their **TheBrewingProject** or **BreweryX** brews for money through a customizable GUI.
 
 ## Requirements
 
-- **Paper** 1.21.11+
+- **Paper** 1.21.9+
 - **Vault** (with an economy provider like EssentialsX)
-- **TheBrewingProject**
+- **TheBrewingProject or BreweryX** (at least one is required)
 
 ## Installation
 
@@ -17,11 +17,11 @@ A Minecraft plugin that lets players sell their [TheBrewingProject](https://hang
 
 ## Commands & Permissions
 
-| Command | Alias | Permission | Description |
-|---|---|---|---|
-| `/thebrewingmarket` | `/tbm` | `thebrewingmarket.use` | Opens the sell GUI |
-| `/thebrewingmarket reload` | `/tbm reload` | `thebrewingmarket.admin` | Reloads configuration |
-| `/thebrewingmarket history` | `/tbm history` | `thebrewingmarket.history` | View sell history |
+| Command | Alias | Description |
+|---|---|---|
+| `/thebrewingmarket` | `/tbm` | Opens the sell GUI |
+| `/thebrewingmarket reload` | `/tbm reload` | Reloads configuration |
+| `/thebrewingmarket history` | `/tbm history` | View sell history |
 
 | Permission | Default | Description |
 |---|---|---|
@@ -31,6 +31,22 @@ A Minecraft plugin that lets players sell their [TheBrewingProject](https://hang
 | `thebrewingmarket.use` | true | Use the sell GUI |
 | `thebrewingmarket.shulker` | true | Sell brews from shulker boxes |
 
+## Features
+
+- Supports **TheBrewingProject** and **BreweryX** (auto-detected)
+- Sell GUI with quick and intuitive interactions
+- Sell All support (GUI + inventory)
+- Shulker box selling (permission-based)
+- Sell history with pagination and time filters
+- Quality-based pricing using TheBrewingProject scoring API
+- Per-recipe configurable pricing
+- Sealed brew support with fallback handling
+- Database support with automatic schema migrations
+- Fully customizable GUI (layout, icons, styles)
+- MiniMessage support for all text formatting
+- Multi-language support (en_US, es_ES)
+
 ## Documentation
 
-For full configuration details, see the **[WIP]()**.
+Full setup and configuration guide:  
+> https://cesarsanchezgomez.github.io/TheBrewingMarket/
