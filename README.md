@@ -48,5 +48,5 @@ A Minecraft plugin that lets players sell their **TheBrewingProject** or **Brewe
 
 ## Documentation
 
-Full setup and configuration guide:
+Full setup and configuration guide:  
 > https://cesarsanchezgomez.github.io/TheBrewingMarket/
