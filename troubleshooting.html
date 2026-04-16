@@ -86,16 +86,27 @@
                 <li>If you recently switched from SQLite to MySQL, remember that <strong>history data is not migrated automatically</strong>.</li>
             </ul>
 
+            <h2>Placeholders return nothing or stay as <code>%tbm_...%</code></h2>
+            <p>You added a TheBrewingMarket placeholder to a hologram, scoreboard or chat plugin, but it either shows an empty string or the raw <code>%tbm_...%</code> text.</p>
+            <ul>
+                <li>Make sure <strong>PlaceholderAPI 2.11+</strong> is installed and listed in <code>/plugins</code>. Without it, TheBrewingMarket silently skips expansion registration.</li>
+                <li>On startup the console should print <code>PlaceholderAPI expansions registered: tbm, thebrewingmarket</code>. If it does not, PAPI was not present when TheBrewingMarket loaded — install PAPI and restart.</li>
+                <li>Run <code>/papi info tbm</code> to confirm the expansion is live. If the command replies "unknown expansion", the registration failed.</li>
+                <li>Placeholders are case-sensitive. Use <code>%tbm_daily_earned%</code>, not <code>%TBM_Daily_Earned%</code>.</li>
+                <li>Per-recipe placeholders like <code>%tbm_price_wine%</code> require the recipe ID to match your <code>config.yml</code> exactly. Unknown recipes return an empty string.</li>
+            </ul>
+
+            <h2>Lifetime or global placeholders show 0</h2>
+            <p><code>%tbm_lifetime_earned%</code> or <code>%tbm_global_total_today%</code> return <code>0</code> even though sales exist in the database.</p>
+            <ul>
+                <li>Lifetime stats are cached per player and seeded <strong>on join</strong>. For players who were already online when the plugin was first installed or reloaded, the cache fills on their next login.</li>
+                <li>Global analytics refresh asynchronously <strong>once every 60 seconds</strong>. A fresh sale will not show up in <code>%tbm_global_*%</code> placeholders until the next refresh tick.</li>
+                <li>Confirm that <code>sell_history</code> is actually being written — if the history table is empty, all lifetime/global placeholders will legitimately read as 0. See the database section above.</li>
+            </ul>
+
             <h2>Still stuck?</h2>
             <p>Open an issue on the <a href="https://github.com/CesarSanchezGomez/TheBrewingMarket" target="_blank">GitHub repository</a> and include the relevant lines from your server console and your <code>database.yml</code> (remove passwords before posting).</p>
 
-            <div class="page-nav">
-                <a href="language.html">
-                    <span class="label">Previous</span>
-                    <span class="title">Language</span>
-                </a>
-                <span></span>
-            </div>
             <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
         </div>
     </div>

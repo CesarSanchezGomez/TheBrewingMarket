@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceholderAPI — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>PlaceholderAPI</h1>
+            <p class="subtitle">Expose market data to holograms, scoreboards, and any PAPI-aware plugin.</p>
+
+            <p>When <strong>PlaceholderAPI</strong> is installed, TheBrewingMarket automatically registers an expansion and exposes the data below. PlaceholderAPI is a <em>soft dependency</em>: servers without it run unchanged, they just don't get the placeholders.</p>
+
+            <div class="info-box tip">
+                <strong>Two identifiers, same data:</strong> every placeholder is registered under both <code>tbm_</code> and <code>thebrewingmarket_</code>. Use whichever reads better. For example <code>%tbm_daily_earned%</code> and <code>%thebrewingmarket_daily_earned%</code> are identical.
+            </div>
+
+            <h2>Value format</h2>
+            <p>Numeric placeholders come in <strong>two flavours</strong>:</p>
+            <ul>
+                <li><strong>Formatted</strong> — e.g. <code>%tbm_daily_earned%</code> → <code>1,234 coins</code>, using the Vault economy formatter.</li>
+                <li><strong>Raw</strong> — same name suffixed with <code>_raw</code>, e.g. <code>%tbm_daily_earned_raw%</code> → <code>1234.0</code>. Use these when feeding math into conditions, scoreboards, or other plugins.</li>
+            </ul>
+
+            <h2>Daily limit</h2>
+            <p>Reads live from the in-memory daily tracker — updates instantly on every sale.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Placeholder</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>%tbm_daily_earned%</code></td><td>String</td><td>Money earned today, formatted.</td></tr>
+                    <tr><td><code>%tbm_daily_earned_raw%</code></td><td>Double</td><td>Money earned today, raw.</td></tr>
+                    <tr><td><code>%tbm_daily_limit%</code></td><td>String</td><td>Daily cap from <code>market.limitation.earnings</code>.</td></tr>
+                    <tr><td><code>%tbm_daily_limit_raw%</code></td><td>Double</td><td>Daily cap, raw.</td></tr>
+                    <tr><td><code>%tbm_daily_remaining%</code></td><td>String</td><td><code>max(0, limit − earned)</code>, formatted.</td></tr>
+                    <tr><td><code>%tbm_daily_remaining_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
+                    <tr><td><code>%tbm_daily_percent%</code></td><td>Integer</td><td>Progress towards the cap, clamped <code>0</code>–<code>100</code>.</td></tr>
+                    <tr><td><code>%tbm_limit_active%</code></td><td>Boolean</td><td><code>true</code> if <code>market.limitation.enable</code> is on.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Base prices</h2>
+            <p>Read the configured base price for any recipe — flat entries and group-defined prices are both supported. The recipe id goes in the placeholder name.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Placeholder</th><th>Type</th><th>Example</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>%tbm_price_&lt;recipe&gt;%</code></td><td>String</td><td><code>%tbm_price_wine%</code> → <code>150 coins</code></td></tr>
+                    <tr><td><code>%tbm_price_&lt;recipe&gt;_raw%</code></td><td>Double</td><td><code>%tbm_price_wine_raw%</code> → <code>150.0</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Lifetime stats (per player)</h2>
+            <p>Cached per player on join and kept in sync with every sale. Invalidated on quit to keep memory small.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Placeholder</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>%tbm_lifetime_earned%</code></td><td>String</td><td>All-time earnings from the market, formatted.</td></tr>
+                    <tr><td><code>%tbm_lifetime_earned_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
+                    <tr><td><code>%tbm_lifetime_brews%</code></td><td>Long</td><td>Total brews the player has ever sold.</td></tr>
+                    <tr><td><code>%tbm_last_sale_amount%</code></td><td>String</td><td>Money from the most recent sale, formatted.</td></tr>
+                    <tr><td><code>%tbm_last_sale_amount_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
+                    <tr><td><code>%tbm_last_sale_recipe%</code></td><td>String</td><td>Recipe id of the last brew sold.</td></tr>
+                    <tr><td><code>%tbm_last_sale_ago%</code></td><td>String</td><td>Relative time (e.g. <code>5 min ago</code>).</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Per-recipe stats (per player)</h2>
+            <p>Check whether a player has ever sold a specific brew, and how much.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Placeholder</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>%tbm_player_sold_&lt;recipe&gt;%</code></td><td>Boolean</td><td><code>true</code> if the player has sold at least one of that recipe.</td></tr>
+                    <tr><td><code>%tbm_player_sold_&lt;recipe&gt;_qty%</code></td><td>Long</td><td>Total units of that recipe sold.</td></tr>
+                    <tr><td><code>%tbm_player_sold_&lt;recipe&gt;_total%</code></td><td>String</td><td>Total money earned from that recipe, formatted.</td></tr>
+                    <tr><td><code>%tbm_player_sold_&lt;recipe&gt;_total_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box note">
+                <strong>Example:</strong> <code>%tbm_player_sold_wine%</code> → <code>true</code> if the player has ever sold a wine, <code>%tbm_player_sold_wine_qty%</code> → the exact unit count.
+            </div>
+
+            <h2>Global analytics</h2>
+            <p>Server-wide daily snapshot refreshed from the database every <strong>60 seconds</strong>. These placeholders are independent of the player viewing them — ideal for public scoreboards and holograms.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Placeholder</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>%tbm_global_total_today%</code></td><td>String</td><td>Total money earned by everyone today, formatted.</td></tr>
+                    <tr><td><code>%tbm_global_total_today_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
+                    <tr><td><code>%tbm_global_top_recipe_today%</code></td><td>String</td><td>Most-sold recipe today (ties broken alphabetically).</td></tr>
+                    <tr><td><code>%tbm_global_top_recipe_today_qty%</code></td><td>Long</td><td>Units sold of that top recipe today.</td></tr>
+                    <tr><td><code>%tbm_global_top_player_today%</code></td><td>String</td><td>Player name with the highest earnings today.</td></tr>
+                    <tr><td><code>%tbm_global_top_player_today_amount%</code></td><td>String</td><td>That player's earnings today, formatted.</td></tr>
+                    <tr><td><code>%tbm_global_top_player_today_amount_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box warning">
+                <strong>Refresh interval:</strong> global analytics can be up to 60 seconds stale. The refresh runs on the async DB executor, so it never blocks the server tick.
+            </div>
+
+            <h2>Verification</h2>
+            <p>Test with PlaceholderAPI's built-in <code>/papi parse</code> command:</p>
+            <div class="code-block">
+                <div class="code-header"><span>in-game</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="text">/papi info tbm
+/papi info thebrewingmarket
+/papi parse &lt;yourName&gt; %tbm_daily_earned% / %tbm_daily_limit%
+/papi parse &lt;yourName&gt; %tbm_lifetime_brews% brews, %tbm_lifetime_earned% earned
+/papi parse &lt;yourName&gt; top recipe: %tbm_global_top_recipe_today% (%tbm_global_top_recipe_today_qty%)</pre>
+            </div>
+
+            <div class="page-nav">
+                <a href="language.html">
+                    <span class="label">Previous</span>
+                    <span class="title">Language</span>
+                </a>
+                <span></span>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

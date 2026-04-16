@@ -56,32 +56,25 @@
   prices:
     default: 10
     beer: 25
-    darkbeer: 30
-    wheatbeer: 30
     cidre: 35
     wine: 150
     mead: 120
-    ap_mead: 130
-    vodka: 130
-    g_vodka: 160
-    whiskey: 200
-    fire_whiskey: 250
-    rum: 180
-    tequila: 170
-    gin: 160
-    brandy: 200
-    absinthe: 250
-    gr_absinthe: 300
     apple_liquor: 140
+    tequila: 170
     shroom_vodka: 220
-    gin_and_tonic: 180
-    red_sangria: 160
-    french_75: 200
+    gr_absinthe: 300
     coffee: 40
     iced_coffee: 50
     hot_choc: 35
     eggnog: 60
-    hangover_detox: 80</pre>
+    hangover_detox: 80
+    groups:
+      30: [darkbeer, wheatbeer]
+      130: [ap_mead, vodka]
+      160: [g_vodka, gin, red_sangria]
+      180: [rum, gin_and_tonic]
+      200: [whiskey, brandy, french_75]
+      250: [fire_whiskey, absinthe]</pre>
             </div>
 
             <p>The <code>default</code> key is used as fallback when a recipe is not listed.</p>
@@ -96,6 +89,24 @@
                 <pre data-lang="yaml">market:
   prices:
     my_custom_brew: 175</pre>
+            </div>
+
+            <h2>Group Prices</h2>
+            <p>When several recipes share the same price you can use the <code>groups</code> map instead of repeating each recipe individually. The key is the price, the value is a list of recipe ids.</p>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">market:
+  prices:
+    default: 10
+    wine: 150          # flat entry — takes priority over any group
+    groups:
+      30: [darkbeer, wheatbeer]
+      130: [ap_mead, vodka]
+      200: [whiskey, brandy, french_75]</pre>
+            </div>
+
+            <div class="info-box note">
+                <strong>Priority:</strong> flat entries always override group entries when there is a collision. You can freely mix both formats in the same <code>prices:</code> block.
             </div>
 
             <div class="page-nav">

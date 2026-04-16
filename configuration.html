@@ -26,6 +26,7 @@
                 <table>
                     <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
                     <tbody>
+                    <tr><td><code>config-version</code></td><td>Integer</td><td><code>1</code></td><td>Internal version used for automatic migration. <strong>Do not edit.</strong></td></tr>
                     <tr><td><code>lang</code></td><td>String</td><td><code>en_US</code></td><td>Language file to load from <code>lang/</code></td></tr>
                     <tr><td><code>history-per-page</code></td><td>Integer</td><td><code>8</code></td><td>Sell history entries shown per page (1–32)</td></tr>
                     <tr><td><code>market.shulker-selling</code></td><td>Boolean</td><td><code>true</code></td><td>Allow selling brews inside shulker boxes (also requires <code>thebrewingmarket.shulker</code>)</td></tr>
@@ -36,6 +37,28 @@
 
             <div class="info-box tip">
                 <strong>Tip:</strong> Run <code>/thebrewingmarket reload</code> after any change to apply it without restarting the server.
+            </div>
+
+            <h2>Daily Earnings Limit</h2>
+            <p>The <code>market.limitation</code> block caps how much money each player can earn from the market per calendar day. Sales that would exceed the cap are rejected in full.</p>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml">market:
+  limitation:
+    enable: true
+    earnings: 10000</pre>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>market.limitation.enable</code></td><td>Boolean</td><td><code>true</code></td><td>Whether the daily cap is active.</td></tr>
+                    <tr><td><code>market.limitation.earnings</code></td><td>Double</td><td><code>10000</code></td><td>Maximum money a player can earn per day.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="info-box note">
+                <strong>Note:</strong> The cap resets at midnight (server local time). Players can check their progress with <code>%tbm_daily_earned%</code> and <code>%tbm_daily_remaining%</code> via PlaceholderAPI, or in the sell button lore using <code>{money}</code>.
             </div>
 
             <h2>Config Sections</h2>
@@ -64,6 +87,10 @@
                 <a href="language.html" class="card" style="text-decoration:none;">
                     <h3>Language</h3>
                     <p>Message customization and localization.</p>
+                </a>
+                <a href="placeholders.html" class="card" style="text-decoration:none;">
+                    <h3>PlaceholderAPI</h3>
+                    <p>Expose market data to holograms, scoreboards, and conditions.</p>
                 </a>
             </div>
 
