@@ -1,3 +1,6 @@
+# Internal version — do not edit. Bump = new keys were added.
+config-version: 1
+
 # local database
 #   SQLite
 

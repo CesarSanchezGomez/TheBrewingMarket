@@ -8,7 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +33,12 @@ public final class JdbcSellHistoryService implements SellHistoryService {
     private final String findPlayerUuidSql;
     private final String selectHistorySql;
     private final String countHistorySql;
+    private final String sumTotalSinceSql;
+    private final String playerRecipeAggregateSql;
+    private final String playerLastSaleSql;
+    private final String sumTotalAllSinceSql;
+    private final String topRecipeSinceSql;
+    private final String topPlayerSinceSql;
 
     public JdbcSellHistoryService(final ConnectionProvider connectionProvider,
                                   final MigrationManager migrationManager,
@@ -61,6 +69,41 @@ public final class JdbcSellHistoryService implements SellHistoryService {
 
         this.countHistorySql =
                 "SELECT COUNT(*) FROM `%s` WHERE player_uuid = ? AND sold_at >= ?".formatted(table);
+
+        this.sumTotalSinceSql =
+                "SELECT COALESCE(SUM(total), 0) FROM `%s` WHERE player_uuid = ? AND sold_at >= ?".formatted(table);
+
+        this.playerRecipeAggregateSql = """
+                SELECT recipe_id, SUM(total) AS total_sum, SUM(quantity) AS qty_sum, MAX(sold_at) AS last_at
+                FROM `%s`
+                WHERE player_uuid = ?
+                GROUP BY recipe_id""".formatted(table);
+
+        this.playerLastSaleSql = """
+                SELECT recipe_id, total, sold_at
+                FROM `%s`
+                WHERE player_uuid = ?
+                ORDER BY sold_at DESC, id DESC
+                LIMIT 1""".formatted(table);
+
+        this.sumTotalAllSinceSql =
+                "SELECT COALESCE(SUM(total), 0) FROM `%s` WHERE sold_at >= ?".formatted(table);
+
+        this.topRecipeSinceSql = """
+                SELECT recipe_id, SUM(quantity) AS qty
+                FROM `%s`
+                WHERE sold_at >= ?
+                GROUP BY recipe_id
+                ORDER BY qty DESC, recipe_id ASC
+                LIMIT 1""".formatted(table);
+
+        this.topPlayerSinceSql = """
+                SELECT player_name, SUM(total) AS earned
+                FROM `%s`
+                WHERE sold_at >= ?
+                GROUP BY player_uuid, player_name
+                ORDER BY earned DESC, player_name ASC
+                LIMIT 1""".formatted(table);
 
         this.executor = Executors.newSingleThreadExecutor(r -> {
             final Thread t = new Thread(r, "TheBrewingMarket-DB-" + providerName);
@@ -192,6 +235,127 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                 logger.log(Level.WARNING, "Failed to count sell history", e);
             }
             return 0;
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Double> sumTotalSince(final UUID playerUuid, final long sinceEpochMillis) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = connectionProvider.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sumTotalSinceSql)) {
+                ps.setString(1, playerUuid.toString());
+                ps.setLong(2, sinceEpochMillis);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) return rs.getDouble(1);
+                }
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Failed to sum earnings", e);
+            }
+            return 0.0;
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<PlayerStats> getPlayerStats(final UUID playerUuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            double lifetimeEarned = 0.0;
+            long lifetimeBrews = 0L;
+            Map<String, RecipeTally> perRecipe = new HashMap<>();
+            String lastRecipe = "";
+            double lastAmount = 0.0;
+            long lastSoldAt = 0L;
+
+            try (Connection conn = connectionProvider.getConnection()) {
+                try (PreparedStatement ps = conn.prepareStatement(playerRecipeAggregateSql)) {
+                    ps.setString(1, playerUuid.toString());
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            String recipeId = rs.getString("recipe_id");
+                            double totalSum = rs.getDouble("total_sum");
+                            long qtySum = rs.getLong("qty_sum");
+                            lifetimeEarned += totalSum;
+                            lifetimeBrews += qtySum;
+                            if (recipeId != null) {
+                                perRecipe.put(recipeId.toLowerCase(), new RecipeTally(qtySum, totalSum));
+                            }
+                        }
+                    }
+                }
+
+                try (PreparedStatement ps = conn.prepareStatement(playerLastSaleSql)) {
+                    ps.setString(1, playerUuid.toString());
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            lastRecipe = rs.getString("recipe_id");
+                            if (lastRecipe == null) lastRecipe = "";
+                            lastAmount = rs.getDouble("total");
+                            lastSoldAt = rs.getLong("sold_at");
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Failed to load player stats", e);
+                return PlayerStats.empty();
+            }
+
+            return new PlayerStats(lifetimeEarned, lifetimeBrews,
+                    lastRecipe, lastAmount, lastSoldAt, perRecipe);
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Double> sumTotalAllSince(final long sinceEpochMillis) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = connectionProvider.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sumTotalAllSinceSql)) {
+                ps.setLong(1, sinceEpochMillis);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) return rs.getDouble(1);
+                }
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Failed to sum global earnings", e);
+            }
+            return 0.0;
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<RecipeAggregate> getTopRecipeSince(final long sinceEpochMillis) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = connectionProvider.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(topRecipeSinceSql)) {
+                ps.setLong(1, sinceEpochMillis);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String recipeId = rs.getString("recipe_id");
+                        long qty = rs.getLong("qty");
+                        return new RecipeAggregate(recipeId != null ? recipeId : "", qty);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Failed to fetch top recipe", e);
+            }
+            return RecipeAggregate.empty();
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<PlayerAggregate> getTopPlayerSince(final long sinceEpochMillis) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = connectionProvider.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(topPlayerSinceSql)) {
+                ps.setLong(1, sinceEpochMillis);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String name = rs.getString("player_name");
+                        double earned = rs.getDouble("earned");
+                        return new PlayerAggregate(name != null ? name : "", earned);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Failed to fetch top player", e);
+            }
+            return PlayerAggregate.empty();
         }, executor);
     }
 }

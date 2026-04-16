@@ -6,12 +6,20 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 public final class MarketConfig {
+
+    public static final int CURRENT_VERSION = 1;
+
+    public record LimitationConfig(boolean enabled, double earnings) {
+        public boolean active() { return enabled && earnings > 0; }
+    }
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
@@ -36,6 +44,8 @@ public final class MarketConfig {
 
     private final Map<String, Double> prices;
     private final double defaultPrice;
+
+    private final LimitationConfig limitation;
 
     public MarketConfig(ConfigurationSection root, Logger logger) {
         this.historyPerPage = Math.clamp(root.getInt("history-per-page", 8), 1, 32);
@@ -63,14 +73,72 @@ public final class MarketConfig {
 
         this.prices = new HashMap<>();
         ConfigurationSection priceSection = market.getConfigurationSection("prices");
+        this.defaultPrice = priceSection != null ? priceSection.getDouble("default", 0.0) : 0.0;
         if (priceSection != null) {
-            for (String key : priceSection.getKeys(false)) {
-                if (!key.equals("default")) {
-                    prices.put(key.toLowerCase(), priceSection.getDouble(key));
+            loadPrices(priceSection, logger);
+        }
+
+        ConfigurationSection lim = market.getConfigurationSection("limitation");
+        this.limitation = new LimitationConfig(
+                lim != null && lim.getBoolean("enable", false),
+                lim != null ? lim.getDouble("earnings", 0.0) : 0.0);
+    }
+
+    private void loadPrices(ConfigurationSection priceSection, Logger logger) {
+        ConfigurationSection groups = priceSection.getConfigurationSection("groups");
+        if (groups != null) {
+            // getValues(false) avoids treating dotted keys (e.g. "12.5") as config paths.
+            for (Map.Entry<String, Object> entry : groups.getValues(false).entrySet()) {
+                String priceKey = entry.getKey();
+                double price;
+                try {
+                    price = Double.parseDouble(priceKey);
+                } catch (NumberFormatException ex) {
+                    logger.warning("Invalid price group key '" + priceKey + "' in prices.groups — expected a number.");
+                    continue;
+                }
+                List<String> recipes = coerceRecipeList(entry.getValue());
+                if (recipes.isEmpty()) {
+                    logger.warning("Price group '" + priceKey + "' has no recipes assigned.");
+                    continue;
+                }
+                for (String recipe : recipes) {
+                    prices.put(recipe.toLowerCase(), price);
                 }
             }
         }
-        this.defaultPrice = priceSection != null ? priceSection.getDouble("default", 0.0) : 0.0;
+
+        for (String key : priceSection.getKeys(false)) {
+            if (key.equals("default") || key.equals("groups")) {
+                continue;
+            }
+            if (priceSection.isConfigurationSection(key) || priceSection.isList(key)) {
+                logger.warning("Unexpected value for price '" + key + "' — expected a number. "
+                        + "Did you mean to put it inside 'groups'?");
+                continue;
+            }
+            prices.put(key.toLowerCase(), priceSection.getDouble(key));
+        }
+    }
+
+    private static List<String> coerceRecipeList(Object value) {
+        if (value instanceof List<?> list) {
+            List<String> result = new ArrayList<>(list.size());
+            for (Object item : list) {
+                if (item != null) {
+                    String name = item.toString().trim();
+                    if (!name.isEmpty()) {
+                        result.add(name);
+                    }
+                }
+            }
+            return result;
+        }
+        if (value instanceof String single) {
+            String trimmed = single.trim();
+            return trimmed.isEmpty() ? List.of() : List.of(trimmed);
+        }
+        return List.of();
     }
 
     public Component getTitle() {
@@ -151,5 +219,9 @@ public final class MarketConfig {
 
     public IconConfig getSellAllDeny() {
         return sellAllDeny;
+    }
+
+    public LimitationConfig getLimitation() {
+        return limitation;
     }
 }

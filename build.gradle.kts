@@ -26,6 +26,10 @@ repositories {
         name = "jsinco-releases"
         setUrl("https://repo.jsinco.dev/releases")
     }
+    maven {
+        name = "extendedclip"
+        setUrl("https://repo.extendedclip.com/releases/")
+    }
 }
 
 dependencies {
@@ -33,6 +37,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.github.BreweryTeam:TheBrewingProject:v3.0.0-beta.0")
     compileOnly("com.dre.brewery:BreweryX:3.6.5")
+    compileOnly("me.clip:placeholderapi:2.12.2")
 
     // Bundled via shadowJar
     implementation("com.zaxxer:HikariCP:7.0.2")

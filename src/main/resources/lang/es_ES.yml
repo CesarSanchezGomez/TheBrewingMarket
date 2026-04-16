@@ -1,6 +1,8 @@
 # TheBrewingMarket - Archivo de idioma en Español (España)
 # Soporta formato MiniMessage.
 # Usa {prefix} para insertar el prefijo del plugin.
+# Versión interna — no editar. Cambio = nuevos mensajes añadidos.
+config-version: 1
 
 prefix: "<white>[<gradient:#FCBDE3:#F973C4>BrewingMarket</gradient>]</white>"
 
@@ -15,6 +17,9 @@ market:
   sell-success: "{prefix} <white>Vendiste <#FCBDE3>{sold_amount}</#FCBDE3> bebidas por <#FCBDE3>{money}</#FCBDE3>!</white>"
   sell-nothing: "{prefix} <white>No tienes bebidas para vender.</white>"
   sell-error: "{prefix} <white>La transacción ha fallado. Inténtalo de nuevo.</white>"
+  limit-reached:
+    - "{prefix} <white>Ganancias del día: <#FCBDE3>{earned}</#FCBDE3>/<#FCBDE3>{limit}</#FCBDE3>.</white>"
+    - "{prefix} <white>Disponible hoy: <#FCBDE3>{remaining}</#FCBDE3>.</white>"
 
 # -- Historial --------------------------------
 history:

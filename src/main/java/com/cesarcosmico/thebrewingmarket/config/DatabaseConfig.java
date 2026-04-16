@@ -5,6 +5,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class DatabaseConfig {
 
+    public static final int CURRENT_VERSION = 1;
+
     public record SQLiteSettings(String file, String tablePrefix) {}
 
     public record PoolSettings(

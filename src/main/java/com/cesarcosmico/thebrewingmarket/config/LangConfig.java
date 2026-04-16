@@ -16,6 +16,8 @@ import java.util.Map;
 
 public final class LangConfig {
 
+    public static final int CURRENT_VERSION = 1;
+
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
     private final JavaPlugin plugin;
@@ -48,6 +50,9 @@ public final class LangConfig {
         }
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(langFile);
+
+        ConfigVersionChecker.check(config, "lang/" + lang + ".yml",
+                CURRENT_VERSION, plugin, plugin.getLogger());
 
         InputStream defaultStream = plugin.getResource("lang/en_US.yml");
         if (defaultStream != null) {

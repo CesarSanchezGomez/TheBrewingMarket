@@ -3,7 +3,10 @@ package com.cesarcosmico.thebrewingmarket.listener;
 import com.cesarcosmico.thebrewingmarket.config.IconConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
+import com.cesarcosmico.thebrewingmarket.config.MarketConfig.LimitationConfig;
 import com.cesarcosmico.thebrewingmarket.gui.TheBrewingMarketGUI;
+import com.cesarcosmico.thebrewingmarket.service.DailyEarningsTracker;
+import com.cesarcosmico.thebrewingmarket.service.PlayerStatsCache;
 import com.cesarcosmico.thebrewingmarket.service.SellService;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -13,10 +16,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public final class MarketGUIListener implements Listener {
@@ -24,14 +30,35 @@ public final class MarketGUIListener implements Listener {
     private final JavaPlugin plugin;
     private final LangConfig langConfig;
     private final SellHistoryService historyService;
+    private final DailyEarningsTracker earningsTracker;
+    private final PlayerStatsCache playerStatsCache;
+    private final Supplier<MarketConfig> marketConfigSupplier;
     private final Logger logger;
 
     public MarketGUIListener(JavaPlugin plugin, LangConfig langConfig,
-                             SellHistoryService historyService) {
+                             SellHistoryService historyService,
+                             DailyEarningsTracker earningsTracker,
+                             PlayerStatsCache playerStatsCache,
+                             Supplier<MarketConfig> marketConfigSupplier) {
         this.plugin = plugin;
         this.langConfig = langConfig;
         this.historyService = historyService;
+        this.earningsTracker = earningsTracker;
+        this.playerStatsCache = playerStatsCache;
+        this.marketConfigSupplier = marketConfigSupplier;
         this.logger = plugin.getLogger();
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        earningsTracker.seedAsync(event.getPlayer().getUniqueId());
+        playerStatsCache.seedAsync(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        earningsTracker.invalidate(event.getPlayer().getUniqueId());
+        playerStatsCache.invalidate(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
@@ -110,41 +137,53 @@ public final class MarketGUIListener implements Listener {
         SellService sellService = gui.getSellService();
         MarketConfig config = gui.getConfig();
 
-        double previewValue = sellService.calculateValue(
+        SellService.SellPlan plan = sellService.planSellFromGui(
                 gui.getInventory(), config, gui.isShulkerEnabled());
 
-        executeSell(gui, player, previewValue,
-                () -> sellService.detailedSellFromGui(gui.getInventory(), config, gui.isShulkerEnabled()),
-                config.getSellAllow(), config.getSellDeny());
+        executeSell(gui, player, plan, config.getSellAllow(), config.getSellDeny());
     }
 
     private void handleSellAll(TheBrewingMarketGUI gui, Player player) {
         SellService sellService = gui.getSellService();
         MarketConfig config = gui.getConfig();
 
-        double previewValue = sellService.calculateTotalValue(
+        SellService.SellPlan plan = sellService.planSellAll(
                 gui.getInventory(), config, player, gui.isShulkerEnabled());
 
-        executeSell(gui, player, previewValue,
-                () -> sellService.detailedSellAll(gui.getInventory(), config, player, gui.isShulkerEnabled()),
-                config.getSellAllAllow(), config.getSellAllDeny());
+        executeSell(gui, player, plan, config.getSellAllAllow(), config.getSellAllDeny());
     }
 
-    private void executeSell(TheBrewingMarketGUI gui, Player player, double previewValue,
-                             java.util.function.Supplier<SellService.DetailedSellResult> sellAction,
+    private void executeSell(TheBrewingMarketGUI gui, Player player, SellService.SellPlan plan,
                              IconConfig allowSound, IconConfig denySound) {
         MarketConfig config = gui.getConfig();
         SellService sellService = gui.getSellService();
 
-        if (previewValue <= 0) {
+        if (!plan.hasValue()) {
             langConfig.send(player, "market.sell-nothing");
             playSound(player, config.getActionSound(denySound));
             return;
         }
 
-        SellService.DetailedSellResult result = sellAction.get();
+        LimitationConfig limit = marketConfigSupplier.get().getLimitation();
+        if (limit.active()) {
+            double earned = earningsTracker.getTodayEarnings(player.getUniqueId());
+            double remaining = Math.max(0, limit.earnings() - earned);
+            if (remaining <= 0 || plan.money() > remaining) {
+                langConfig.send(player, "market.limit-reached",
+                        "{earned}", sellService.format(earned),
+                        "{limit}", sellService.format(limit.earnings()),
+                        "{remaining}", sellService.format(remaining));
+                playSound(player, config.getActionSound(denySound));
+                return;
+            }
+        }
+
+        plan.apply();
+        SellService.DetailedSellResult result = plan.toDetailedResult();
 
         if (result.money() > 0 && sellService.deposit(player, result.money())) {
+            earningsTracker.record(player.getUniqueId(), result.money());
+            playerStatsCache.recordSale(player.getUniqueId(), result);
             String money = sellService.format(result.money());
             langConfig.send(player, "market.sell-success",
                     "{money}", money,

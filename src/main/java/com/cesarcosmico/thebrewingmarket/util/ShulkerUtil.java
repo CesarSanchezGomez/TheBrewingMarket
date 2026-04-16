@@ -9,8 +9,13 @@ public final class ShulkerUtil {
     private ShulkerUtil() {
     }
 
-    public static boolean isShulkerBox(ItemStack item) {
+    public static boolean isShulkerBoxMaterial(ItemStack item) {
         if (item == null) return false;
+        return item.getType().name().endsWith("SHULKER_BOX");
+    }
+
+    public static boolean isShulkerBox(ItemStack item) {
+        if (!isShulkerBoxMaterial(item)) return false;
         if (!(item.getItemMeta() instanceof BlockStateMeta bsm)) return false;
         return bsm.getBlockState() instanceof ShulkerBox;
     }

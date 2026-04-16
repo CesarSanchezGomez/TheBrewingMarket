@@ -18,6 +18,9 @@
 #   tooltip_display   - Hide tooltip or components
 #   tooltip_style     - Custom tooltip style
 
+# Internal version — do not edit. Bump = new keys were added.
+config-version: 1
+
 # Language file to use from the lang/ folder (without .yml)
 # Available: en_US, es_ES (or create your own)
 lang: 'en_US'
@@ -30,6 +33,7 @@ market:
   # Set to false to disable for everyone. When true, individual
   # players can be excluded by negating the thebrewingmarket.shulker permission.
   shulker-selling: true
+
   title: '<white>🍺 <gradient:#FCBDE3:#F973C4><b>Liquor Store</b></gradient> 🍺</white>'
   layout:
     - 'JJLKTKLJJ'
@@ -39,39 +43,43 @@ market:
     - 'IIIIIIIII'
     - 'JJLBCSLJJ'
 
+  # -- Daily earnings limit -------------------
+  # Caps how much money each player can earn from the market per day.
+  # Sales that would exceed the cap are rejected entirely.
+  limitation:
+    enable: true
+    earnings: 10000
+
   # -- Prices --------------------------------
   # final_price = base_price * brewery:score
-  # If a recipe is not listed, 'default' is used.
-  # Set it to 0 so a brew cannot be sold.
+  # Missing recipes use 'default'. Set a price to 0 to forbid selling.
+  #
+  # Two formats, mixable. Flat entries override groups on collision:
+  #   wine: 150              # flat: recipe -> price
+  #   groups:                # groups: price -> [recipes]
+  #     30: [darkbeer, wheatbeer]
   prices:
     default: 10
     beer: 25
-    darkbeer: 30
-    wheatbeer: 30
     cidre: 35
     wine: 150
     mead: 120
-    ap_mead: 130
-    vodka: 130
-    g_vodka: 160
-    whiskey: 200
-    fire_whiskey: 250
-    rum: 180
-    tequila: 170
-    gin: 160
-    brandy: 200
-    absinthe: 250
-    gr_absinthe: 300
     apple_liquor: 140
+    tequila: 170
     shroom_vodka: 220
-    gin_and_tonic: 180
-    red_sangria: 160
-    french_75: 200
+    gr_absinthe: 300
     coffee: 40
     iced_coffee: 50
     hot_choc: 35
     eggnog: 60
     hangover_detox: 80
+    groups:
+      30: [darkbeer, wheatbeer]
+      130: [ap_mead, vodka]
+      160: [g_vodka, gin, red_sangria]
+      180: [rum, gin_and_tonic]
+      200: [whiskey, brandy, french_75]
+      250: [fire_whiskey, absinthe]
 
   # -- Item Slots -----------------------------
   # Symbol for slots where players can place/view brews

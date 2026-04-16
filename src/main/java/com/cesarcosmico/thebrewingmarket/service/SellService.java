@@ -7,25 +7,22 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public final class SellService {
 
-    private final BrewEvaluator priceService;
+    private final BrewEvaluator brewEvaluator;
     private final EconomyService economyService;
 
-    public SellService(BrewEvaluator priceService, EconomyService economyService) {
-        this.priceService = priceService;
+    public SellService(BrewEvaluator brewEvaluator, EconomyService economyService) {
+        this.brewEvaluator = brewEvaluator;
         this.economyService = economyService;
-    }
-
-    public record SellResult(double money, int itemCount) {
     }
 
     public record SoldBrewDetail(String recipeId, double score, double pricePerUnit, int quantity,
@@ -36,133 +33,168 @@ public final class SellService {
     }
 
     public record DetailedSellResult(double money, int itemCount, List<SoldBrewDetail> details) {
-        public SellResult toSimple() {
-            return new SellResult(money, itemCount);
+    }
+
+    public record InventoryStats(double value, int brewCount) {
+        public static final InventoryStats EMPTY = new InventoryStats(0.0, 0);
+    }
+
+    public record SellPlan(double money,
+                           int itemCount,
+                           List<SoldBrewDetail> details,
+                           Runnable applyAction) {
+        public static SellPlan empty() {
+            return new SellPlan(0.0, 0, List.of(), () -> {});
+        }
+
+        public boolean hasValue() {
+            return money > 0 && itemCount > 0;
+        }
+
+        public void apply() {
+            applyAction.run();
+        }
+
+        public DetailedSellResult toDetailedResult() {
+            return new DetailedSellResult(money, itemCount, details);
         }
     }
 
-    // ── Value calculation ────────────────────────────────────────
+    // ── Single-pass inventory stats (used by GUI refresh) ────────
 
-    public double calculateValue(Inventory inventory, MarketConfig config, boolean includeShulkers) {
-        double total = 0;
-        for (int slot : config.getItemSlots()) {
-            ItemStack item = inventory.getItem(slot);
-            var eval = priceService.evaluate(item);
-            if (eval.isPresent()) {
-                total += eval.get().price() * item.getAmount();
-            } else if (includeShulkers && item != null && ShulkerUtil.isShulkerBox(item)) {
-                total += calculateShulkerValue(item);
-            }
-        }
-        return total;
-    }
-
-    public double calculateInventoryValue(Player player, boolean includeShulkers) {
-        double total = 0;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null) continue;
-            var eval = priceService.evaluate(item);
-            if (eval.isPresent()) {
-                total += eval.get().price() * item.getAmount();
-            } else if (includeShulkers && ShulkerUtil.isShulkerBox(item)) {
-                total += calculateShulkerValue(item);
-            }
-        }
-        return total;
-    }
-
-    public double calculateTotalValue(Inventory inventory, MarketConfig config,
-                                      Player player, boolean includeShulkers) {
-        return calculateValue(inventory, config, includeShulkers) + calculateInventoryValue(player, includeShulkers);
-    }
-
-    // ── Brew counting ────────────────────────────────────────────
-
-    public int countBrews(Inventory inventory, MarketConfig config, boolean includeShulkers) {
+    public InventoryStats computeGuiStats(Inventory inventory, MarketConfig config, boolean includeShulkers) {
+        double value = 0;
         int count = 0;
         for (int slot : config.getItemSlots()) {
             ItemStack item = inventory.getItem(slot);
-            if (item != null && priceService.evaluate(item).isPresent()) {
-                count += item.getAmount();
-            } else if (includeShulkers && item != null && ShulkerUtil.isShulkerBox(item)) {
-                count += countBrewsInShulker(item);
+            if (item == null || item.getType().isAir()) continue;
+
+            var eval = brewEvaluator.evaluate(item);
+            if (eval.isPresent()) {
+                int amount = item.getAmount();
+                value += eval.get().price() * amount;
+                count += amount;
+            } else if (includeShulkers && ShulkerUtil.isShulkerBoxMaterial(item)) {
+                InventoryStats sub = readShulkerStats(item);
+                value += sub.value();
+                count += sub.brewCount();
             }
         }
-        return count;
+        return new InventoryStats(value, count);
     }
 
-    public int countBrewsInPlayerInventory(Player player, boolean includeShulkers) {
+    public InventoryStats computePlayerStats(Player player, boolean includeShulkers) {
+        double value = 0;
         int count = 0;
         for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null) continue;
-            if (priceService.evaluate(item).isPresent()) {
-                count += item.getAmount();
-            } else if (includeShulkers && ShulkerUtil.isShulkerBox(item)) {
-                count += countBrewsInShulker(item);
+            if (item == null || item.getType().isAir()) continue;
+
+            var eval = brewEvaluator.evaluate(item);
+            if (eval.isPresent()) {
+                int amount = item.getAmount();
+                value += eval.get().price() * amount;
+                count += amount;
+            } else if (includeShulkers && ShulkerUtil.isShulkerBoxMaterial(item)) {
+                InventoryStats sub = readShulkerStats(item);
+                value += sub.value();
+                count += sub.brewCount();
             }
         }
-        return count;
+        return new InventoryStats(value, count);
     }
 
-    // ── Detailed sell (with per-recipe breakdown) ────────────────
+    // ── Sell plans (used by listener for Sell / Sell All) ────────
 
-    public DetailedSellResult detailedSellFromGui(Inventory inventory, MarketConfig config,
-                                                  boolean includeShulkers) {
+    public SellPlan planSellFromGui(Inventory inventory, MarketConfig config, boolean includeShulkers) {
+        Map<String, SoldBrewDetail> detailMap = new LinkedHashMap<>();
+        List<Runnable> commits = new ArrayList<>();
         double total = 0;
         int count = 0;
-        Map<String, SoldBrewDetail> detailMap = new LinkedHashMap<>();
 
         for (int slot : config.getItemSlots()) {
             ItemStack item = inventory.getItem(slot);
-            var eval = priceService.evaluate(item);
+            if (item == null || item.getType().isAir()) continue;
+
+            var eval = brewEvaluator.evaluate(item);
             if (eval.isPresent()) {
-                double itemTotal = eval.get().price() * item.getAmount();
-                total += itemTotal;
-                count += item.getAmount();
-                accumulateDetail(detailMap, eval.get(), item.getAmount());
-                inventory.setItem(slot, null);
-            } else if (includeShulkers && item != null && ShulkerUtil.isShulkerBox(item)) {
-                SellResult shulkerResult = processShulker(item, detailMap);
-                total += shulkerResult.money();
-                count += shulkerResult.itemCount();
+                int amount = item.getAmount();
+                total += eval.get().price() * amount;
+                count += amount;
+                accumulateDetail(detailMap, eval.get(), amount);
+                final int capturedSlot = slot;
+                commits.add(() -> inventory.setItem(capturedSlot, null));
+            } else if (includeShulkers && ShulkerUtil.isShulkerBoxMaterial(item)) {
+                ShulkerPlan sp = planShulkerSell(item, detailMap);
+                if (sp != null) {
+                    total += sp.value;
+                    count += sp.count;
+                    commits.add(sp.commit);
+                }
             }
         }
 
-        return new DetailedSellResult(total, count, new ArrayList<>(detailMap.values()));
+        if (total <= 0) return SellPlan.empty();
+        return new SellPlan(total, count, new ArrayList<>(detailMap.values()),
+                () -> commits.forEach(Runnable::run));
     }
 
-    public DetailedSellResult detailedSellAll(Inventory inventory, MarketConfig config,
-                                              Player player, boolean includeShulkers) {
-        DetailedSellResult guiResult = detailedSellFromGui(inventory, config, includeShulkers);
-
-        double inventoryTotal = 0;
-        int inventoryCount = 0;
+    public SellPlan planSellAll(Inventory inventory, MarketConfig config, Player player, boolean includeShulkers) {
         Map<String, SoldBrewDetail> detailMap = new LinkedHashMap<>();
-        guiResult.details().forEach(d -> detailMap.put(detailKey(d.recipeId(), d.score()), d));
+        List<Runnable> commits = new ArrayList<>();
+        double total = 0;
+        int count = 0;
 
-        ItemStack[] contents = player.getInventory().getContents();
+        // GUI slots
+        for (int slot : config.getItemSlots()) {
+            ItemStack item = inventory.getItem(slot);
+            if (item == null || item.getType().isAir()) continue;
+
+            var eval = brewEvaluator.evaluate(item);
+            if (eval.isPresent()) {
+                int amount = item.getAmount();
+                total += eval.get().price() * amount;
+                count += amount;
+                accumulateDetail(detailMap, eval.get(), amount);
+                final int capturedSlot = slot;
+                commits.add(() -> inventory.setItem(capturedSlot, null));
+            } else if (includeShulkers && ShulkerUtil.isShulkerBoxMaterial(item)) {
+                ShulkerPlan sp = planShulkerSell(item, detailMap);
+                if (sp != null) {
+                    total += sp.value;
+                    count += sp.count;
+                    commits.add(sp.commit);
+                }
+            }
+        }
+
+        // Player inventory
+        PlayerInventory playerInv = player.getInventory();
+        ItemStack[] contents = playerInv.getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            if (item == null) continue;
+            if (item == null || item.getType().isAir()) continue;
 
-            var eval = priceService.evaluate(item);
+            var eval = brewEvaluator.evaluate(item);
             if (eval.isPresent()) {
-                inventoryTotal += eval.get().price() * item.getAmount();
-                inventoryCount += item.getAmount();
-                accumulateDetail(detailMap, eval.get(), item.getAmount());
-                player.getInventory().setItem(i, null);
-            } else if (includeShulkers && ShulkerUtil.isShulkerBox(item)) {
-                SellResult shulkerResult = processShulker(item, detailMap);
-                inventoryTotal += shulkerResult.money();
-                inventoryCount += shulkerResult.itemCount();
+                int amount = item.getAmount();
+                total += eval.get().price() * amount;
+                count += amount;
+                accumulateDetail(detailMap, eval.get(), amount);
+                final int capturedIndex = i;
+                commits.add(() -> playerInv.setItem(capturedIndex, null));
+            } else if (includeShulkers && ShulkerUtil.isShulkerBoxMaterial(item)) {
+                ShulkerPlan sp = planShulkerSell(item, detailMap);
+                if (sp != null) {
+                    total += sp.value;
+                    count += sp.count;
+                    commits.add(sp.commit);
+                }
             }
         }
 
-        return new DetailedSellResult(
-                guiResult.money() + inventoryTotal,
-                guiResult.itemCount() + inventoryCount,
-                new ArrayList<>(detailMap.values())
-        );
+        if (total <= 0) return SellPlan.empty();
+        return new SellPlan(total, count, new ArrayList<>(detailMap.values()),
+                () -> commits.forEach(Runnable::run));
     }
 
     // ── Economy delegation ───────────────────────────────────────
@@ -175,70 +207,56 @@ public final class SellService {
         return economyService.format(amount);
     }
 
-    // ── Shulker helpers (private) ────────────────────────────────
+    // ── Shulker helpers ──────────────────────────────────────────
 
-    private Optional<ShulkerBox> openShulker(ItemStack shulkerItem) {
-        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return Optional.empty();
-        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return Optional.empty();
-        return Optional.of(shulker);
-    }
+    private InventoryStats readShulkerStats(ItemStack shulkerItem) {
+        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return InventoryStats.EMPTY;
+        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return InventoryStats.EMPTY;
 
-    private double calculateShulkerValue(ItemStack shulkerItem) {
-        return openShulker(shulkerItem).map(shulker -> {
-            double total = 0;
-            for (ItemStack item : shulker.getInventory().getContents()) {
-                if (item == null) continue;
-                var eval = priceService.evaluate(item);
-                if (eval.isPresent()) {
-                    total += eval.get().price() * item.getAmount();
-                }
-            }
-            return total;
-        }).orElse(0.0);
-    }
-
-    private int countBrewsInShulker(ItemStack shulkerItem) {
-        return openShulker(shulkerItem).map(shulker -> {
-            int count = 0;
-            for (ItemStack item : shulker.getInventory().getContents()) {
-                if (item == null) continue;
-                if (priceService.evaluate(item).isPresent()) {
-                    count += item.getAmount();
-                }
-            }
-            return count;
-        }).orElse(0);
-    }
-
-    private SellResult processShulker(ItemStack shulkerItem, Map<String, SoldBrewDetail> detailMap) {
-        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return new SellResult(0, 0);
-        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return new SellResult(0, 0);
-
-        double total = 0;
+        double value = 0;
         int count = 0;
+        for (ItemStack inner : shulker.getInventory().getContents()) {
+            if (inner == null || inner.getType().isAir()) continue;
+            var eval = brewEvaluator.evaluate(inner);
+            if (eval.isPresent()) {
+                value += eval.get().price() * inner.getAmount();
+                count += inner.getAmount();
+            }
+        }
+        return new InventoryStats(value, count);
+    }
+
+    private ShulkerPlan planShulkerSell(ItemStack shulkerItem, Map<String, SoldBrewDetail> detailMap) {
+        if (!(shulkerItem.getItemMeta() instanceof BlockStateMeta bsm)) return null;
+        if (!(bsm.getBlockState() instanceof ShulkerBox shulker)) return null;
+
         Inventory inv = shulker.getInventory();
-        boolean anyProcessed = false;
+        double value = 0;
+        int count = 0;
+        boolean anyFound = false;
 
         for (int i = 0; i < inv.getSize(); i++) {
-            ItemStack item = inv.getItem(i);
-            if (item == null || item.getType().isAir()) continue;
-
-            var eval = priceService.evaluate(item);
+            ItemStack inner = inv.getItem(i);
+            if (inner == null || inner.getType().isAir()) continue;
+            var eval = brewEvaluator.evaluate(inner);
             if (eval.isPresent()) {
-                total += eval.get().price() * item.getAmount();
-                count += item.getAmount();
-                accumulateDetail(detailMap, eval.get(), item.getAmount());
+                value += eval.get().price() * inner.getAmount();
+                count += inner.getAmount();
+                accumulateDetail(detailMap, eval.get(), inner.getAmount());
                 inv.setItem(i, null);
-                anyProcessed = true;
+                anyFound = true;
             }
         }
 
-        if (anyProcessed) {
+        if (!anyFound) return null;
+
+        return new ShulkerPlan(value, count, () -> {
             bsm.setBlockState(shulker);
             shulkerItem.setItemMeta(bsm);
-        }
+        });
+    }
 
-        return new SellResult(total, count);
+    private record ShulkerPlan(double value, int count, Runnable commit) {
     }
 
     // ── Detail accumulation ──────────────────────────────────────

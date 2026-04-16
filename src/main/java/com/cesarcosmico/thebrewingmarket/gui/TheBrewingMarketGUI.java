@@ -67,14 +67,14 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
     }
 
     public void refreshSellButtons() {
-        double guiValue = sellService.calculateValue(inventory, config, shulkerEnabled);
-        double totalValue = sellService.calculateTotalValue(inventory, config, owner, shulkerEnabled);
+        SellService.InventoryStats guiStats    = sellService.computeGuiStats(inventory, config, shulkerEnabled);
+        SellService.InventoryStats playerStats = sellService.computePlayerStats(owner, shulkerEnabled);
 
-        String guiMoney = sellService.format(guiValue);
-        String totalMoney = sellService.format(totalValue);
+        String guiMoney   = sellService.format(guiStats.value());
+        String totalMoney = sellService.format(guiStats.value() + playerStats.value());
 
-        int guiBrewCount = sellService.countBrews(inventory, config, shulkerEnabled);
-        int totalBrewCount = guiBrewCount + sellService.countBrewsInPlayerInventory(owner, shulkerEnabled);
+        int guiBrewCount   = guiStats.brewCount();
+        int totalBrewCount = guiBrewCount + playerStats.brewCount();
 
         for (int slot : config.getSellSlots()) {
             if (guiBrewCount > 0) {

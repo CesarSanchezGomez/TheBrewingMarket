@@ -1,16 +1,21 @@
 package com.cesarcosmico.thebrewingmarket;
 
 import com.cesarcosmico.thebrewingmarket.command.CommandManager;
+import com.cesarcosmico.thebrewingmarket.config.ConfigVersionChecker;
 import com.cesarcosmico.thebrewingmarket.config.DatabaseConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.listener.MarketGUIListener;
 import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
 import com.cesarcosmico.thebrewingmarket.brew.BreweryXBrewResolver;
-import com.cesarcosmico.thebrewingmarket.service.BrewEvaluator;
-import com.cesarcosmico.thebrewingmarket.service.EconomyService;
-import com.cesarcosmico.thebrewingmarket.service.SellService;
 import com.cesarcosmico.thebrewingmarket.brew.TBPBrewResolver;
+import com.cesarcosmico.thebrewingmarket.integration.placeholderapi.TBMExpansion;
+import com.cesarcosmico.thebrewingmarket.service.BrewEvaluator;
+import com.cesarcosmico.thebrewingmarket.service.DailyEarningsTracker;
+import com.cesarcosmico.thebrewingmarket.service.EconomyService;
+import com.cesarcosmico.thebrewingmarket.service.MarketAnalyticsCache;
+import com.cesarcosmico.thebrewingmarket.service.PlayerStatsCache;
+import com.cesarcosmico.thebrewingmarket.service.SellService;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import com.cesarcosmico.thebrewingmarket.storage.StorageFactory;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
@@ -29,12 +34,15 @@ import java.util.logging.Level;
 public final class TheBrewingMarketPlugin extends JavaPlugin {
 
     private EconomyService economyService;
-    private BrewEvaluator brewPriceService;
+    private BrewEvaluator brewEvaluator;
     private SellService sellService;
     private MarketConfig marketConfig;
     private LangConfig langConfig;
     private SellHistoryService historyService;
     private BrewResolver brewResolver;
+    private DailyEarningsTracker dailyEarningsTracker;
+    private PlayerStatsCache playerStatsCache;
+    private MarketAnalyticsCache marketAnalyticsCache;
 
     @Override
     public void onEnable() {
@@ -63,12 +71,14 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         }
 
         saveDefaultConfig();
+        ConfigVersionChecker.check(getConfig(), "config.yml",
+                MarketConfig.CURRENT_VERSION, this, getLogger());
 
         this.langConfig = new LangConfig(this);
         this.economyService = new EconomyService(economy);
         this.marketConfig = new MarketConfig(getConfig(), getLogger());
-        this.brewPriceService = new BrewEvaluator(marketConfig, brewResolver);
-        this.sellService = new SellService(brewPriceService, economyService);
+        this.brewEvaluator = new BrewEvaluator(marketConfig, brewResolver);
+        this.sellService = new SellService(brewEvaluator, economyService);
 
         final File dbFile = new File(getDataFolder(), "database.yml");
         if (!dbFile.exists()) {
@@ -76,6 +86,8 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         }
         final FileConfiguration dbYml = YamlConfiguration.loadConfiguration(
                 new File(getDataFolder(), "database.yml"));
+        ConfigVersionChecker.check(dbYml, "database.yml",
+                DatabaseConfig.CURRENT_VERSION, this, getLogger());
         final DatabaseConfig dbConfig = new DatabaseConfig(dbYml);
         try {
             this.historyService = StorageFactory.create(dbConfig, getDataFolder().toPath(), getLogger());
@@ -90,15 +102,33 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
             return;
         }
 
+        this.dailyEarningsTracker = new DailyEarningsTracker(historyService);
+        this.playerStatsCache = new PlayerStatsCache(historyService);
+        this.marketAnalyticsCache = new MarketAnalyticsCache(historyService);
+        this.marketAnalyticsCache.start(this);
+
         registerCommands();
         getServer().getPluginManager().registerEvents(
-                new MarketGUIListener(this, langConfig, historyService), this);
+                new MarketGUIListener(this, langConfig, historyService,
+                        dailyEarningsTracker, playerStatsCache, this::getMarketConfig), this);
+
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            for (String id : new String[] {"tbm", "thebrewingmarket"}) {
+                new TBMExpansion(id, this, this::getMarketConfig,
+                        dailyEarningsTracker, playerStatsCache,
+                        marketAnalyticsCache, sellService).register();
+            }
+            getLogger().info("PlaceholderAPI expansions registered: tbm, thebrewingmarket.");
+        }
 
         getLogger().info("TheBrewingMarket enabled.");
     }
 
     @Override
     public void onDisable() {
+        if (marketAnalyticsCache != null) {
+            marketAnalyticsCache.stop();
+        }
         if (historyService != null) {
             historyService.shutdown();
         }
@@ -107,10 +137,12 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
 
     public void reload() {
         reloadConfig();
+        ConfigVersionChecker.check(getConfig(), "config.yml",
+                MarketConfig.CURRENT_VERSION, this, getLogger());
         this.langConfig.load();
         this.marketConfig = new MarketConfig(getConfig(), getLogger());
-        this.brewPriceService = new BrewEvaluator(marketConfig, brewResolver);
-        this.sellService = new SellService(brewPriceService, economyService);
+        this.brewEvaluator = new BrewEvaluator(marketConfig, brewResolver);
+        this.sellService = new SellService(brewEvaluator, economyService);
     }
 
     private void registerCommands() {
