@@ -33,8 +33,6 @@ public final class LayoutParser {
                 slotsBySymbol.computeIfAbsent(symbol, k -> new LinkedHashSet<>()).add(slot);
             }
         }
-
-        logger.info("Loaded market layout: " + rows.length + " rows (" + inventorySize + " slots).");
     }
 
     public int getInventorySize() {
