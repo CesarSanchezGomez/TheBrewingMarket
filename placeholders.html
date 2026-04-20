@@ -73,7 +73,8 @@
                     <tr><td><code>%tbm_lifetime_brews%</code></td><td>Long</td><td>Total brews the player has ever sold.</td></tr>
                     <tr><td><code>%tbm_last_sale_amount%</code></td><td>String</td><td>Money from the most recent sale, formatted.</td></tr>
                     <tr><td><code>%tbm_last_sale_amount_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
-                    <tr><td><code>%tbm_last_sale_recipe%</code></td><td>String</td><td>Recipe id of the last brew sold.</td></tr>
+                    <tr><td><code>%tbm_last_sale_recipe_id%</code></td><td>String</td><td>Recipe id of the last brew sold.</td></tr>
+                    <tr><td><code>%tbm_last_sale_recipe_name%</code></td><td>String</td><td>Display name (plain text, no formatting) of the last brew sold. Falls back to the recipe id when the item has no custom name.</td></tr>
                     <tr><td><code>%tbm_last_sale_ago%</code></td><td>String</td><td>Relative time (e.g. <code>5 min ago</code>).</td></tr>
                     </tbody>
                 </table>
@@ -105,7 +106,8 @@
                     <tbody>
                     <tr><td><code>%tbm_global_total_today%</code></td><td>String</td><td>Total money earned by everyone today, formatted.</td></tr>
                     <tr><td><code>%tbm_global_total_today_raw%</code></td><td>Double</td><td>Same, raw.</td></tr>
-                    <tr><td><code>%tbm_global_top_recipe_today%</code></td><td>String</td><td>Most-sold recipe today (ties broken alphabetically).</td></tr>
+                    <tr><td><code>%tbm_global_top_recipe_id_today%</code></td><td>String</td><td>Recipe id of the most-sold brew today (ties broken alphabetically).</td></tr>
+                    <tr><td><code>%tbm_global_top_recipe_name_today%</code></td><td>String</td><td>Display name (plain text) of the most-sold brew today — taken from its most recent sale. Falls back to the recipe id when that sale has no custom name.</td></tr>
                     <tr><td><code>%tbm_global_top_recipe_today_qty%</code></td><td>Long</td><td>Units sold of that top recipe today.</td></tr>
                     <tr><td><code>%tbm_global_top_player_today%</code></td><td>String</td><td>Player name with the highest earnings today.</td></tr>
                     <tr><td><code>%tbm_global_top_player_today_amount%</code></td><td>String</td><td>That player's earnings today, formatted.</td></tr>
@@ -118,6 +120,10 @@
                 <strong>Refresh interval:</strong> global analytics can be up to 60 seconds stale. The refresh runs on the async DB executor, so it never blocks the server tick.
             </div>
 
+            <div class="info-box note">
+                <strong>Empty fallback:</strong> placeholders that depend on a sale fall back to a per-placeholder message defined under <code>placeholders.empty</code> in your lang file. Each key can be customized independently — see <a href="language.html">Language</a> for the full list.
+            </div>
+
             <h2>Verification</h2>
             <p>Test with PlaceholderAPI's built-in <code>/papi parse</code> command:</p>
             <div class="code-block">
@@ -126,7 +132,7 @@
 /papi info thebrewingmarket
 /papi parse &lt;yourName&gt; %tbm_daily_earned% / %tbm_daily_limit%
 /papi parse &lt;yourName&gt; %tbm_lifetime_brews% brews, %tbm_lifetime_earned% earned
-/papi parse &lt;yourName&gt; top recipe: %tbm_global_top_recipe_today% (%tbm_global_top_recipe_today_qty%)</pre>
+/papi parse &lt;yourName&gt; top recipe: %tbm_global_top_recipe_name_today% (%tbm_global_top_recipe_today_qty%)</pre>
             </div>
 
             <div class="page-nav">
@@ -134,7 +140,10 @@
                     <span class="label">Previous</span>
                     <span class="title">Language</span>
                 </a>
-                <span></span>
+                <a href="references.html" class="next">
+                    <span class="label">Next</span>
+                    <span class="title">Default Files</span>
+                </a>
             </div>
             <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
         </div>

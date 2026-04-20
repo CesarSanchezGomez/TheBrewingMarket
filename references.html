@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>References — TheBrewingMarket Wiki</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="wrapper">
+
+    <aside class="sidebar"></aside>
+
+    <div class="main">
+        <header class="header"></header>
+
+        <div class="content">
+            <h1>References</h1>
+            <p class="subtitle">Complete default files — copy, paste, and customize.</p>
+
+            <h2><code>config.yml</code></h2>
+            <div class="code-block">
+                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml"># =============================================
+#          TheBrewingMarket Configuration
+# =============================================
+# Supports MiniMessage format for all text fields.
+# The layout uses symbols to define the GUI structure.
+#
+# Price formula: base_price * brewery:score (0.01 to 1.0)
+#
+# -- Data Components --------------------------
+# Icons support the following Minecraft data components:
+#   custom_name       - Item name (MiniMessage)
+#   lore              - List of lines (MiniMessage)
+#   profile           - Head texture (textures: 'base64...')
+#   enchantments      - Enchantment:level map
+#   custom_model_data - floats, flags, strings, colors
+#   item_model        - Model resource location
+#   potion_contents   - Potion type, color, effects
+#   tooltip_display   - Hide tooltip or components
+#   tooltip_style     - Custom tooltip style
+
+# Internal version — do not edit. Bump = new keys were added.
+config-version: 1
+
+# Language file to use from the lang/ folder (without .yml)
+# Available: en_US, es_ES (or create your own)
+lang: 'en_US'
+
+# Number of records shown per page in /tbm history (1-32)
+history-per-page: 8
+
+market:
+  # Allow selling brews from inside shulker boxes via "Sell All".
+  # Set to false to disable for everyone. When true, individual
+  # players can be excluded by negating the thebrewingmarket.shulker permission.
+  shulker-selling: true
+
+  title: '&lt;white&gt;🍺 &lt;gradient:#FCBDE3:#F973C4&gt;&lt;b&gt;Liquor Store&lt;/b&gt;&lt;/gradient&gt; 🍺&lt;/white&gt;'
+  layout:
+    - 'JJLKTKLJJ'
+    - 'IIIIIIIII'
+    - 'IIIIIIIII'
+    - 'IIIIIIIII'
+    - 'IIIIIIIII'
+    - 'JJLBCSLJJ'
+
+  # -- Daily earnings limit -------------------
+  # Caps how much money each player can earn from the market per day.
+  # Sales that would exceed the cap are rejected entirely.
+  limitation:
+    enable: true
+    earnings: 10000
+
+  # -- Prices --------------------------------
+  # final_price = base_price * brewery:score
+  # Missing recipes use 'default'. Set a price to 0 to forbid selling.
+  #
+  # Two formats, mixable. Flat entries override groups on collision:
+  #   wine: 150              # flat: recipe -&gt; price
+  #   groups:                # groups: price -&gt; [recipes]
+  #     30: [darkbeer, wheatbeer]
+  prices:
+    default: 10
+    beer: 25
+    cidre: 35
+    wine: 150
+    mead: 120
+    apple_liquor: 140
+    tequila: 170
+    shroom_vodka: 220
+    gr_absinthe: 300
+    coffee: 40
+    iced_coffee: 50
+    hot_choc: 35
+    eggnog: 60
+    hangover_detox: 80
+    groups:
+      30: [darkbeer, wheatbeer]
+      130: [ap_mead, vodka]
+      160: [g_vodka, gin, red_sangria]
+      180: [rum, gin_and_tonic]
+      200: [whiskey, brandy, french_75]
+      250: [fire_whiskey, absinthe]
+
+  # -- Item Slots -----------------------------
+  # Symbol for slots where players can place/view brews
+  item-slot:
+    symbol: 'I'
+
+  # -- Sell Button (sells only items in the GUI) --
+  sell-icons:
+    symbol: 'B'
+    allow-icon:
+      material: 'POTION'
+      potion_contents:
+        custom_color: 16679863
+      tooltip_display:
+        hidden_components:
+          - 'potion_contents'
+      custom_name: '&lt;gradient:#FCBDE3:#F973C4&gt;● &lt;b&gt;Sell drink&lt;/b&gt;&lt;/gradient&gt;'
+      lore:
+        - ''
+        - ' &lt;font:uniform&gt;&lt;white&gt;Sell all brews from&lt;/white&gt;&lt;/font&gt; '
+        - ' &lt;font:uniform&gt;&lt;white&gt;above for &lt;#FCBDE3&gt;{money}&lt;/#FCBDE3&gt; coins.&lt;/white&gt;&lt;/font&gt; '
+        - ''
+        - ' &lt;font:uniform&gt;&lt;gradient:#FCBDE3:#F973C4&gt;&lt;b&gt;&gt; Click to sell&lt;/b&gt; 🍺&lt;/gradient&gt;&lt;/font&gt;'
+        - ''
+      action:
+        sound:
+          type: 'sound'
+          value: 'minecraft:block.amethyst_block.place'
+    deny-icon:
+      material: 'GLASS_BOTTLE'
+      custom_name: '&lt;gradient:#FF7373:#FF0D0D&gt;&lt;b&gt;Nothing to sell!&lt;/b&gt;&lt;/gradient&gt;'
+      lore:
+        - ''
+        - '  &lt;#FF7373&gt;❌&lt;/#FF7373&gt; &lt;white&gt;&lt;font:uniform&gt;Nothing to sell!&lt;/font&gt;&lt;/white&gt; &lt;#FF0D0D&gt;❌&lt;/#FF0D0D&gt;  '
+        - ''
+      action:
+        sound:
+          type: 'sound'
+          value: 'minecraft:entity.villager.no'
+
+  # -- Sell All Button (sells from GUI + scans inventory) --
+  sell-all-icons:
+    symbol: 'S'
+    allow-icon:
+      material: 'POTION'
+      potion_contents:
+        custom_color: 16679863
+      enchantment_glint_override: true
+      tooltip_display:
+        hidden_components:
+          - 'potion_contents'
+      custom_name: '&lt;gradient:#FCBDE3:#F973C4&gt;● &lt;b&gt;Sell all!&lt;/b&gt;&lt;/gradient&gt;'
+      lore:
+        - ''
+        - ' &lt;font:uniform&gt;&lt;white&gt;Sell all brews from your&lt;/white&gt;&lt;/font&gt; '
+        - ' &lt;font:uniform&gt;&lt;white&gt;inventory for &lt;#FCBDE3&gt;{money}&lt;/#FCBDE3&gt; coins.&lt;/white&gt;&lt;/font&gt; '
+        - ''
+        - ' &lt;font:uniform&gt;&lt;gradient:#FCBDE3:#F973C4&gt;&lt;b&gt;&gt; Click to sell&lt;/b&gt; 🍺&lt;/gradient&gt;&lt;/font&gt;'
+        - ''
+      action:
+        sound:
+          type: 'sound'
+          value: 'minecraft:block.amethyst_block.place'
+    deny-icon:
+      material: 'GLASS_BOTTLE'
+      custom_name: '&lt;gradient:#FF7373:#FF0D0D&gt;&lt;b&gt;Nothing to sell!&lt;/b&gt;&lt;/gradient&gt;'
+      lore:
+        - ''
+        - '  &lt;#FF7373&gt;❌&lt;/#FF7373&gt; &lt;white&gt;&lt;font:uniform&gt;Nothing to sell!&lt;/font&gt;&lt;/white&gt; &lt;#FF0D0D&gt;❌&lt;/#FF0D0D&gt;  '
+        - ''
+      action:
+        sound:
+          type: 'sound'
+          value: 'minecraft:entity.villager.no'
+
+  # -- Title Icon -----------------------------
+  title-icon:
+    symbol: 'T'
+    material: 'PLAYER_HEAD'
+    profile:
+      textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTg4NzZjZTFiY2VjMmI5MjI0ZjRkNjhlZTA0ZjdjNjNiZjM1NGJhOTY2ZmE2YTVjYjg4ZDFiNWMwNTA0ZGRjMyJ9fX0='
+    custom_name: '&lt;white&gt;🍺 &lt;gradient:#FCBDE3:#F973C4&gt;&lt;b&gt;Liquor Store&lt;/b&gt;&lt;/gradient&gt; 🍺&lt;/white&gt;'
+    lore:
+      - ''
+      - ' &lt;white&gt;Place your brews below and...&lt;/white&gt; '
+      - ' &lt;white&gt;Sell them for money!&lt;/white&gt; '
+      - ''
+      - ' &lt;white&gt;The price depends on the recipe&lt;/white&gt; '
+      - ' &lt;white&gt;and the brew quality.&lt;/white&gt; '
+      - ''
+
+  # -- Close Button ---------------------------
+  close-icon:
+    symbol: 'C'
+    material: 'PLAYER_HEAD'
+    profile:
+      textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTg4NzZjZTFiY2VjMmI5MjI0ZjRkNjhlZTA0ZjdjNjNiZjM1NGJhOTY2ZmE2YTVjYjg4ZDFiNWMwNTA0ZGRjMyJ9fX0='
+    custom_name: '&lt;gradient:#FCBDE3:#F973C4&gt;&lt;b&gt;Close&lt;/b&gt;&lt;/gradient&gt;'
+
+  # -- Decorative Icons -----------------------
+  decorative-icons:
+    pink-glass:
+      symbol: 'J'
+      material: 'PINK_STAINED_GLASS_PANE'
+      tooltip_display:
+        hide_tooltip: true
+    brain-coral:
+      symbol: 'K'
+      material: 'BRAIN_CORAL'
+      tooltip_display:
+        hide_tooltip: true
+    brain-coral-fan:
+      symbol: 'L'
+      material: 'BRAIN_CORAL_FAN'
+      tooltip_display:
+        hide_tooltip: true</pre>
+            </div>
+
+            <h2><code>database.yml</code></h2>
+            <div class="code-block">
+                <div class="code-header"><span>database.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml"># Internal version — do not edit. Bump = new keys were added.
+config-version: 1
+
+# local database
+#   SQLite
+
+# remote database
+#   MySQL
+#   MariaDB (preferred over MySQL)
+#
+data-storage-method: SQLite
+
+SQLite:
+  # Name of the .db file (without extension) inside the plugin's data folder
+  file: 'TheBrewingMarket'
+  # Leave empty to keep the legacy table name 'sell_history' (no prefix)
+  table-prefix: 'tbm'
+
+MySQL:
+  host: 'localhost'
+  port: '3306'
+  user: 'root'
+  password: 'password'
+  database: 'minecraft'
+  connection-parameters: '?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8'
+  Pool-Settings:
+    max-pool-size: 10
+    min-idle: 10
+    max-lifetime: 180000
+    keep-alive-time: 60000
+    time-out: 20000
+  table-prefix: 'tbm'
+
+MariaDB:
+  host: 'localhost'
+  port: '3306'
+  user: 'root'
+  password: 'password'
+  database: 'minecraft'
+  connection-parameters: '?useUnicode=true&amp;characterEncoding=UTF-8'
+  Pool-Settings:
+    max-pool-size: 10
+    min-idle: 10
+    max-lifetime: 180000
+    keep-alive-time: 60000
+    time-out: 20000
+  table-prefix: 'tbm'</pre>
+            </div>
+
+            <h2><code>lang/en_US.yml</code></h2>
+            <div class="code-block">
+                <div class="code-header"><span>lang/en_US.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml"># TheBrewingMarket - English Language File (US)
+# Supports MiniMessage formatting.
+# Use {prefix} to insert the plugin prefix.
+# Internal version — do not edit. Bump = new messages were added.
+config-version: 2
+
+prefix: '&lt;white&gt;[&lt;gradient:#FCBDE3:#F973C4&gt;BrewingMarket&lt;/gradient&gt;]&lt;/white&gt;'
+
+# -- Placeholders -----------------------------
+placeholders:
+  empty:
+    last_sale_recipe_id: 'N/A'
+    last_sale_recipe_name: 'N/A'
+    last_sale_ago: 'N/A'
+    global_top_recipe_id_today: 'N/A'
+    global_top_recipe_name_today: 'N/A'
+    global_top_player_today: 'N/A'
+
+# -- Commands ---------------------------------
+command:
+  only-players: '{prefix} &lt;red&gt;This command can only be used by players.&lt;/red&gt;'
+  no-permission: '{prefix} &lt;white&gt;You don''t have permission to do that.&lt;/white&gt;'
+  reload-success: '{prefix} &lt;white&gt;Configuration reloaded successfully.&lt;/white&gt;'
+
+# -- Market -----------------------------------
+market:
+  sell-success: '{prefix} &lt;white&gt;You sold &lt;#FCBDE3&gt;{sold_amount}&lt;/#FCBDE3&gt; brews for &lt;#FCBDE3&gt;{money}&lt;/#FCBDE3&gt;!&lt;/white&gt;'
+  sell-nothing: '{prefix} &lt;white&gt;There are no valid brews to sell.&lt;/white&gt;'
+  sell-error: '{prefix} &lt;white&gt;Transaction failed. Please try again.&lt;/white&gt;'
+  limit-reached:
+    - '{prefix} &lt;white&gt;Daily earnings: &lt;#FCBDE3&gt;{earned}&lt;/#FCBDE3&gt;/&lt;#FCBDE3&gt;{limit}&lt;/#FCBDE3&gt;.&lt;/white&gt;'
+    - '{prefix} &lt;white&gt;Remaining today: &lt;#FCBDE3&gt;{remaining}&lt;/#FCBDE3&gt;.&lt;/white&gt;'
+
+# -- History ----------------------------------
+history:
+  invalid-time: '{prefix} &lt;red&gt;Invalid time format. Use: 1s, 1m, 1h, 1d, 1w, 1M, 1Y&lt;/red&gt;'
+  empty: '{prefix} &lt;white&gt;{player} has no sell history.&lt;/white&gt;'
+  display:
+    - ''
+    - '&lt;gradient:#FCBDE3:#F973C4&gt;◤&lt;st&gt;                 &lt;/st&gt;&lt;/gradient&gt; &lt;white&gt;[&lt;/white&gt;&lt;gradient:#FCBDE3:#F973C4&gt;BrewingMarket&lt;/gradient&gt;&lt;white&gt;]&lt;/white&gt; &lt;gradient:#F973C4:#FCBDE3&gt;&lt;st&gt;                 &lt;/st&gt;◥&lt;/gradient&gt;'
+    - ''
+    - '{entries}'
+    - ''
+    - '&lt;gradient:#FCBDE3:#F973C4&gt;◣&lt;st&gt;                   &lt;/st&gt;&lt;/gradient&gt; {previous_page} &lt;white&gt;| {page}/{max_page} |&lt;/white&gt; {next_page} &lt;gradient:#F973C4:#FCBDE3&gt;&lt;st&gt;                   &lt;/st&gt;◢&lt;/gradient&gt;'
+    - ''
+  entry: '  &lt;gray&gt;•&lt;/gray&gt; {player_head} &lt;white&gt;{recipe}&lt;/white&gt; &lt;gray&gt;x{quantity}&lt;/gray&gt; &lt;white&gt;[&lt;/white&gt;&lt;#FCBDE3&gt;{quality}&lt;/#FCBDE3&gt;&lt;white&gt;]&lt;/white&gt; &lt;white&gt;[&lt;/white&gt;&lt;#FCBDE3&gt;{total}$&lt;/#FCBDE3&gt;&lt;white&gt;]&lt;/white&gt;'
+  entry_hover: '&lt;white&gt;{player}&lt;/white&gt; &lt;dark_gray&gt;-&lt;/dark_gray&gt; &lt;gray&gt;{time_ago}&lt;/gray&gt; &lt;dark_gray&gt;-&lt;/dark_gray&gt; &lt;gray&gt;{exact_date}&lt;/gray&gt;'
+  navigation:
+    previous: '&lt;gradient:#FCBDE3:#F973C4&gt;«&lt;/gradient&gt;'
+    previous_disabled: '&lt;dark_gray&gt;«&lt;/dark_gray&gt;'
+    previous_hover: '&lt;gray&gt;Click to go to page {page}&lt;/gray&gt;'
+    next: '&lt;gradient:#FCBDE3:#F973C4&gt;»&lt;/gradient&gt;'
+    next_disabled: '&lt;dark_gray&gt;»&lt;/dark_gray&gt;'
+    next_hover: '&lt;gray&gt;Click to go to page {page}&lt;/gray&gt;'</pre>
+            </div>
+
+            <h2><code>lang/es_ES.yml</code></h2>
+            <div class="code-block">
+                <div class="code-header"><span>lang/es_ES.yml</span><button class="copy-btn">Copy</button></div>
+                <pre data-lang="yaml"># TheBrewingMarket - Archivo de idioma en Español (España)
+# Soporta formato MiniMessage.
+# Usa {prefix} para insertar el prefijo del plugin.
+# Versión interna — no editar. Cambio = nuevos mensajes añadidos.
+config-version: 2
+
+prefix: '&lt;white&gt;[&lt;gradient:#FCBDE3:#F973C4&gt;BrewingMarket&lt;/gradient&gt;]&lt;/white&gt;'
+
+# -- Placeholders -----------------------------
+placeholders:
+  empty:
+    last_sale_recipe_id: 'N/A'
+    last_sale_recipe_name: 'N/A'
+    last_sale_ago: 'N/A'
+    global_top_recipe_id_today: 'N/A'
+    global_top_recipe_name_today: 'N/A'
+    global_top_player_today: 'N/A'
+
+# -- Comandos ---------------------------------
+command:
+  only-players: '{prefix} &lt;red&gt;Este comando solo puede ser usado por jugadores.&lt;/red&gt;'
+  no-permission: '{prefix} &lt;white&gt;No tienes permiso para hacer eso.&lt;/white&gt;'
+  reload-success: '{prefix} &lt;white&gt;Configuración recargada exitosamente.&lt;/white&gt;'
+
+# -- Market -----------------------------------
+market:
+  sell-success: '{prefix} &lt;white&gt;Vendiste &lt;#FCBDE3&gt;{sold_amount}&lt;/#FCBDE3&gt; bebidas por &lt;#FCBDE3&gt;{money}&lt;/#FCBDE3&gt;!&lt;/white&gt;'
+  sell-nothing: '{prefix} &lt;white&gt;No tienes bebidas para vender.&lt;/white&gt;'
+  sell-error: '{prefix} &lt;white&gt;La transacción ha fallado. Inténtalo de nuevo.&lt;/white&gt;'
+  limit-reached:
+    - '{prefix} &lt;white&gt;Ganancias del día: &lt;#FCBDE3&gt;{earned}&lt;/#FCBDE3&gt;/&lt;#FCBDE3&gt;{limit}&lt;/#FCBDE3&gt;.&lt;/white&gt;'
+    - '{prefix} &lt;white&gt;Disponible hoy: &lt;#FCBDE3&gt;{remaining}&lt;/#FCBDE3&gt;.&lt;/white&gt;'
+
+# -- Historial --------------------------------
+history:
+  invalid-time: '{prefix} &lt;red&gt;Formato de tiempo inválido. Usa: 1s, 1m, 1h, 1d, 1w, 1M, 1Y&lt;/red&gt;'
+  empty: '{prefix} &lt;white&gt;{player} no tiene historial de ventas.&lt;/white&gt;'
+  display:
+    - ''
+    - '&lt;gradient:#FCBDE3:#F973C4&gt;◤&lt;st&gt;                 &lt;/st&gt;&lt;/gradient&gt; &lt;white&gt;[&lt;/white&gt;&lt;gradient:#FCBDE3:#F973C4&gt;BrewingMarket&lt;/gradient&gt;&lt;white&gt;]&lt;/white&gt; &lt;gradient:#F973C4:#FCBDE3&gt;&lt;st&gt;                 &lt;/st&gt;◥&lt;/gradient&gt;'
+    - ''
+    - '{entries}'
+    - ''
+    - '&lt;gradient:#FCBDE3:#F973C4&gt;◣&lt;st&gt;                   &lt;/st&gt;&lt;/gradient&gt; {previous_page} &lt;white&gt;| {page}/{max_page} |&lt;/white&gt; {next_page} &lt;gradient:#F973C4:#FCBDE3&gt;&lt;st&gt;                   &lt;/st&gt;◢&lt;/gradient&gt;'
+    - ''
+  entry: '  &lt;gray&gt;•&lt;/gray&gt; {player_head} &lt;white&gt;{recipe}&lt;/white&gt; &lt;gray&gt;x{quantity}&lt;/gray&gt; &lt;white&gt;[&lt;/white&gt;&lt;#FCBDE3&gt;{quality}&lt;/#FCBDE3&gt;&lt;white&gt;]&lt;/white&gt; &lt;white&gt;[&lt;/white&gt;&lt;#FCBDE3&gt;{total}$&lt;/#FCBDE3&gt;&lt;white&gt;]&lt;/white&gt;'
+  entry_hover: '&lt;white&gt;{player}&lt;/white&gt; &lt;dark_gray&gt;-&lt;/dark_gray&gt; &lt;gray&gt;{time_ago}&lt;/gray&gt; &lt;dark_gray&gt;-&lt;/dark_gray&gt; &lt;gray&gt;{exact_date}&lt;/gray&gt;'
+  navigation:
+    previous: '&lt;gradient:#FCBDE3:#F973C4&gt;«&lt;/gradient&gt;'
+    previous_disabled: '&lt;dark_gray&gt;«&lt;/dark_gray&gt;'
+    previous_hover: '&lt;gray&gt;Clic para ir a la página {page}&lt;/gray&gt;'
+    next: '&lt;gradient:#FCBDE3:#F973C4&gt;»&lt;/gradient&gt;'
+    next_disabled: '&lt;dark_gray&gt;»&lt;/dark_gray&gt;'
+    next_hover: '&lt;gray&gt;Clic para ir a la página {page}&lt;/gray&gt;'</pre>
+            </div>
+
+            <div class="page-nav">
+                <a href="placeholders.html">
+                    <span class="label">Previous</span>
+                    <span class="title">PlaceholderAPI</span>
+                </a>
+                <span></span>
+            </div>
+            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+        </div>
+    </div>
+</div>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

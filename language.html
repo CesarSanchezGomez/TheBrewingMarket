@@ -86,6 +86,22 @@
                 </table>
             </div>
 
+            <h3>Placeholders (PlaceholderAPI empty fallbacks)</h3>
+            <p>Text shown by each sale-dependent PlaceholderAPI placeholder when there's no data yet. Each key is independent — customize only the ones you care about.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Key</th><th>When it's shown</th></tr></thead>
+                    <tbody>
+                    <tr><td><code>placeholders.empty.last_sale_recipe_id</code></td><td>Player has never sold a brew.</td></tr>
+                    <tr><td><code>placeholders.empty.last_sale_recipe_name</code></td><td>Player has never sold a brew (also falls back to the recipe id first when the item had no custom name).</td></tr>
+                    <tr><td><code>placeholders.empty.last_sale_ago</code></td><td>Player has never sold a brew.</td></tr>
+                    <tr><td><code>placeholders.empty.global_top_recipe_id_today</code></td><td>No sales recorded server-wide today.</td></tr>
+                    <tr><td><code>placeholders.empty.global_top_recipe_name_today</code></td><td>No sales today (also falls back to the recipe id first when the top sale had no custom name).</td></tr>
+                    <tr><td><code>placeholders.empty.global_top_player_today</code></td><td>No sales recorded server-wide today.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div class="info-box note">
                 <strong>Note:</strong> All messages use MiniMessage formatting. See the Adventure documentation for the full tag reference.
             </div>
