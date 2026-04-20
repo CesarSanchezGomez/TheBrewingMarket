@@ -2,6 +2,7 @@ package com.cesarcosmico.thebrewingmarket.storage;
 
 import com.cesarcosmico.thebrewingmarket.storage.connection.ConnectionProvider;
 import com.cesarcosmico.thebrewingmarket.storage.migration.MigrationManager;
+import com.cesarcosmico.thebrewingmarket.util.MiniMessageUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -80,7 +81,7 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                 GROUP BY recipe_id""".formatted(table);
 
         this.playerLastSaleSql = """
-                SELECT recipe_id, total, sold_at
+                SELECT recipe_id, display_name, total, sold_at
                 FROM `%s`
                 WHERE player_uuid = ?
                 ORDER BY sold_at DESC, id DESC
@@ -90,12 +91,16 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                 "SELECT COALESCE(SUM(total), 0) FROM `%s` WHERE sold_at >= ?".formatted(table);
 
         this.topRecipeSinceSql = """
-                SELECT recipe_id, SUM(quantity) AS qty
-                FROM `%s`
-                WHERE sold_at >= ?
-                GROUP BY recipe_id
-                ORDER BY qty DESC, recipe_id ASC
-                LIMIT 1""".formatted(table);
+                SELECT s1.recipe_id,
+                       SUM(s1.quantity) AS qty,
+                       (SELECT s2.display_name FROM `%s` s2
+                        WHERE s2.recipe_id = s1.recipe_id AND s2.sold_at >= ?
+                        ORDER BY s2.sold_at DESC, s2.id DESC LIMIT 1) AS display_name
+                FROM `%s` s1
+                WHERE s1.sold_at >= ?
+                GROUP BY s1.recipe_id
+                ORDER BY qty DESC, s1.recipe_id ASC
+                LIMIT 1""".formatted(table, table);
 
         this.topPlayerSinceSql = """
                 SELECT player_name, SUM(total) AS earned
@@ -262,6 +267,7 @@ public final class JdbcSellHistoryService implements SellHistoryService {
             long lifetimeBrews = 0L;
             Map<String, RecipeTally> perRecipe = new HashMap<>();
             String lastRecipe = "";
+            String lastDisplayName = "";
             double lastAmount = 0.0;
             long lastSoldAt = 0L;
 
@@ -288,6 +294,12 @@ public final class JdbcSellHistoryService implements SellHistoryService {
                         if (rs.next()) {
                             lastRecipe = rs.getString("recipe_id");
                             if (lastRecipe == null) lastRecipe = "";
+                            String rawDisplay = rs.getString("display_name");
+                            if (rawDisplay != null && !rawDisplay.isEmpty()) {
+                                lastDisplayName = MiniMessageUtil.toPlainText(rawDisplay);
+                            } else {
+                                lastDisplayName = lastRecipe;
+                            }
                             lastAmount = rs.getDouble("total");
                             lastSoldAt = rs.getLong("sold_at");
                         }
@@ -299,7 +311,7 @@ public final class JdbcSellHistoryService implements SellHistoryService {
             }
 
             return new PlayerStats(lifetimeEarned, lifetimeBrews,
-                    lastRecipe, lastAmount, lastSoldAt, perRecipe);
+                    lastRecipe, lastDisplayName, lastAmount, lastSoldAt, perRecipe);
         }, executor);
     }
 
@@ -325,11 +337,17 @@ public final class JdbcSellHistoryService implements SellHistoryService {
             try (Connection conn = connectionProvider.getConnection();
                  PreparedStatement ps = conn.prepareStatement(topRecipeSinceSql)) {
                 ps.setLong(1, sinceEpochMillis);
+                ps.setLong(2, sinceEpochMillis);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         String recipeId = rs.getString("recipe_id");
+                        if (recipeId == null) recipeId = "";
+                        String rawDisplay = rs.getString("display_name");
+                        String displayName = (rawDisplay != null && !rawDisplay.isEmpty())
+                                ? MiniMessageUtil.toPlainText(rawDisplay)
+                                : recipeId;
                         long qty = rs.getLong("qty");
-                        return new RecipeAggregate(recipeId != null ? recipeId : "", qty);
+                        return new RecipeAggregate(recipeId, displayName, qty);
                     }
                 }
             } catch (SQLException e) {

@@ -114,7 +114,7 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             for (String id : new String[] {"tbm", "thebrewingmarket"}) {
-                new TBMExpansion(id, this, this::getMarketConfig,
+                new TBMExpansion(id, this, this::getMarketConfig, langConfig,
                         dailyEarningsTracker, playerStatsCache,
                         marketAnalyticsCache, sellService).register();
             }

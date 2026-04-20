@@ -25,9 +25,7 @@ public final class TBPBrewResolver implements BrewResolver {
     public Optional<String> resolveRecipeName(final ItemStack item) {
         final TheBrewingProjectApi api = apiSupplier.get();
         if (api != null) {
-            final Optional<String> name = api.getBrewManager().fromItem(item)
-                    .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry()))
-                    .map(Recipe::getRecipeName);
+            final Optional<String> name = readBrewName(api, item);
             if (name.isPresent()) {
                 return name;
             }
@@ -39,14 +37,32 @@ public final class TBPBrewResolver implements BrewResolver {
     public double resolveScore(final ItemStack item) {
         final TheBrewingProjectApi api = apiSupplier.get();
         if (api != null) {
-            final Optional<Double> score = api.getBrewManager().fromItem(item)
-                    .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry())
-                            .map(recipe -> brew.score(recipe).score()));
+            final Optional<Double> score = readBrewScore(api, item);
             if (score.isPresent()) {
                 return score.get();
             }
         }
         return readTag(item, SCORE_KEY, PersistentDataType.DOUBLE).orElse(0.0);
+    }
+
+    private Optional<String> readBrewName(final TheBrewingProjectApi api, final ItemStack item) {
+        try {
+            return api.getBrewManager().fromItem(item)
+                    .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry()))
+                    .map(Recipe::getRecipeName);
+        } catch (final RuntimeException ex) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<Double> readBrewScore(final TheBrewingProjectApi api, final ItemStack item) {
+        try {
+            return api.getBrewManager().fromItem(item)
+                    .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry())
+                            .map(recipe -> brew.score(recipe).score()));
+        } catch (final RuntimeException ex) {
+            return Optional.empty();
+        }
     }
 
     private <T> Optional<T> readTag(final ItemStack item, final NamespacedKey key,

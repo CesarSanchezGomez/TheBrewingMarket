@@ -16,12 +16,13 @@ public final class MarketAnalyticsCache {
     public record Analytics(
             double totalToday,
             String topRecipe,
+            String topRecipeName,
             long topRecipeQty,
             String topPlayer,
             double topPlayerAmount
     ) {
         public static Analytics empty() {
-            return new Analytics(0.0, "", 0L, "", 0.0);
+            return new Analytics(0.0, "", "", 0L, "", 0.0);
         }
     }
 
@@ -45,6 +46,7 @@ public final class MarketAnalyticsCache {
         }
     }
 
+    // Snapshot read; refresh runs every 60s on the async executor.
     public Analytics getSnapshot() {
         return snapshot;
     }
@@ -64,6 +66,7 @@ public final class MarketAnalyticsCache {
                 snapshot = new Analytics(
                         total,
                         r != null ? r.recipeId() : "",
+                        r != null ? r.displayName() : "",
                         r != null ? r.quantity() : 0L,
                         p != null ? p.playerName() : "",
                         p != null ? p.total() : 0.0

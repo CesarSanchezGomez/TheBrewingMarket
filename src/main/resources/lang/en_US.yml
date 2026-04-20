@@ -2,9 +2,19 @@
 # Supports MiniMessage formatting.
 # Use {prefix} to insert the plugin prefix.
 # Internal version — do not edit. Bump = new messages were added.
-config-version: 1
+config-version: 2
 
 prefix: "<white>[<gradient:#FCBDE3:#F973C4>BrewingMarket</gradient>]</white>"
+
+# -- Placeholders -----------------------------
+placeholders:
+  empty:
+    last_sale_recipe_id: "N/A"
+    last_sale_recipe_name: "N/A"
+    last_sale_ago: "N/A"
+    global_top_recipe_today_id: "N/A"
+    global_top_recipe_today_name: "N/A"
+    global_top_player_today: "N/A"
 
 # -- Commands ---------------------------------
 command:

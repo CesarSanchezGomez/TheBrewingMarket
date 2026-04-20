@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.integration.placeholderapi;
 
+import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig.LimitationConfig;
 import com.cesarcosmico.thebrewingmarket.service.DailyEarningsTracker;
@@ -21,6 +22,7 @@ public final class TBMExpansion extends PlaceholderExpansion {
     private final String identifier;
     private final JavaPlugin plugin;
     private final Supplier<MarketConfig> marketConfigSupplier;
+    private final LangConfig langConfig;
     private final DailyEarningsTracker dailyTracker;
     private final PlayerStatsCache statsCache;
     private final MarketAnalyticsCache analyticsCache;
@@ -29,6 +31,7 @@ public final class TBMExpansion extends PlaceholderExpansion {
     public TBMExpansion(String identifier,
                         JavaPlugin plugin,
                         Supplier<MarketConfig> marketConfigSupplier,
+                        LangConfig langConfig,
                         DailyEarningsTracker dailyTracker,
                         PlayerStatsCache statsCache,
                         MarketAnalyticsCache analyticsCache,
@@ -36,6 +39,7 @@ public final class TBMExpansion extends PlaceholderExpansion {
         this.identifier = identifier;
         this.plugin = plugin;
         this.marketConfigSupplier = marketConfigSupplier;
+        this.langConfig = langConfig;
         this.dailyTracker = dailyTracker;
         this.statsCache = statsCache;
         this.analyticsCache = analyticsCache;
@@ -89,12 +93,17 @@ public final class TBMExpansion extends PlaceholderExpansion {
                 return sellService.format(analytics.totalToday());
             case "global_total_today_raw":
                 return raw(analytics.totalToday());
-            case "global_top_recipe_today":
-                return analytics.topRecipe();
+            case "global_top_recipe_id_today":
+                return notBlank(analytics.topRecipe(), langConfig.getPlaceholderEmpty(key));
+            case "global_top_recipe_name_today": {
+                String name = analytics.topRecipeName();
+                if (name != null && !name.isEmpty()) return name;
+                return notBlank(analytics.topRecipe(), langConfig.getPlaceholderEmpty(key));
+            }
             case "global_top_recipe_today_qty":
                 return String.valueOf(analytics.topRecipeQty());
             case "global_top_player_today":
-                return analytics.topPlayer();
+                return notBlank(analytics.topPlayer(), langConfig.getPlaceholderEmpty(key));
             case "global_top_player_today_amount":
                 return sellService.format(analytics.topPlayerAmount());
             case "global_top_player_today_amount_raw":
@@ -134,10 +143,17 @@ public final class TBMExpansion extends PlaceholderExpansion {
                 return sellService.format(stats.lastAmount());
             case "last_sale_amount_raw":
                 return raw(stats.lastAmount());
-            case "last_sale_recipe":
-                return stats.lastRecipe() != null ? stats.lastRecipe() : "";
+            case "last_sale_recipe_id":
+                return notBlank(stats.lastRecipe(), langConfig.getPlaceholderEmpty(key));
+            case "last_sale_recipe_name": {
+                String name = stats.lastDisplayName();
+                if (name != null && !name.isEmpty()) return name;
+                return notBlank(stats.lastRecipe(), langConfig.getPlaceholderEmpty(key));
+            }
             case "last_sale_ago":
-                return stats.lastSoldAt() > 0 ? TimeUtil.relativeTime(stats.lastSoldAt()) : "";
+                return stats.lastSoldAt() > 0
+                        ? TimeUtil.relativeTime(stats.lastSoldAt())
+                        : langConfig.getPlaceholderEmpty(key);
         }
 
         if (key.startsWith("player_sold_")) {
@@ -184,5 +200,9 @@ public final class TBMExpansion extends PlaceholderExpansion {
 
     private static String raw(double value) {
         return Double.toString(value);
+    }
+
+    private static String notBlank(String value, String fallback) {
+        return value != null && !value.isEmpty() ? value : fallback;
     }
 }

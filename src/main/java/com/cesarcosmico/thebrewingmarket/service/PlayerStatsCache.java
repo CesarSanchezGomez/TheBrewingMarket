@@ -3,6 +3,7 @@ package com.cesarcosmico.thebrewingmarket.service;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService.PlayerStats;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService.RecipeTally;
+import com.cesarcosmico.thebrewingmarket.util.MiniMessageUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +42,7 @@ public final class PlayerStatsCache {
             long brews = base.lifetimeBrews();
             Map<String, RecipeTally> perRecipe = new HashMap<>(base.perRecipe());
             String lastRecipe = base.lastRecipe();
+            String lastDisplayName = base.lastDisplayName();
             double lastAmount = base.lastAmount();
             long lastAt = base.lastSoldAt();
             long now = System.currentTimeMillis();
@@ -57,12 +59,15 @@ public final class PlayerStatsCache {
 
                 if (now >= lastAt) {
                     lastRecipe = d.recipeId();
+                    lastDisplayName = d.displayName() != null
+                            ? MiniMessageUtil.toPlainText(d.displayName())
+                            : d.recipeId();
                     lastAmount = total;
                     lastAt = now;
                 }
             }
 
-            return new PlayerStats(earned, brews, lastRecipe, lastAmount, lastAt, perRecipe);
+            return new PlayerStats(earned, brews, lastRecipe, lastDisplayName, lastAmount, lastAt, perRecipe);
         });
     }
 

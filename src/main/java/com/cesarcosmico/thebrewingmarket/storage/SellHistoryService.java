@@ -40,18 +40,19 @@ public interface SellHistoryService {
             double lifetimeEarned,
             long lifetimeBrews,
             String lastRecipe,
+            String lastDisplayName,
             double lastAmount,
             long lastSoldAt,
             Map<String, RecipeTally> perRecipe
     ) {
         public static PlayerStats empty() {
-            return new PlayerStats(0.0, 0L, "", 0.0, 0L, Map.of());
+            return new PlayerStats(0.0, 0L, "", "", 0.0, 0L, Map.of());
         }
     }
 
-    record RecipeAggregate(String recipeId, long quantity) {
+    record RecipeAggregate(String recipeId, String displayName, long quantity) {
         public static RecipeAggregate empty() {
-            return new RecipeAggregate("", 0L);
+            return new RecipeAggregate("", "", 0L);
         }
     }
 

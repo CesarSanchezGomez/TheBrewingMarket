@@ -16,7 +16,7 @@ import java.util.Map;
 
 public final class LangConfig {
 
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
@@ -54,9 +54,10 @@ public final class LangConfig {
         ConfigVersionChecker.check(config, "lang/" + lang + ".yml",
                 CURRENT_VERSION, plugin, plugin.getLogger());
 
+        YamlConfiguration defaults = null;
         InputStream defaultStream = plugin.getResource("lang/en_US.yml");
         if (defaultStream != null) {
-            YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+            defaults = YamlConfiguration.loadConfiguration(
                     new InputStreamReader(defaultStream, StandardCharsets.UTF_8));
             config.setDefaults(defaults);
         }
@@ -71,10 +72,30 @@ public final class LangConfig {
                 messages.put(key, config.getString(key, key));
             }
         }
+
+        // Backfill keys present in bundled defaults but missing from the user's
+        // file — keeps placeholders working when an outdated lang file is in use.
+        if (defaults != null) {
+            for (String key : defaults.getKeys(true)) {
+                if (defaults.isConfigurationSection(key)) continue;
+                if (messages.containsKey(key)) continue;
+                if (defaults.isList(key)) {
+                    messages.put(key, String.join("\n", defaults.getStringList(key)));
+                } else {
+                    String value = defaults.getString(key);
+                    if (value != null) messages.put(key, value);
+                }
+            }
+        }
     }
 
     public String getRaw(String key) {
         return messages.getOrDefault(key, "<red>Missing message: " + key + "</red>");
+    }
+
+    public String getPlaceholderEmpty(String placeholderKey) {
+        String value = messages.get("placeholders.empty." + placeholderKey);
+        return value != null ? value : "N/A";
     }
 
     public Component get(String key, String... placeholders) {
