@@ -27,6 +27,10 @@ repositories {
         setUrl("https://repo.jsinco.dev/releases")
     }
     maven {
+        name = "breweryteam"
+        setUrl("https://repo.breweryteam.dev/releases")
+    }
+    maven {
         name = "extendedclip"
         setUrl("https://repo.extendedclip.com/releases/")
     }
@@ -35,7 +39,8 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("com.github.BreweryTeam:TheBrewingProject:v3.0.0-beta.0")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.0.0")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.0.0")
     compileOnly("com.dre.brewery:BreweryX:3.6.5")
     compileOnly("me.clip:placeholderapi:2.12.2")
 
