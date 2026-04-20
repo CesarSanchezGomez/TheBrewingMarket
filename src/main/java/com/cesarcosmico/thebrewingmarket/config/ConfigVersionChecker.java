@@ -18,7 +18,7 @@ public final class ConfigVersionChecker {
     public static void check(FileConfiguration live, String resourceName,
                              int expectedVersion, JavaPlugin plugin, Logger logger) {
         int current = live.getInt("config-version", 0);
-        if (current >= expectedVersion) return;
+        boolean outdated = current < expectedVersion;
 
         InputStream stream = plugin.getResource(resourceName);
         if (stream == null) return;
@@ -32,11 +32,18 @@ public final class ConfigVersionChecker {
             if (!live.isSet(key)) missing.add(key);
         }
 
-        logger.warning(resourceName + " is outdated (version " + current
-                + ", expected " + expectedVersion + "). Missing keys:");
-        for (String key : missing) {
-            logger.warning("  - " + key);
+        if (!outdated && missing.isEmpty()) return;
+
+        if (outdated) {
+            logger.warning(resourceName + " is outdated (version " + current
+                    + ", expected " + expectedVersion + ").");
         }
-        logger.warning("Add them manually or regenerate the file.");
+        if (!missing.isEmpty()) {
+            logger.warning(resourceName + " is missing " + missing.size() + " key(s):");
+            for (String key : missing) {
+                logger.warning("  - " + key);
+            }
+            logger.warning("Add them manually or regenerate the file.");
+        }
     }
 }
