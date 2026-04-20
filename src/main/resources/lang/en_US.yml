@@ -4,37 +4,37 @@
 # Internal version — do not edit. Bump = new messages were added.
 config-version: 2
 
-prefix: "<white>[<gradient:#FCBDE3:#F973C4>BrewingMarket</gradient>]</white>"
+prefix: '<white>[<gradient:#FCBDE3:#F973C4>BrewingMarket</gradient>]</white>'
 
 # -- Placeholders -----------------------------
 placeholders:
   empty:
-    last_sale_recipe_id: "N/A"
-    last_sale_recipe_name: "N/A"
-    last_sale_ago: "N/A"
-    global_top_recipe_today_id: "N/A"
-    global_top_recipe_today_name: "N/A"
-    global_top_player_today: "N/A"
+    last_sale_recipe_id: 'N/A'
+    last_sale_recipe_name: 'N/A'
+    last_sale_ago: 'N/A'
+    global_top_recipe_id_today: 'N/A'
+    global_top_recipe_name_today: 'N/A'
+    global_top_player_today: 'N/A'
 
 # -- Commands ---------------------------------
 command:
-  only-players: "{prefix} <red>This command can only be used by players.</red>"
-  no-permission: "{prefix} <white>You don't have permission to do that.</white>"
-  reload-success: "{prefix} <white>Configuration reloaded successfully.</white>"
+  only-players: '{prefix} <red>This command can only be used by players.</red>'
+  no-permission: '{prefix} <white>You don''t have permission to do that.</white>'
+  reload-success: '{prefix} <white>Configuration reloaded successfully.</white>'
 
 # -- Market -----------------------------------
 market:
-  sell-success: "{prefix} <white>You sold <#FCBDE3>{sold_amount}</#FCBDE3> brews for <#FCBDE3>{money}</#FCBDE3>!</white>"
-  sell-nothing: "{prefix} <white>There are no valid brews to sell.</white>"
-  sell-error: "{prefix} <white>Transaction failed. Please try again.</white>"
+  sell-success: '{prefix} <white>You sold <#FCBDE3>{sold_amount}</#FCBDE3> brews for <#FCBDE3>{money}</#FCBDE3>!</white>'
+  sell-nothing: '{prefix} <white>There are no valid brews to sell.</white>'
+  sell-error: '{prefix} <white>Transaction failed. Please try again.</white>'
   limit-reached:
-    - "{prefix} <white>Daily earnings: <#FCBDE3>{earned}</#FCBDE3>/<#FCBDE3>{limit}</#FCBDE3>.</white>"
-    - "{prefix} <white>Remaining today: <#FCBDE3>{remaining}</#FCBDE3>.</white>"
+    - '{prefix} <white>Daily earnings: <#FCBDE3>{earned}</#FCBDE3>/<#FCBDE3>{limit}</#FCBDE3>.</white>'
+    - '{prefix} <white>Remaining today: <#FCBDE3>{remaining}</#FCBDE3>.</white>'
 
 # -- History ----------------------------------
 history:
-  invalid-time: "{prefix} <red>Invalid time format. Use: 1s, 1m, 1h, 1d, 1w, 1M, 1Y</red>"
-  empty: "{prefix} <white>{player} has no sell history.</white>"
+  invalid-time: '{prefix} <red>Invalid time format. Use: 1s, 1m, 1h, 1d, 1w, 1M, 1Y</red>'
+  empty: '{prefix} <white>{player} has no sell history.</white>'
   display:
     - ''
     - '<gradient:#FCBDE3:#F973C4>◤<st>                 </st></gradient> <white>[</white><gradient:#FCBDE3:#F973C4>BrewingMarket</gradient><white>]</white> <gradient:#F973C4:#FCBDE3><st>                 </st>◥</gradient>'
@@ -43,8 +43,8 @@ history:
     - ''
     - '<gradient:#FCBDE3:#F973C4>◣<st>                   </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#F973C4:#FCBDE3><st>                   </st>◢</gradient>'
     - ''
-  entry: "  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#FCBDE3>{quality}</#FCBDE3><white>]</white> <white>[</white><#FCBDE3>{total}$</#FCBDE3><white>]</white>"
-  entry_hover: "<gray>{player} {time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>"
+  entry: '  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#FCBDE3>{quality}</#FCBDE3><white>]</white> <white>[</white><#FCBDE3>{total}$</#FCBDE3><white>]</white>'
+  entry_hover: '<white>{player}</white> <dark_gray>-</dark_gray> <gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>'
   navigation:
     previous: '<gradient:#FCBDE3:#F973C4>«</gradient>'
     previous_disabled: '<dark_gray>«</dark_gray>'
