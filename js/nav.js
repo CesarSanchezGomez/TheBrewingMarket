@@ -88,7 +88,7 @@
   var sidebarHTML =
     '<div class=sidebar-brand>' +
       '<img class=logo src="assets/images/TBM_Logo_128x128.webp" alt="TheBrewingMarket">' +
-      '<h1>TheBrewingMarket <span class=version>v2.2.1</span></h1>' +
+      '<h1>TheBrewingMarket <span class=version>v2.2.2</span></h1>' +
     '</div>' +
     '<nav class=sidebar-nav>' + sections + '</nav>' +
     '<div class=sidebar-footer>' +
