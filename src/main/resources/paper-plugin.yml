@@ -1,10 +1,10 @@
 name: TheBrewingMarket
-version: '2.2.1'
+version: '2.2.2'
 authors:
   - CesarCosmico
 main: com.cesarcosmico.thebrewingmarket.TheBrewingMarketPlugin
 description: Sell your TheBrewingProject brews for money
-api-version: '1.21'
+api-version: '26.1'
 
 dependencies:
   server:
