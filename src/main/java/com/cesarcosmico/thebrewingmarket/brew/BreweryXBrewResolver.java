@@ -13,23 +13,29 @@ public final class BreweryXBrewResolver implements BrewResolver {
     @Override
     public Optional<String> resolveRecipeName(final ItemStack item) {
         final Brew brew = Brew.get(item);
-        if (brew == null) {
-            return Optional.empty();
+        if (brew != null) {
+            final BRecipe recipe = brew.getCurrentRecipe();
+            if (recipe != null) {
+                final String id = recipe.getId();
+                final String name = id != null ? id : recipe.getRecipeName();
+                if (name != null && !name.isEmpty()) {
+                    return Optional.of(name);
+                }
+            }
         }
-        final BRecipe recipe = brew.getCurrentRecipe();
-        if (recipe == null) {
-            return Optional.empty();
-        }
-        final String id = recipe.getId();
-        return id != null ? Optional.of(id) : Optional.ofNullable(recipe.getRecipeName());
+        return BreweryXRawDecoder.decode(item)
+                .map(BreweryXRawDecoder.RawBrewData::recipeName)
+                .filter(name -> name != null && !name.isEmpty());
     }
 
     @Override
     public double resolveScore(final ItemStack item) {
         final Brew brew = Brew.get(item);
-        if (brew == null) {
-            return 0.0;
+        if (brew != null) {
+            return brew.getQuality() / MAX_QUALITY;
         }
-        return brew.getQuality() / MAX_QUALITY;
+        return BreweryXRawDecoder.decode(item)
+                .map(data -> data.quality() / MAX_QUALITY)
+                .orElse(0.0);
     }
 }
