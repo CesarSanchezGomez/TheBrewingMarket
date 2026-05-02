@@ -37,10 +37,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.53-stable")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.0.0")
-    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.0.0")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.1.1")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.1.1")
     compileOnly("com.dre.brewery:BreweryX:3.6.5")
     compileOnly("me.clip:placeholderapi:2.12.2")
 
