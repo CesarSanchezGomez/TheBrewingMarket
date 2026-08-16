@@ -1,10 +1,10 @@
 package com.cesarcosmico.thebrewingmarket.brew;
 
-import dev.jsinco.brewery.api.recipe.Recipe;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Optional;
@@ -22,55 +22,38 @@ public final class TBPBrewResolver implements BrewResolver {
     }
 
     @Override
-    public Optional<String> resolveRecipeName(final ItemStack item) {
+    public Optional<ResolvedItem> resolve(final ItemStack item) {
         final TheBrewingProjectApi api = apiSupplier.get();
         if (api != null) {
-            final Optional<String> name = readBrewName(api, item);
-            if (name.isPresent()) {
-                return name;
+            final Optional<ResolvedItem> resolved = resolveFromApi(api, item);
+            if (resolved.isPresent()) {
+                return resolved;
             }
         }
-        return readTag(item, TAG_KEY, PersistentDataType.STRING);
+        return resolveFromTags(item);
     }
 
-    @Override
-    public double resolveScore(final ItemStack item) {
-        final TheBrewingProjectApi api = apiSupplier.get();
-        if (api != null) {
-            final Optional<Double> score = readBrewScore(api, item);
-            if (score.isPresent()) {
-                return score.get();
-            }
-        }
-        return readTag(item, SCORE_KEY, PersistentDataType.DOUBLE).orElse(0.0);
-    }
-
-    private Optional<String> readBrewName(final TheBrewingProjectApi api, final ItemStack item) {
-        try {
-            return api.getBrewManager().fromItem(item)
-                    .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry()))
-                    .map(Recipe::getRecipeName);
-        } catch (final RuntimeException ex) {
-            return Optional.empty();
-        }
-    }
-
-    private Optional<Double> readBrewScore(final TheBrewingProjectApi api, final ItemStack item) {
+    private Optional<ResolvedItem> resolveFromApi(final TheBrewingProjectApi api, final ItemStack item) {
         try {
             return api.getBrewManager().fromItem(item)
                     .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry())
-                            .map(recipe -> brew.score(recipe).score()));
+                            .map(recipe -> new ResolvedItem(recipe.getRecipeName(), brew.score(recipe).score())));
         } catch (final RuntimeException ex) {
             return Optional.empty();
         }
     }
 
-    private <T> Optional<T> readTag(final ItemStack item, final NamespacedKey key,
-                                    final PersistentDataType<?, T> type) {
+    private Optional<ResolvedItem> resolveFromTags(final ItemStack item) {
         final ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(meta.getPersistentDataContainer().get(key, type));
+        final PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        final String recipeName = pdc.get(TAG_KEY, PersistentDataType.STRING);
+        if (recipeName == null) {
+            return Optional.empty();
+        }
+        final Double score = pdc.get(SCORE_KEY, PersistentDataType.DOUBLE);
+        return Optional.of(new ResolvedItem(recipeName, score != null ? score : 0.0));
     }
 }

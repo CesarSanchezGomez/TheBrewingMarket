@@ -1,6 +1,7 @@
 package com.cesarcosmico.thebrewingmarket.service;
 
 import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
+import com.cesarcosmico.thebrewingmarket.brew.ResolvedItem;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -26,17 +27,17 @@ public final class BrewEvaluator {
             return Optional.empty();
         }
 
-        final Optional<String> recipeId = brewResolver.resolveRecipeName(itemStack);
-        if (recipeId.isEmpty()) {
+        final Optional<ResolvedItem> resolved = brewResolver.resolve(itemStack);
+        if (resolved.isEmpty()) {
             return Optional.empty();
         }
 
-        final double score = brewResolver.resolveScore(itemStack);
-        if (score <= 0) {
+        final ResolvedItem item = resolved.get();
+        if (item.score() <= 0) {
             return Optional.empty();
         }
 
-        final double basePrice = marketConfig.getBasePrice(recipeId.get());
+        final double basePrice = marketConfig.getBasePrice(item.id());
         if (basePrice <= 0) {
             return Optional.empty();
         }
@@ -44,8 +45,8 @@ public final class BrewEvaluator {
         final ItemMeta meta = itemStack.getItemMeta();
         final Component displayName = (meta != null && meta.hasDisplayName())
                 ? meta.displayName()
-                : Component.text(recipeId.get());
+                : Component.text(item.id());
 
-        return Optional.of(new BrewEvaluation(recipeId.get(), score, basePrice * score, displayName));
+        return Optional.of(new BrewEvaluation(item.id(), item.score(), basePrice * item.score(), displayName));
     }
 }

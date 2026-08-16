@@ -6,7 +6,5 @@ import java.util.Optional;
 
 public interface BrewResolver {
 
-    Optional<String> resolveRecipeName(ItemStack item);
-
-    double resolveScore(ItemStack item);
+    Optional<ResolvedItem> resolve(ItemStack item);
 }
