@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.config;
 
+import com.cesarcosmico.thebrewingmarket.brew.PriceCategory;
 import com.cesarcosmico.thebrewingmarket.item.IconFactory;
 import com.cesarcosmico.thebrewingmarket.service.MoneyFormatter;
 import com.cesarcosmico.thebrewingmarket.text.TextRenderer;
@@ -10,9 +11,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -46,8 +44,8 @@ public final class MarketConfig {
     private final boolean shulkerSelling;
     private final int historyPerPage;
 
-    private final Map<String, Double> prices;
-    private final double defaultPrice;
+    private final PriceTable brewPrices;
+    private final PriceTable gardenPrices;
 
     private final LimitationConfig limitation;
 
@@ -77,74 +75,13 @@ public final class MarketConfig {
         this.sellAllAllow = iconFactory.parseIconConfig(market.getConfigurationSection("sell-all-icons.allow-icon"));
         this.sellAllDeny = iconFactory.parseIconConfig(market.getConfigurationSection("sell-all-icons.deny-icon"));
 
-        this.prices = new HashMap<>();
-        ConfigurationSection priceSection = market.getConfigurationSection("prices");
-        this.defaultPrice = priceSection != null ? priceSection.getDouble("default", 0.0) : 0.0;
-        if (priceSection != null) {
-            loadPrices(priceSection, logger);
-        }
+        this.brewPrices = PriceTable.load(market.getConfigurationSection("brews"), "brews", logger);
+        this.gardenPrices = PriceTable.load(market.getConfigurationSection("garden"), "garden", logger);
 
         ConfigurationSection lim = market.getConfigurationSection("limitation");
         this.limitation = new LimitationConfig(
                 lim != null && lim.getBoolean("enable", false),
                 lim != null ? lim.getDouble("earnings", 0.0) : 0.0);
-    }
-
-    private void loadPrices(ConfigurationSection priceSection, Logger logger) {
-        ConfigurationSection groups = priceSection.getConfigurationSection("groups");
-        if (groups != null) {
-            // getValues(false) avoids treating dotted keys (e.g. "12.5") as config paths.
-            for (Map.Entry<String, Object> entry : groups.getValues(false).entrySet()) {
-                String priceKey = entry.getKey();
-                double price;
-                try {
-                    price = Double.parseDouble(priceKey);
-                } catch (NumberFormatException ex) {
-                    logger.warning("Invalid price group key '" + priceKey + "' in prices.groups — expected a number.");
-                    continue;
-                }
-                List<String> recipes = coerceRecipeList(entry.getValue());
-                if (recipes.isEmpty()) {
-                    logger.warning("Price group '" + priceKey + "' has no recipes assigned.");
-                    continue;
-                }
-                for (String recipe : recipes) {
-                    prices.put(recipe.toLowerCase(), price);
-                }
-            }
-        }
-
-        for (String key : priceSection.getKeys(false)) {
-            if (key.equals("default") || key.equals("groups")) {
-                continue;
-            }
-            if (priceSection.isConfigurationSection(key) || priceSection.isList(key)) {
-                logger.warning("Unexpected value for price '" + key + "' — expected a number. "
-                        + "Did you mean to put it inside 'groups'?");
-                continue;
-            }
-            prices.put(key.toLowerCase(), priceSection.getDouble(key));
-        }
-    }
-
-    private static List<String> coerceRecipeList(Object value) {
-        if (value instanceof List<?> list) {
-            List<String> result = new ArrayList<>(list.size());
-            for (Object item : list) {
-                if (item != null) {
-                    String name = item.toString().trim();
-                    if (!name.isEmpty()) {
-                        result.add(name);
-                    }
-                }
-            }
-            return result;
-        }
-        if (value instanceof String single) {
-            String trimmed = single.trim();
-            return trimmed.isEmpty() ? List.of() : List.of(trimmed);
-        }
-        return List.of();
     }
 
     public Component renderTitle(OfflinePlayer viewer) {
@@ -214,8 +151,11 @@ public final class MarketConfig {
         return historyPerPage;
     }
 
-    public double getBasePrice(String recipeName) {
-        return prices.getOrDefault(recipeName.toLowerCase(), defaultPrice);
+    public double getBasePrice(PriceCategory category, String id) {
+        return switch (category) {
+            case BREW -> brewPrices.get(id);
+            case GARDEN -> gardenPrices.get(id);
+        };
     }
 
     public IconConfig getSellAllow() {

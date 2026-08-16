@@ -66,7 +66,7 @@ market:
   #     30:
   #       - darkbeer
   #       - wheatbeer
-  prices:
+  brews:
     default: 10
     beer: 25
     cidre: 35
@@ -102,6 +102,19 @@ market:
       250:
         - fire_whiskey
         - absinthe
+
+  # -- Garden prices (fruits and seeds) -------
+  # For servers running the Garden plugin. Fixed price (no quality; score is 1).
+  # Same format as 'brews'. Ids are '<plant>_fruit' or '<plant>_seeds'.
+  # default: 0 keeps unlisted produce unsellable.
+  garden:
+    default: 0
+    # strawberry_fruit: 5
+    # strawberry_seeds: 2
+    # groups:
+    #   10:
+    #     - apple_fruit
+    #     - cherry_fruit
 
   # -- Item Slots -----------------------------
   # Symbol for slots where players can place/view brews

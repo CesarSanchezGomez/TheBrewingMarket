@@ -1,14 +1,12 @@
 package com.cesarcosmico.thebrewingmarket;
 
+import com.cesarcosmico.thebrewingmarket.brew.*;
 import com.cesarcosmico.thebrewingmarket.command.CommandManager;
 import com.cesarcosmico.thebrewingmarket.config.ConfigVersionChecker;
 import com.cesarcosmico.thebrewingmarket.config.DatabaseConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.listener.MarketGUIListener;
-import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
-import com.cesarcosmico.thebrewingmarket.brew.BreweryXBrewResolver;
-import com.cesarcosmico.thebrewingmarket.brew.TBPBrewResolver;
 import com.cesarcosmico.thebrewingmarket.integration.placeholderapi.PapiPlaceholderResolver;
 import com.cesarcosmico.thebrewingmarket.integration.placeholderapi.TBMExpansion;
 import com.cesarcosmico.thebrewingmarket.service.BrewEvaluator;
@@ -33,6 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -83,6 +82,11 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
         } else {
             getLogger().info("Hooked into BreweryX.");
             this.brewResolver = new BreweryXBrewResolver();
+        }
+
+        if (getServer().getPluginManager().getPlugin("Garden") != null) {
+            getLogger().info("Hooked into Garden. Fruits and seeds are sellable.");
+            this.brewResolver = new CompositeBrewResolver(List.of(brewResolver, new GardenBrewResolver()));
         }
 
         saveDefaultConfig();

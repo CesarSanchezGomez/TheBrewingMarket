@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.integration.placeholderapi;
 
+import com.cesarcosmico.thebrewingmarket.brew.PriceCategory;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig.LimitationConfig;
@@ -167,7 +168,7 @@ public final class TBMExpansion extends PlaceholderExpansion {
         boolean rawValue = rest.endsWith("_raw");
         String recipe = rawValue ? rest.substring(0, rest.length() - "_raw".length()) : rest;
         if (recipe.isEmpty()) return "";
-        double price = config.getBasePrice(recipe);
+        double price = config.getBasePrice(PriceCategory.BREW, recipe);
         return rawValue ? raw(price) : sellService.format(price);
     }
 

@@ -37,7 +37,7 @@ public final class BrewEvaluator {
             return Optional.empty();
         }
 
-        final double basePrice = marketConfig.getBasePrice(item.id());
+        final double basePrice = marketConfig.getBasePrice(item.category(), item.id());
         if (basePrice <= 0) {
             return Optional.empty();
         }
