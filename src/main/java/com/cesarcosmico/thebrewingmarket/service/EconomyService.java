@@ -16,8 +16,4 @@ public final class EconomyService {
         EconomyResponse response = economy.depositPlayer(player, amount);
         return response.transactionSuccess();
     }
-
-    public String format(double amount) {
-        return economy.format(amount);
-    }
 }

@@ -19,10 +19,12 @@ public final class SellService {
 
     private final BrewEvaluator brewEvaluator;
     private final EconomyService economyService;
+    private final MoneyFormatter moneyFormatter;
 
-    public SellService(BrewEvaluator brewEvaluator, EconomyService economyService) {
+    public SellService(BrewEvaluator brewEvaluator, EconomyService economyService, MoneyFormatter moneyFormatter) {
         this.brewEvaluator = brewEvaluator;
         this.economyService = economyService;
+        this.moneyFormatter = moneyFormatter;
     }
 
     public record SoldBrewDetail(String recipeId, double score, double pricePerUnit, int quantity,
@@ -204,7 +206,7 @@ public final class SellService {
     }
 
     public String format(double amount) {
-        return economyService.format(amount);
+        return moneyFormatter.format(amount);
     }
 
     // ── Shulker helpers ──────────────────────────────────────────
