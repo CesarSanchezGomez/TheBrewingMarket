@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.listener;
 
+import com.cesarcosmico.thebrewingmarket.brew.PriceCategory;
 import com.cesarcosmico.thebrewingmarket.config.IconConfig;
 import com.cesarcosmico.thebrewingmarket.config.LangConfig;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
@@ -27,6 +28,8 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public final class MarketGUIListener implements Listener {
+
+    private static final String GARDEN_SEEDS_SUFFIX = "_seeds";
 
     private final JavaPlugin plugin;
     private final LangConfig langConfig;
@@ -186,9 +189,11 @@ public final class MarketGUIListener implements Listener {
             earningsTracker.record(player.getUniqueId(), result.money());
             playerStatsCache.recordSale(player.getUniqueId(), result);
             String money = sellService.format(result.money());
+            String soldType = langConfig.getRaw("market.sell-types." + soldTypeKey(result.details()));
             langConfig.send(player, "market.sell-success",
                     Placeholder.unparsed("money", money),
-                    Placeholder.unparsed("sold-amount", String.valueOf(result.itemCount())));
+                    Placeholder.unparsed("sold-amount", String.valueOf(result.itemCount())),
+                    Placeholder.unparsed("sold-type", soldType));
             playSound(player, config.getActionSound(allowSound));
             logHistory(player, result);
         } else {
@@ -197,6 +202,26 @@ public final class MarketGUIListener implements Listener {
         }
 
         gui.refreshSellButtons();
+    }
+
+    private static String soldTypeKey(List<SellService.SoldBrewDetail> details) {
+        String kind = null;
+        for (SellService.SoldBrewDetail detail : details) {
+            String current = kindOf(detail);
+            if (kind == null) {
+                kind = current;
+            } else if (!kind.equals(current)) {
+                return "mixed";
+            }
+        }
+        return kind != null ? kind : "mixed";
+    }
+
+    private static String kindOf(SellService.SoldBrewDetail detail) {
+        if (detail.category() == PriceCategory.BREW) {
+            return "brews";
+        }
+        return detail.recipeId().endsWith(GARDEN_SEEDS_SUFFIX) ? "seeds" : "fruits";
     }
 
     private void logHistory(Player player, SellService.DetailedSellResult result) {

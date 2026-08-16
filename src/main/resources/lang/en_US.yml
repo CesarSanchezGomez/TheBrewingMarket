@@ -25,9 +25,15 @@ command:
 
 # -- Market -----------------------------------
 market:
-  sell-success: '<prefix> <white>You sold <#FCBDE3><sold-amount></#FCBDE3> brews for <#FCBDE3><money>$</#FCBDE3>!</white>'
-  sell-nothing: '<prefix> <white>There are no valid brews to sell.</white>'
+  sell-success: '<prefix> <white>You sold <#FCBDE3><sold-amount></#FCBDE3> <sold-type> for <#FCBDE3><money>$</#FCBDE3>!</white>'
+  sell-nothing: '<prefix> <white>There are no valid items to sell.</white>'
   sell-error: '<prefix> <white>Transaction failed. Please try again.</white>'
+  # Noun used in 'sell-success', chosen by what was sold (or 'mixed' for a mix).
+  sell-types:
+    brews: 'brews'
+    fruits: 'fruits'
+    seeds: 'seeds'
+    mixed: 'items'
   limit-reached:
     - '<prefix> <white>Daily earnings: <#FCBDE3><earned>$</#FCBDE3>/<#FCBDE3><limit>$</#FCBDE3>.</white>'
     - '<prefix> <white>Remaining today: <#FCBDE3><remaining>$</#FCBDE3>.</white>'

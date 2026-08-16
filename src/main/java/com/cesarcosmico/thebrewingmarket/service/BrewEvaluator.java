@@ -1,6 +1,7 @@
 package com.cesarcosmico.thebrewingmarket.service;
 
 import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
+import com.cesarcosmico.thebrewingmarket.brew.PriceCategory;
 import com.cesarcosmico.thebrewingmarket.brew.ResolvedItem;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import net.kyori.adventure.text.Component;
@@ -19,7 +20,8 @@ public final class BrewEvaluator {
         this.brewResolver = brewResolver;
     }
 
-    public record BrewEvaluation(String recipeId, double score, double price, Component displayName) {
+    public record BrewEvaluation(String recipeId, double score, double price, Component displayName,
+                                 PriceCategory category) {
     }
 
     public Optional<BrewEvaluation> evaluate(final ItemStack itemStack) {
@@ -47,6 +49,7 @@ public final class BrewEvaluator {
                 ? meta.displayName()
                 : Component.text(item.id());
 
-        return Optional.of(new BrewEvaluation(item.id(), item.score(), basePrice * item.score(), displayName));
+        return Optional.of(new BrewEvaluation(item.id(), item.score(), basePrice * item.score(),
+                displayName, item.category()));
     }
 }

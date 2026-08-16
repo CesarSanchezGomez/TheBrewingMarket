@@ -1,5 +1,6 @@
 package com.cesarcosmico.thebrewingmarket.service;
 
+import com.cesarcosmico.thebrewingmarket.brew.PriceCategory;
 import com.cesarcosmico.thebrewingmarket.config.MarketConfig;
 import com.cesarcosmico.thebrewingmarket.util.ShulkerUtil;
 import net.kyori.adventure.text.Component;
@@ -28,8 +29,7 @@ public final class SellService {
     }
 
     public record SoldBrewDetail(String recipeId, double score, double pricePerUnit, int quantity,
-                                 Component displayName) {
-        public double total() {
+                                 Component displayName, PriceCategory category) {        public double total() {
             return pricePerUnit * score * quantity;
         }
     }
@@ -267,10 +267,9 @@ public final class SellService {
                                   BrewEvaluator.BrewEvaluation eval, int amount) {
         String key = detailKey(eval.recipeId(), eval.score());
         map.merge(key, new SoldBrewDetail(eval.recipeId(), eval.score(),
-                        eval.price() / eval.score(), amount, eval.displayName()),
-                (existing, incoming) -> new SoldBrewDetail(
+                eval.price() / eval.score(), amount, eval.displayName(), eval.category()),                (existing, incoming) -> new SoldBrewDetail(
                         existing.recipeId(), existing.score(), existing.pricePerUnit(),
-                        existing.quantity() + incoming.quantity(), existing.displayName()
+                        existing.quantity() + incoming.quantity(), existing.displayName(), existing.category()
                 ));
     }
 
