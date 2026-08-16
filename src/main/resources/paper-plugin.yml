@@ -3,6 +3,7 @@ version: '2.2.2'
 authors:
   - CesarCosmico
 main: com.cesarcosmico.thebrewingmarket.TheBrewingMarketPlugin
+loader: com.cesarcosmico.thebrewingmarket.TheBrewingMarketLoader
 description: Sell your TheBrewingProject brews for money
 api-version: '26.2'
 

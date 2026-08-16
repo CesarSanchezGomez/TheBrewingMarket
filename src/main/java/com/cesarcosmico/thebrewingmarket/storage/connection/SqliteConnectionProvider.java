@@ -19,6 +19,11 @@ public final class SqliteConnectionProvider implements ConnectionProvider {
 
     @Override
     public void initialize() throws SQLException {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("SQLite driver (org.sqlite.JDBC) is not available on the classpath", e);
+        }
         this.realConnection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
     }
 

@@ -44,19 +44,15 @@ dependencies {
     compileOnly("com.dre.brewery:BreweryX:3.7.0")
     compileOnly("me.clip:placeholderapi:2.12.3")
 
-    // Bundled via shadowJar
-    implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("com.mysql:mysql-connector-j:8.0.33")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.7")
+    // Provided at runtime by the PluginLoader (see TheBrewingMarketLoader)
+    compileOnly("com.zaxxer:HikariCP:7.1.0")
+
     implementation("org.bstats:bstats-bukkit:3.2.1")
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveClassifier.set("")
 
-    relocate("com.zaxxer.hikari", "com.cesarcosmico.thebrewingmarket.lib.hikari")
-    relocate("com.mysql", "com.cesarcosmico.thebrewingmarket.lib.mysql")
-    relocate("org.mariadb", "com.cesarcosmico.thebrewingmarket.lib.mariadb")
     relocate("org.bstats", "com.cesarcosmico.thebrewingmarket.lib.bstats")
 
     mergeServiceFiles()
