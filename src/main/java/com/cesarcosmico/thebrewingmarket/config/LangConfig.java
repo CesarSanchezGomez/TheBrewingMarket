@@ -1,10 +1,13 @@
 package com.cesarcosmico.thebrewingmarket.config;
 
+import com.cesarcosmico.thebrewingmarket.text.TextRenderer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -16,16 +19,16 @@ import java.util.Map;
 
 public final class LangConfig {
 
-    public static final int CURRENT_VERSION = 2;
-
-    private static final MiniMessage MINI = MiniMessage.miniMessage();
+    public static final int CURRENT_VERSION = 3;
 
     private final JavaPlugin plugin;
+    private final TextRenderer textRenderer;
     private final Map<String, String> messages;
     private String prefix;
 
-    public LangConfig(JavaPlugin plugin) {
+    public LangConfig(JavaPlugin plugin, TextRenderer textRenderer) {
         this.plugin = plugin;
+        this.textRenderer = textRenderer;
         this.messages = new HashMap<>();
         load();
     }
@@ -98,38 +101,19 @@ public final class LangConfig {
         return value != null ? value : "N/A";
     }
 
-    public Component get(String key, String... placeholders) {
-        String raw = getRaw(key).replace("{prefix}", prefix);
-
-        for (int i = 0; i + 1 < placeholders.length; i += 2) {
-            raw = raw.replace(placeholders[i], placeholders[i + 1]);
-        }
-
-        return MINI.deserialize(raw);
+    public Component get(OfflinePlayer viewer, String key, TagResolver... resolvers) {
+        TagResolver all = TagResolver.resolver(
+                Placeholder.parsed("prefix", prefix),
+                TagResolver.resolver(resolvers));
+        return textRenderer.render(viewer, getRaw(key), all);
     }
 
-    public Component get(String key, TagResolver resolver,
-                         String[] componentKeys, String... placeholders) {
-        String raw = getRaw(key).replace("{prefix}", prefix);
-
-        for (int i = 0; i + 1 < placeholders.length; i += 2) {
-            raw = raw.replace(placeholders[i], placeholders[i + 1]);
-        }
-
-        for (String componentKey : componentKeys) {
-            raw = raw.replace("{" + componentKey + "}", "<" + componentKey + ">");
-        }
-
-        return MINI.deserialize(raw, resolver);
+    public void send(CommandSender sender, String key, TagResolver... resolvers) {
+        sender.sendMessage(get(viewerOf(sender), key, resolvers));
     }
 
-    public void send(CommandSender sender, String key, String... placeholders) {
-        sender.sendMessage(get(key, placeholders));
-    }
-
-    public void send(CommandSender sender, String key, TagResolver resolver,
-                     String[] componentKeys, String... placeholders) {
-        sender.sendMessage(get(key, resolver, componentKeys, placeholders));
+    private static OfflinePlayer viewerOf(CommandSender sender) {
+        return sender instanceof Player player ? player : null;
     }
 
     private void saveDefaultLang(String lang) {

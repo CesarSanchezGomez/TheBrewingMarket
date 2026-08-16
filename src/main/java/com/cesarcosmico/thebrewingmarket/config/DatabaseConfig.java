@@ -5,7 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class DatabaseConfig {
 
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
 
     public record SQLiteSettings(String file, String tablePrefix) {}
 
@@ -36,7 +36,7 @@ public class DatabaseConfig {
     public DatabaseConfig(FileConfiguration config) {
         this.method = config.getString("data-storage-method", "SQLite");
 
-        ConfigurationSection sqlite = config.getConfigurationSection("SQLite");
+        ConfigurationSection sqlite = sectionIgnoreCase(config, "sqlite");
         if (sqlite != null) {
             this.sqliteSettings = new SQLiteSettings(
                     sqlite.getString("file", "TheBrewingMarket"),
@@ -46,15 +46,15 @@ public class DatabaseConfig {
             this.sqliteSettings = new SQLiteSettings("TheBrewingMarket", "");
         }
 
-        this.mysqlSettings  = readPooledSettings(config, "MySQL");
-        this.mariadbSettings = readPooledSettings(config, "MariaDB");
+        this.mysqlSettings  = readPooledSettings(config, "mysql");
+        this.mariadbSettings = readPooledSettings(config, "mariadb");
     }
 
     private static PooledSettings readPooledSettings(FileConfiguration config, String section) {
-        ConfigurationSection sec = config.getConfigurationSection(section);
+        ConfigurationSection sec = sectionIgnoreCase(config, section);
         if (sec == null) return null;
 
-        ConfigurationSection pool = sec.getConfigurationSection("Pool-Settings");
+        ConfigurationSection pool = sec.getConfigurationSection("pool-settings");
         PoolSettings poolSettings = pool == null
                 ? new PoolSettings(10, 10, 180000, 60000, 20000)
                 : new PoolSettings(
@@ -77,6 +77,15 @@ public class DatabaseConfig {
         );
     }
 
+    private static ConfigurationSection sectionIgnoreCase(ConfigurationSection parent, String name) {
+        for (String key : parent.getKeys(false)) {
+            if (key.equalsIgnoreCase(name)) {
+                return parent.getConfigurationSection(key);
+            }
+        }
+        return null;
+    }
+
     public String getMethod() {
         return method;
     }
@@ -86,9 +95,9 @@ public class DatabaseConfig {
     }
 
     public PooledSettings getPooledSettings(String section) {
-        return switch (section) {
-            case "MySQL"   -> mysqlSettings;
-            case "MariaDB" -> mariadbSettings;
+        return switch (section.toLowerCase()) {
+            case "mysql"   -> mysqlSettings;
+            case "mariadb" -> mariadbSettings;
             default -> throw new IllegalArgumentException("Unknown section: " + section);
         };
     }

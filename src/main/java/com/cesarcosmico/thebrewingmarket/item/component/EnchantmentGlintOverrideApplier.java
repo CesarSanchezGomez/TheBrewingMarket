@@ -7,7 +7,7 @@ public final class EnchantmentGlintOverrideApplier extends BaseComponentApplier 
 
     @Override
     public String key() {
-        return "enchantment_glint_override";
+        return "enchantment-glint-override";
     }
 
     @Override

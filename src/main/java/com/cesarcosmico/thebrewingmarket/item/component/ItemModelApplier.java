@@ -16,7 +16,7 @@ public final class ItemModelApplier extends BaseComponentApplier {
 
     @Override
     public String key() {
-        return "item_model";
+        return "item-model";
     }
 
     @Override
@@ -27,13 +27,13 @@ public final class ItemModelApplier extends BaseComponentApplier {
         try {
             NamespacedKey modelKey = NamespacedKey.fromString(value);
             if (modelKey == null) {
-                logger.warning("Invalid item_model key: " + value);
+                logger.warning("Invalid item-model key: " + value);
                 return;
             }
 
             editMeta(item, meta -> meta.setItemModel(modelKey));
         } catch (Exception e) {
-            logger.warning("Failed to apply item_model '" + value + "': " + e.getMessage());
+            logger.warning("Failed to apply item-model '" + value + "': " + e.getMessage());
         }
     }
 }

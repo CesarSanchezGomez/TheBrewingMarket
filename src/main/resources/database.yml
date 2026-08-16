@@ -1,14 +1,15 @@
 # Internal version — do not edit. Bump = new keys were added.
-config-version: 1
+config-version: 2
 
 # local database
 #   SQLite
-
+#
 # remote database
 #   MySQL
 #   MariaDB (preferred over MySQL)
 #
-data-storage-method: SQLite
+# The value below is matched case-insensitively.
+data-storage-method: 'SQLite'
 
 SQLite:
   # Name of the .db file (without extension) inside the plugin's data folder
@@ -18,30 +19,30 @@ SQLite:
 
 MySQL:
   host: 'localhost'
-  port: '3306'
+  port: 3306
   user: 'root'
   password: 'password'
   database: 'minecraft'
   connection-parameters: '?useSSL=false&useUnicode=true&characterEncoding=UTF-8'
-  Pool-Settings:
+  pool-settings:
     max-pool-size: 10
     min-idle: 10
     max-lifetime: 180000
     keep-alive-time: 60000
     time-out: 20000
-  table-prefix: tbm
+  table-prefix: 'tbm'
 
 MariaDB:
   host: 'localhost'
-  port: '3306'
+  port: 3306
   user: 'root'
   password: 'password'
   database: 'minecraft'
   connection-parameters: '?useUnicode=true&characterEncoding=UTF-8'
-  Pool-Settings:
+  pool-settings:
     max-pool-size: 10
     min-idle: 10
     max-lifetime: 180000
     keep-alive-time: 60000
     time-out: 20000
-  table-prefix: tbm
+  table-prefix: 'tbm'

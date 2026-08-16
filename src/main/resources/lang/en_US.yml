@@ -1,12 +1,13 @@
 # TheBrewingMarket - English Language File (US)
 # Supports MiniMessage formatting.
-# Use {prefix} to insert the plugin prefix.
+# Use <prefix> to insert the plugin prefix.
 # Internal version — do not edit. Bump = new messages were added.
-config-version: 2
+config-version: 3
 
 prefix: '<white>[<gradient:#FCBDE3:#F973C4>BrewingMarket</gradient>]</white>'
 
 # -- Placeholders -----------------------------
+# These keys mirror the PlaceholderAPI parameter names — keep them snake_case.
 placeholders:
   empty:
     last_sale_recipe_id: 'N/A'
@@ -18,37 +19,37 @@ placeholders:
 
 # -- Commands ---------------------------------
 command:
-  only-players: '{prefix} <red>This command can only be used by players.</red>'
-  no-permission: '{prefix} <white>You don''t have permission to do that.</white>'
-  reload-success: '{prefix} <white>Configuration reloaded successfully.</white>'
+  only-players: '<prefix> <red>This command can only be used by players.</red>'
+  no-permission: '<prefix> <white>You don''t have permission to do that.</white>'
+  reload-success: '<prefix> <white>Configuration reloaded successfully.</white>'
 
 # -- Market -----------------------------------
 market:
-  sell-success: '{prefix} <white>You sold <#FCBDE3>{sold_amount}</#FCBDE3> brews for <#FCBDE3>{money}</#FCBDE3>!</white>'
-  sell-nothing: '{prefix} <white>There are no valid brews to sell.</white>'
-  sell-error: '{prefix} <white>Transaction failed. Please try again.</white>'
+  sell-success: '<prefix> <white>You sold <#FCBDE3><sold-amount></#FCBDE3> brews for <#FCBDE3><money>$</#FCBDE3>!</white>'
+  sell-nothing: '<prefix> <white>There are no valid brews to sell.</white>'
+  sell-error: '<prefix> <white>Transaction failed. Please try again.</white>'
   limit-reached:
-    - '{prefix} <white>Daily earnings: <#FCBDE3>{earned}</#FCBDE3>/<#FCBDE3>{limit}</#FCBDE3>.</white>'
-    - '{prefix} <white>Remaining today: <#FCBDE3>{remaining}</#FCBDE3>.</white>'
+    - '<prefix> <white>Daily earnings: <#FCBDE3><earned>$</#FCBDE3>/<#FCBDE3><limit>$</#FCBDE3>.</white>'
+    - '<prefix> <white>Remaining today: <#FCBDE3><remaining>$</#FCBDE3>.</white>'
 
 # -- History ----------------------------------
 history:
-  invalid-time: '{prefix} <red>Invalid time format. Use: 1s, 1m, 1h, 1d, 1w, 1M, 1Y</red>'
-  empty: '{prefix} <white>{player} has no sell history.</white>'
+  invalid-time: '<prefix> <red>Invalid time format. Use: 1s, 1m, 1h, 1d, 1w, 1M, 1Y</red>'
+  empty: '<prefix> <white><player> has no sell history.</white>'
   display:
     - ''
     - '<gradient:#FCBDE3:#F973C4>◤<st>                 </st></gradient> <white>[</white><gradient:#FCBDE3:#F973C4>BrewingMarket</gradient><white>]</white> <gradient:#F973C4:#FCBDE3><st>                 </st>◥</gradient>'
     - ''
-    - '{entries}'
+    - '<entries>'
     - ''
-    - '<gradient:#FCBDE3:#F973C4>◣<st>                   </st></gradient> {previous_page} <white>| {page}/{max_page} |</white> {next_page} <gradient:#F973C4:#FCBDE3><st>                   </st>◢</gradient>'
+    - '<gradient:#FCBDE3:#F973C4>◣<st>                   </st></gradient> <previous-page> <white>| <page>/<max-page> |</white> <next-page> <gradient:#F973C4:#FCBDE3><st>                   </st>◢</gradient>'
     - ''
-  entry: '  <gray>•</gray> {player_head} <white>{recipe}</white> <gray>x{quantity}</gray> <white>[</white><#FCBDE3>{quality}</#FCBDE3><white>]</white> <white>[</white><#FCBDE3>{total}$</#FCBDE3><white>]</white>'
-  entry_hover: '<white>{player}</white> <dark_gray>-</dark_gray> <gray>{time_ago}</gray> <dark_gray>-</dark_gray> <gray>{exact_date}</gray>'
+  entry: '  <gray>•</gray> <player-head> <white><recipe></white> <gray>x<quantity></gray> <white>[</white><#FCBDE3><quality></#FCBDE3><white>]</white> <white>[</white><#FCBDE3><total>$</#FCBDE3><white>]</white>'
+  entry-hover: '<white><player></white> <dark_gray>-</dark_gray> <gray><time-ago></gray> <dark_gray>-</dark_gray> <gray><exact-date></gray>'
   navigation:
     previous: '<gradient:#FCBDE3:#F973C4>«</gradient>'
-    previous_disabled: '<dark_gray>«</dark_gray>'
-    previous_hover: '<gray>Click to go to page {page}</gray>'
+    previous-disabled: '<dark_gray>«</dark_gray>'
+    previous-hover: '<gray>Click to go to page <page></gray>'
     next: '<gradient:#FCBDE3:#F973C4>»</gradient>'
-    next_disabled: '<dark_gray>»</dark_gray>'
-    next_hover: '<gray>Click to go to page {page}</gray>'
+    next-disabled: '<dark_gray>»</dark_gray>'
+    next-hover: '<gray>Click to go to page <page></gray>'

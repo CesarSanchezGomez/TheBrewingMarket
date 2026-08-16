@@ -9,7 +9,7 @@ public final class PotionContentsApplier implements ComponentApplier {
 
     @Override
     public String key() {
-        return "potion_contents";
+        return "potion-contents";
     }
 
     @Override
@@ -19,8 +19,8 @@ public final class PotionContentsApplier implements ComponentApplier {
 
         if (!(item.getItemMeta() instanceof PotionMeta potionMeta)) return;
 
-        if (potionSection.contains("custom_color")) {
-            potionMeta.setColor(Color.fromRGB(potionSection.getInt("custom_color")));
+        if (potionSection.contains("custom-color")) {
+            potionMeta.setColor(Color.fromRGB(potionSection.getInt("custom-color")));
         }
 
         item.setItemMeta(potionMeta);

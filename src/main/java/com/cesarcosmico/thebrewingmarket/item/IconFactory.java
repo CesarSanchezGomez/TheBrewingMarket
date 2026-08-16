@@ -2,10 +2,12 @@ package com.cesarcosmico.thebrewingmarket.item;
 
 import com.cesarcosmico.thebrewingmarket.config.IconConfig;
 import com.cesarcosmico.thebrewingmarket.item.component.ComponentRegistry;
+import com.cesarcosmico.thebrewingmarket.text.TextRenderer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,37 +19,78 @@ import java.util.logging.Logger;
 
 public final class IconFactory {
 
-    private static final MiniMessage MINI = MiniMessage.miniMessage();
-
     private final Logger logger;
+    private final TextRenderer textRenderer;
     private final ComponentRegistry componentRegistry;
 
-    public IconFactory(Logger logger) {
+    public IconFactory(Logger logger, TextRenderer textRenderer) {
         this.logger = logger;
+        this.textRenderer = textRenderer;
         this.componentRegistry = new ComponentRegistry(logger);
-    }
-
-    public ItemStack buildStaticIcon(ConfigurationSection section) {
-        Material material = resolveMaterial(section);
-        ItemStack item = new ItemStack(material);
-
-        componentRegistry.applyAll(item, section);
-
-        return item;
     }
 
     public IconConfig parseIconConfig(ConfigurationSection section) {
         if (section == null) {
-            return new IconConfig(new ItemStack(Material.BARRIER), null, List.of(), " ");
+            return new IconConfig(new ItemStack(Material.BARRIER), null, List.of(), null);
         }
 
-        ItemStack baseItem = buildStaticIcon(section);
-
-        String displayNameRaw = section.getString("custom_name", " ");
-        List<String> loreRaw = section.getStringList("lore");
+        ItemStack baseItem = buildBaseItem(section);
+        ConfigurationSection components = section.getConfigurationSection("components");
+        String displayNameRaw = components != null ? components.getString("custom-name") : null;
+        List<String> loreRaw = components != null ? components.getStringList("lore") : List.of();
         String sound = extractSound(section);
 
         return new IconConfig(baseItem, sound, loreRaw, displayNameRaw);
+    }
+
+    public ItemStack render(IconConfig config, OfflinePlayer viewer, TagResolver resolver) {
+        ItemStack item = config.baseItem().clone();
+        ItemMeta meta = item.getItemMeta();
+
+        if (config.displayNameRaw() != null) {
+            meta.displayName(renderLine(viewer, config.displayNameRaw(), resolver));
+        }
+        if (!config.loreRaw().isEmpty()) {
+            meta.lore(config.loreRaw().stream()
+                    .map(line -> renderLine(viewer, line, resolver))
+                    .toList());
+        }
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public Map<Character, IconConfig> parseDecorativeIcons(ConfigurationSection market) {
+        Map<Character, IconConfig> result = new HashMap<>();
+
+        ConfigurationSection decoSection = market.getConfigurationSection("decorative-icons");
+        if (decoSection != null) {
+            for (String key : decoSection.getKeys(false)) {
+                ConfigurationSection icon = decoSection.getConfigurationSection(key);
+                if (icon == null) continue;
+                char symbol = icon.getString("symbol", "?").charAt(0);
+                result.put(symbol, parseIconConfig(icon));
+            }
+        }
+
+        parseNamedIcon(market, "title-icon", result);
+        parseNamedIcon(market, "close-icon", result);
+
+        return result;
+    }
+
+    private ItemStack buildBaseItem(ConfigurationSection section) {
+        Material material = resolveMaterial(section);
+        ItemStack item = new ItemStack(material);
+        ConfigurationSection components = section.getConfigurationSection("components");
+        if (components != null) {
+            componentRegistry.applyAll(item, components);
+        }
+        return item;
+    }
+
+    private Component renderLine(OfflinePlayer viewer, String raw, TagResolver resolver) {
+        return textRenderer.render(viewer, raw, resolver).decoration(TextDecoration.ITALIC, false);
     }
 
     private String extractSound(ConfigurationSection section) {
@@ -64,51 +107,11 @@ public final class IconFactory {
         return null;
     }
 
-    public ItemStack buildDynamicIcon(IconConfig config, String money, String soldAmount) {
-        ItemStack item = config.baseItem().clone();
-        ItemMeta meta = item.getItemMeta();
-
-        String nameRaw = config.displayNameRaw()
-                .replace("{money}", money)
-                .replace("{sold_amount}", soldAmount);
-        meta.displayName(mm(nameRaw));
-
-        if (!config.loreRaw().isEmpty()) {
-            List<Component> lore = config.loreRaw().stream()
-                    .map(line -> line.replace("{money}", money).replace("{sold_amount}", soldAmount))
-                    .map(IconFactory::mm)
-                    .toList();
-            meta.lore(lore);
-        }
-
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    public Map<Character, ItemStack> parseDecorativeIcons(ConfigurationSection market) {
-        Map<Character, ItemStack> result = new HashMap<>();
-
-        ConfigurationSection decoSection = market.getConfigurationSection("decorative-icons");
-        if (decoSection != null) {
-            for (String key : decoSection.getKeys(false)) {
-                ConfigurationSection icon = decoSection.getConfigurationSection(key);
-                if (icon == null) continue;
-                char symbol = icon.getString("symbol", "?").charAt(0);
-                result.put(symbol, buildStaticIcon(icon));
-            }
-        }
-
-        parseNamedIcon(market, "title-icon", result);
-        parseNamedIcon(market, "close-icon", result);
-
-        return result;
-    }
-
-    private void parseNamedIcon(ConfigurationSection market, String key, Map<Character, ItemStack> target) {
+    private void parseNamedIcon(ConfigurationSection market, String key, Map<Character, IconConfig> target) {
         ConfigurationSection section = market.getConfigurationSection(key);
         if (section == null) return;
         char symbol = section.getString("symbol", "?").charAt(0);
-        target.put(symbol, buildStaticIcon(section));
+        target.put(symbol, parseIconConfig(section));
     }
 
     private Material resolveMaterial(ConfigurationSection section) {
@@ -118,9 +121,5 @@ public final class IconFactory {
             material = Material.STONE;
         }
         return material;
-    }
-
-    private static Component mm(String raw) {
-        return MINI.deserialize(raw).decoration(TextDecoration.ITALIC, false);
     }
 }

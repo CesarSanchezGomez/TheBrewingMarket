@@ -15,8 +15,6 @@ public final class ComponentRegistry {
         this.appliers = new LinkedHashMap<>();
 
         register(new ProfileApplier(logger));
-        register(new CustomNameApplier());
-        register(new LoreApplier());
         register(new EnchantmentsApplier(logger));
         register(new CustomModelDataApplier());
         register(new ItemModelApplier(logger));

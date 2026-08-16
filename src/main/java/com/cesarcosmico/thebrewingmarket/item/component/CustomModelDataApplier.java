@@ -11,7 +11,7 @@ public final class CustomModelDataApplier extends BaseComponentApplier {
 
     @Override
     public String key() {
-        return "custom_model_data";
+        return "custom-model-data";
     }
 
     @Override

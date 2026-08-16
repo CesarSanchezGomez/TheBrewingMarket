@@ -21,13 +21,13 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
     private BukkitTask refreshTask;
 
     public TheBrewingMarketGUI(MarketConfig config, SellService sellService, Player player,
-                         boolean shulkerEnabled) {
+                               boolean shulkerEnabled) {
         this.config = config;
         this.sellService = sellService;
         this.owner = player;
         this.shulkerEnabled = shulkerEnabled;
 
-        this.inventory = Bukkit.createInventory(this, config.getInventorySize(), config.getTitle());
+        this.inventory = Bukkit.createInventory(this, config.getInventorySize(), config.renderTitle(owner));
 
         populateDecoration();
         refreshSellButtons();
@@ -79,20 +79,20 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
         for (int slot : config.getSellSlots()) {
             if (guiBrewCount > 0) {
                 inventory.setItem(slot, config.buildSellButton(
-                        config.getSellAllow(), guiMoney, String.valueOf(guiBrewCount)));
+                        config.getSellAllow(), owner, guiMoney, String.valueOf(guiBrewCount)));
             } else {
                 inventory.setItem(slot, config.buildSellButton(
-                        config.getSellDeny(), "0", "0"));
+                        config.getSellDeny(), owner, "0", "0"));
             }
         }
 
         for (int slot : config.getSellAllSlots()) {
             if (totalBrewCount > 0) {
                 inventory.setItem(slot, config.buildSellButton(
-                        config.getSellAllAllow(), totalMoney, String.valueOf(totalBrewCount)));
+                        config.getSellAllAllow(), owner, totalMoney, String.valueOf(totalBrewCount)));
             } else {
                 inventory.setItem(slot, config.buildSellButton(
-                        config.getSellAllDeny(), "0", "0"));
+                        config.getSellAllDeny(), owner, "0", "0"));
             }
         }
     }
@@ -114,9 +114,9 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
                 continue;
             }
             char symbol = config.getSymbolAt(slot);
-            ItemStack decoItem = config.getDecorativeItem(symbol);
+            ItemStack decoItem = config.renderDecoration(symbol, owner);
             if (decoItem != null) {
-                inventory.setItem(slot, decoItem.clone());
+                inventory.setItem(slot, decoItem);
             }
         }
     }

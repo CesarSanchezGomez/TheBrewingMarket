@@ -8,6 +8,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -42,17 +44,24 @@ public final class ProfileApplier implements ComponentApplier {
     }
 
     private void applyFromSection(ItemStack item, SkullMeta meta, ConfigurationSection profileSection) {
-        String textures = profileSection.getString("textures");
-        if (textures == null || textures.isEmpty()) return;
+        List<Map<?, ?>> properties = profileSection.getMapList("properties");
+        if (properties.isEmpty()) return;
 
         try {
             PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
             profile.clearProperties();
-            profile.setProperty(new ProfileProperty("textures", textures));
+            for (Map<?, ?> property : properties) {
+                Object name = property.get("name");
+                Object value = property.get("value");
+                if (name == null || value == null) continue;
+                Object signature = property.get("signature");
+                profile.setProperty(new ProfileProperty(name.toString(), value.toString(),
+                        signature == null ? null : signature.toString()));
+            }
             meta.setPlayerProfile(profile);
             item.setItemMeta(meta);
         } catch (Exception e) {
-            logger.warning("Invalid profile textures: " + e.getMessage());
+            logger.warning("Invalid profile properties: " + e.getMessage());
         }
     }
 

@@ -24,7 +24,7 @@ public final class TooltipDisplayApplier implements ComponentApplier {
 
     @Override
     public String key() {
-        return "tooltip_display";
+        return "tooltip-display";
     }
 
     @Override
@@ -34,16 +34,16 @@ public final class TooltipDisplayApplier implements ComponentApplier {
 
         TooltipDisplay.Builder builder = TooltipDisplay.tooltipDisplay();
 
-        if (tooltipSection.getBoolean("hide_tooltip", false)) {
+        if (tooltipSection.getBoolean("hide-tooltip", false)) {
             builder.hideTooltip(true);
         }
 
-        for (String componentId : tooltipSection.getStringList("hidden_components")) {
-            String normalized = componentId.replace("minecraft:", "").toLowerCase();
+        for (String componentId : tooltipSection.getStringList("hidden-components")) {
+            String normalized = componentId.replace("minecraft:", "").replace('-', '_').toLowerCase();
             DataComponentType type = TYPE_REGISTRY.get(normalized);
 
             if (type == null) {
-                logger.warning("Unknown component for tooltip_display hidden_components: " + componentId);
+                logger.warning("Unknown component for tooltip-display hidden-components: " + componentId);
                 continue;
             }
 

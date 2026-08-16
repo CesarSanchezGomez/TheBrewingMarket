@@ -16,7 +16,7 @@ public final class TooltipStyleApplier extends BaseComponentApplier {
 
     @Override
     public String key() {
-        return "tooltip_style";
+        return "tooltip-style";
     }
 
     @Override
@@ -27,13 +27,13 @@ public final class TooltipStyleApplier extends BaseComponentApplier {
         try {
             NamespacedKey styleKey = NamespacedKey.fromString(value);
             if (styleKey == null) {
-                logger.warning("Invalid tooltip_style key: " + value);
+                logger.warning("Invalid tooltip-style key: " + value);
                 return;
             }
 
             editMeta(item, meta -> meta.setTooltipStyle(styleKey));
         } catch (Exception e) {
-            logger.warning("Failed to apply tooltip_style '" + value + "': " + e.getMessage());
+            logger.warning("Failed to apply tooltip-style '" + value + "': " + e.getMessage());
         }
     }
 }

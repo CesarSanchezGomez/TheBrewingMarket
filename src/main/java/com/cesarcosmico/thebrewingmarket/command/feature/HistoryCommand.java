@@ -19,8 +19,8 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -107,12 +107,12 @@ public final class HistoryCommand {
         }
 
         final int recordsPerPage = configSupplier.get().getHistoryPerPage();
-        
+
         historyService.findPlayerUuid(targetName).thenCompose(uuidOpt -> {
             if (uuidOpt.isEmpty()) {
                 plugin.getServer().getScheduler().runTask(plugin, () ->
                         langSupplier.get().send(context.getSource().getSender(),
-                                "history.empty", "{player}", targetName));
+                                "history.empty", Placeholder.unparsed("player", targetName)));
                 return CompletableFuture.completedFuture(null);
             }
 
@@ -146,7 +146,7 @@ public final class HistoryCommand {
 
         if (records.isEmpty()) {
             lang.send(context.getSource().getSender(), "history.empty",
-                    "{player}", targetName);
+                    Placeholder.unparsed("player", targetName));
             return;
         }
 
@@ -154,6 +154,7 @@ public final class HistoryCommand {
         final List<Component> entryComponents = new ArrayList<>();
 
         final boolean isConsoleSender = !(context.getSource().getSender() instanceof Player);
+        final OfflinePlayer viewer = isConsoleSender ? null : (Player) context.getSource().getSender();
 
         for (final SellHistoryService.SellRecord record : records) {
             final String headTag;
@@ -165,18 +166,18 @@ public final class HistoryCommand {
                 headTag = "<head:" + DEFAULT_HEAD_UUID + ">";
             }
 
-            final Component entryComponent = lang.get("history.entry",
-                    "{player_head}", headTag,
-                    "{recipe}", record.displayName(),
-                    "{quantity}", String.valueOf(record.quantity()),
-                    "{quality}", String.format("%.0f%%", record.quality() * 100),
-                    "{total}", sellService.format(record.total())
+            final Component entryComponent = lang.get(viewer, "history.entry",
+                    Placeholder.parsed("player-head", headTag),
+                    Placeholder.parsed("recipe", record.displayName()),
+                    Placeholder.unparsed("quantity", String.valueOf(record.quantity())),
+                    Placeholder.unparsed("quality", String.format("%.0f%%", record.quality() * 100)),
+                    Placeholder.unparsed("total", sellService.format(record.total()))
             );
 
-            final Component hoverComponent = lang.get("history.entry_hover",
-                    "{player}", record.playerName(),
-                    "{time_ago}", TimeUtil.relativeTime(record.soldAt()),
-                    "{exact_date}", TimeUtil.exactTime(record.soldAt())
+            final Component hoverComponent = lang.get(viewer, "history.entry-hover",
+                    Placeholder.unparsed("player", record.playerName()),
+                    Placeholder.unparsed("time-ago", TimeUtil.relativeTime(record.soldAt())),
+                    Placeholder.unparsed("exact-date", TimeUtil.exactTime(record.soldAt()))
             );
 
             entryComponents.add(entryComponent
@@ -184,45 +185,43 @@ public final class HistoryCommand {
         }
 
         final Component entriesBlock = Component.join(JoinConfiguration.newlines(), entryComponents);
-        final Component previousPage = buildPreviousPage(lang, targetName, timeArg, page);
-        final Component nextPage = buildNextPage(lang, targetName, timeArg, page, maxPage);
+        final Component previousPage = buildPreviousPage(lang, viewer, targetName, timeArg, page);
+        final Component nextPage = buildNextPage(lang, viewer, targetName, timeArg, page, maxPage);
 
-        final TagResolver componentResolver = TagResolver.resolver(
+        lang.send(context.getSource().getSender(), "history.display",
                 Placeholder.component("entries", entriesBlock),
-                Placeholder.component("previous_page", previousPage),
-                Placeholder.component("next_page", nextPage)
-        );
-
-        lang.send(context.getSource().getSender(),
-                "history.display", componentResolver,
-                new String[]{"entries", "previous_page", "next_page"},
-                "{player}", targetName,
-                "{page}", String.format("%02d", page),
-                "{max_page}", String.format("%02d", maxPage));
+                Placeholder.component("previous-page", previousPage),
+                Placeholder.component("next-page", nextPage),
+                Placeholder.unparsed("player", targetName),
+                Placeholder.unparsed("page", String.format("%02d", page)),
+                Placeholder.unparsed("max-page", String.format("%02d", maxPage)));
     }
 
     private Component buildPreviousPage(final LangConfig lang,
+                                        final OfflinePlayer viewer,
                                         final String targetName,
                                         final String timeArg,
                                         final int currentPage) {
-        return buildPageButton(lang, targetName, timeArg,
+        return buildPageButton(lang, viewer, targetName, timeArg,
                 currentPage > 1, currentPage - 1,
-                "history.navigation.previous", "history.navigation.previous_hover",
-                "history.navigation.previous_disabled");
+                "history.navigation.previous", "history.navigation.previous-hover",
+                "history.navigation.previous-disabled");
     }
 
     private Component buildNextPage(final LangConfig lang,
+                                    final OfflinePlayer viewer,
                                     final String targetName,
                                     final String timeArg,
                                     final int currentPage,
                                     final int maxPage) {
-        return buildPageButton(lang, targetName, timeArg,
+        return buildPageButton(lang, viewer, targetName, timeArg,
                 currentPage < maxPage, currentPage + 1,
-                "history.navigation.next", "history.navigation.next_hover",
-                "history.navigation.next_disabled");
+                "history.navigation.next", "history.navigation.next-hover",
+                "history.navigation.next-disabled");
     }
 
     private Component buildPageButton(final LangConfig lang,
+                                      final OfflinePlayer viewer,
                                       final String targetName,
                                       final String timeArg,
                                       final boolean enabled,
@@ -231,10 +230,10 @@ public final class HistoryCommand {
                                       final String hoverKey,
                                       final String disabledKey) {
         if (!enabled) {
-            return lang.get(disabledKey);
+            return lang.get(viewer, disabledKey);
         }
-        final Component text = lang.get(textKey);
-        final Component hover = lang.get(hoverKey, "{page}", String.valueOf(targetPage));
+        final Component text = lang.get(viewer, textKey);
+        final Component hover = lang.get(viewer, hoverKey, Placeholder.unparsed("page", String.valueOf(targetPage)));
         return text
                 .hoverEvent(HoverEvent.showText(hover))
                 .clickEvent(ClickEvent.runCommand("/tbm history " + targetName + " " + timeArg + " " + targetPage));

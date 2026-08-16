@@ -1,8 +1,12 @@
 package com.cesarcosmico.thebrewingmarket.config;
 
 import com.cesarcosmico.thebrewingmarket.item.IconFactory;
+import com.cesarcosmico.thebrewingmarket.service.MoneyFormatter;
+import com.cesarcosmico.thebrewingmarket.text.TextRenderer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,19 +19,19 @@ import java.util.logging.Logger;
 
 public final class MarketConfig {
 
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
 
     public record LimitationConfig(boolean enabled, double earnings) {
         public boolean active() { return enabled && earnings > 0; }
     }
 
-    private static final MiniMessage MINI = MiniMessage.miniMessage();
-
+    private final TextRenderer textRenderer;
     private final LayoutParser layout;
     private final IconFactory iconFactory;
-    private final Map<Character, ItemStack> decorativeItems;
+    private final Map<Character, IconConfig> decorativeIcons;
 
-    private final Component title;
+    private final String titleRaw;
+    private final String moneyFormatPattern;
 
     private final char itemSlotSymbol;
     private final char sellSymbol;
@@ -47,15 +51,17 @@ public final class MarketConfig {
 
     private final LimitationConfig limitation;
 
-    public MarketConfig(ConfigurationSection root, Logger logger) {
+    public MarketConfig(ConfigurationSection root, Logger logger, TextRenderer textRenderer) {
+        this.textRenderer = textRenderer;
         this.historyPerPage = Math.clamp(root.getInt("history-per-page", 8), 1, 32);
 
         ConfigurationSection market = root.getConfigurationSection("market");
 
-        this.title = MINI.deserialize(market.getString("title", "<gold><b>Brew Market</b></gold>"));
+        this.titleRaw = market.getString("title", "<gold><b>Brew Market</b></gold>");
         this.shulkerSelling = market.getBoolean("shulker-selling", false);
+        this.moneyFormatPattern = market.getString("money-format", MoneyFormatter.DEFAULT_PATTERN);
 
-        this.iconFactory = new IconFactory(logger);
+        this.iconFactory = new IconFactory(logger, textRenderer);
 
         this.layout = new LayoutParser(market.getStringList("layout"), logger);
 
@@ -64,7 +70,7 @@ public final class MarketConfig {
         this.sellAllSymbol = market.getString("sell-all-icons.symbol", "S").charAt(0);
         this.closeSymbol = market.getString("close-icon.symbol", "C").charAt(0);
 
-        this.decorativeItems = iconFactory.parseDecorativeIcons(market);
+        this.decorativeIcons = iconFactory.parseDecorativeIcons(market);
 
         this.sellAllow = iconFactory.parseIconConfig(market.getConfigurationSection("sell-icons.allow-icon"));
         this.sellDeny = iconFactory.parseIconConfig(market.getConfigurationSection("sell-icons.deny-icon"));
@@ -141,8 +147,12 @@ public final class MarketConfig {
         return List.of();
     }
 
-    public Component getTitle() {
-        return title;
+    public Component renderTitle(OfflinePlayer viewer) {
+        return textRenderer.render(viewer, titleRaw);
+    }
+
+    public String getMoneyFormatPattern() {
+        return moneyFormatPattern;
     }
 
     public int getInventorySize() {
@@ -181,12 +191,15 @@ public final class MarketConfig {
         return layout.getSymbolAt(slot);
     }
 
-    public ItemStack getDecorativeItem(char symbol) {
-        return decorativeItems.get(symbol);
+    public ItemStack renderDecoration(char symbol, OfflinePlayer viewer) {
+        IconConfig icon = decorativeIcons.get(symbol);
+        return icon == null ? null : iconFactory.render(icon, viewer, TagResolver.empty());
     }
 
-    public ItemStack buildSellButton(IconConfig config, String money, String soldAmount) {
-        return iconFactory.buildDynamicIcon(config, money, soldAmount);
+    public ItemStack buildSellButton(IconConfig config, OfflinePlayer viewer, String money, String soldAmount) {
+        return iconFactory.render(config, viewer, TagResolver.resolver(
+                Placeholder.unparsed("money", money),
+                Placeholder.unparsed("sold-amount", soldAmount)));
     }
 
     public String getActionSound(IconConfig config) {

@@ -10,6 +10,7 @@ import com.cesarcosmico.thebrewingmarket.service.PlayerStatsCache;
 import com.cesarcosmico.thebrewingmarket.service.SellService;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -170,9 +171,9 @@ public final class MarketGUIListener implements Listener {
             double remaining = Math.max(0, limit.earnings() - earned);
             if (remaining <= 0 || plan.money() > remaining) {
                 langConfig.send(player, "market.limit-reached",
-                        "{earned}", sellService.format(earned),
-                        "{limit}", sellService.format(limit.earnings()),
-                        "{remaining}", sellService.format(remaining));
+                        Placeholder.unparsed("earned", sellService.format(earned)),
+                        Placeholder.unparsed("limit", sellService.format(limit.earnings())),
+                        Placeholder.unparsed("remaining", sellService.format(remaining)));
                 playSound(player, config.getActionSound(denySound));
                 return;
             }
@@ -186,8 +187,8 @@ public final class MarketGUIListener implements Listener {
             playerStatsCache.recordSale(player.getUniqueId(), result);
             String money = sellService.format(result.money());
             langConfig.send(player, "market.sell-success",
-                    "{money}", money,
-                    "{sold_amount}", String.valueOf(result.itemCount()));
+                    Placeholder.unparsed("money", money),
+                    Placeholder.unparsed("sold-amount", String.valueOf(result.itemCount())));
             playSound(player, config.getActionSound(allowSound));
             logHistory(player, result);
         } else {
