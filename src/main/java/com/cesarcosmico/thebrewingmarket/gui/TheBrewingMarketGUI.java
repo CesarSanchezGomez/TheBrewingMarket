@@ -11,6 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class TheBrewingMarketGUI implements InventoryHolder {
 
     private final Inventory inventory;
@@ -18,6 +21,7 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
     private final SellService sellService;
     private final Player owner;
     private final boolean shulkerEnabled;
+    private final List<Integer> dynamicDecorationSlots = new ArrayList<>();
     private BukkitTask refreshTask;
 
     public TheBrewingMarketGUI(MarketConfig config, SellService sellService, Player player,
@@ -39,7 +43,7 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
 
     public void startAutoRefresh(JavaPlugin plugin) {
         this.refreshTask = plugin.getServer().getScheduler()
-                .runTaskTimer(plugin, this::refreshSellButtons, 20L, 20L);
+                .runTaskTimer(plugin, this::refresh, 20L, 20L);
     }
 
     public void stopAutoRefresh() {
@@ -64,6 +68,11 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
 
     public boolean isShulkerEnabled() {
         return shulkerEnabled;
+    }
+
+    public void refresh() {
+        refreshSellButtons();
+        refreshDynamicDecorations();
     }
 
     public void refreshSellButtons() {
@@ -108,6 +117,12 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
         }
     }
 
+    private void refreshDynamicDecorations() {
+        for (int slot : dynamicDecorationSlots) {
+            inventory.setItem(slot, config.renderDecoration(config.getSymbolAt(slot), owner));
+        }
+    }
+
     private void populateDecoration() {
         for (int slot = 0; slot < config.getInventorySize(); slot++) {
             if (config.isItemSlot(slot) || config.isSellSlot(slot) || config.isSellAllSlot(slot)) {
@@ -117,6 +132,9 @@ public final class TheBrewingMarketGUI implements InventoryHolder {
             ItemStack decoItem = config.renderDecoration(symbol, owner);
             if (decoItem != null) {
                 inventory.setItem(slot, decoItem);
+            }
+            if (config.isDynamicDecoration(symbol)) {
+                dynamicDecorationSlots.add(slot);
             }
         }
     }

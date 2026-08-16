@@ -133,6 +133,11 @@ public final class MarketConfig {
         return icon == null ? null : iconFactory.render(icon, viewer, TagResolver.empty());
     }
 
+    public boolean isDynamicDecoration(char symbol) {
+        IconConfig icon = decorativeIcons.get(symbol);
+        return icon != null && icon.dynamic();
+    }
+
     public ItemStack buildSellButton(IconConfig config, OfflinePlayer viewer, String money, String soldAmount) {
         return iconFactory.render(config, viewer, TagResolver.resolver(
                 Placeholder.unparsed("money", money),
