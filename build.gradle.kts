@@ -39,8 +39,8 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.1.2.build.53-stable")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.1.1")
-    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.1.1")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.0.0")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.0.0")
     compileOnly("com.dre.brewery:BreweryX:3.6.5")
     compileOnly("me.clip:placeholderapi:2.12.2")
 
@@ -48,14 +48,6 @@ dependencies {
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("com.mysql:mysql-connector-j:8.0.33")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.7")
-
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
