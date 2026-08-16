@@ -23,6 +23,7 @@ import com.cesarcosmico.thebrewingmarket.text.TextRenderer;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -36,6 +37,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public final class TheBrewingMarketPlugin extends JavaPlugin {
+
+    private static final int BSTATS_PLUGIN_ID = 33410;
 
     private static final Set<String> CONFIG_REQUIRED_KEYS = Set.of(
             "lang",
@@ -145,6 +148,8 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
             }
             getLogger().info("PlaceholderAPI expansions registered: tbm, thebrewingmarket.");
         }
+
+        new Metrics(this, BSTATS_PLUGIN_ID);
 
         getLogger().info("TheBrewingMarket enabled.");
     }
