@@ -7,142 +7,174 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="sidebar-overlay"></div>
-<div class="wrapper">
+<main class="content">
+    <h1>Icons &amp; Items</h1>
+    <p class="subtitle">Configure icon appearance using item data components.</p>
 
-    <aside class="sidebar"></aside>
+    <h2>Basic Structure</h2>
+    <p>Every icon needs at minimum a <code>material</code>. Its appearance is customized through an optional <code>components</code> block, which mirrors the vanilla data-component format using <strong>kebab-case</strong> keys.</p>
 
-    <div class="main">
-        <header class="header"></header>
-
-        <div class="content">
-            <h1>Icons &amp; Items</h1>
-            <p class="subtitle">Configure icon appearance using item data components.</p>
-
-            <h2>Basic Structure</h2>
-            <p>Every icon needs at minimum a <code>material</code>. All other fields are optional.</p>
-
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">title-icon:
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">title-icon:
   symbol: 'T'
-  material: 'PLAYER_HEAD'
-  custom_name: '&lt;gradient:#FCBDE3:#F973C4&gt;Brew Market&lt;/gradient&gt;'
+  material: 'player_head'
+  components:
+    custom-name: '&lt;gradient:#FCBDE3:#F973C4&gt;Brew Market&lt;/gradient&gt;'
+    lore:
+      - '&lt;gray&gt;Sell your finest brews!&lt;/gray&gt;'
+    profile:
+      properties:
+        - name: 'textures'
+          value: 'eyJ0ZXh0dXJlcyI6...'</pre>
+    </div>
+
+    <div class="img-placeholder">
+        <img src="assets/images/TBM_DecorativeIcons.webp">
+    </div>
+
+    <h2>Data Components</h2>
+    <p>All of the following go under the icon's <code>components</code> block:</p>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Component</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+            <tr><td><code>custom-name</code></td><td>String</td><td>Display name (MiniMessage)</td></tr>
+            <tr><td><code>lore</code></td><td>List</td><td>Lore lines (MiniMessage)</td></tr>
+            <tr><td><code>profile</code></td><td>Object</td><td>Head profile (<code>properties</code> list of name/value)</td></tr>
+            <tr><td><code>enchantments</code></td><td>Map</td><td>Enchantment : level</td></tr>
+            <tr><td><code>enchantment-glint-override</code></td><td>Boolean</td><td>Force or disable the enchant glint</td></tr>
+            <tr><td><code>custom-model-data</code></td><td>Object</td><td>Resource pack data (floats, flags, strings, colors)</td></tr>
+            <tr><td><code>item-model</code></td><td>String</td><td>Resource location for the item model</td></tr>
+            <tr><td><code>potion-contents</code></td><td>Object</td><td>Potion custom color</td></tr>
+            <tr><td><code>tooltip-display</code></td><td>Object</td><td>Tooltip visibility control</td></tr>
+            <tr><td><code>tooltip-style</code></td><td>String</td><td>Custom tooltip style</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="info-box note">
+        <strong>Names and lore are per-viewer:</strong> <code>custom-name</code> and <code>lore</code> are rendered for each player and support MiniMessage plus PlaceholderAPI placeholders. The remaining components are structural and baked into the item once.
+    </div>
+
+    <h3>custom-name &amp; lore</h3>
+    <p>Both accept MiniMessage and PlaceholderAPI placeholders and are rendered for each viewer.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">components:
+  custom-name: '&lt;gradient:#FCBDE3:#F973C4&gt;&lt;b&gt;Sell drink&lt;/b&gt;&lt;/gradient&gt;'
   lore:
-    - '&lt;gray&gt;Sell your finest brews!&lt;/gray&gt;'
-  profile:
-    textures: 'eyJ0ZXh0dXJlcyI6...'</pre>
-            </div>
+    - ''
+    - ' &lt;white&gt;Place your brews below and...&lt;/white&gt; '
+    - ' &lt;white&gt;Sell them for money!&lt;/white&gt; '
+    - ''</pre>
+    </div>
 
-            <div class="img-placeholder">
-                <img src="assets/images/TBM_DecorativeIcons.webp">
-            </div>
+    <h3>profile</h3>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">profile:
+  properties:
+    - name: 'textures'
+      value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6...'</pre>
+    </div>
+    <p>Forces the material to <code>player_head</code>. A bare player name also works: <code>profile: 'Notch'</code>.</p>
 
-            <h2>Data Components</h2>
+    <h3>enchantments</h3>
+    <p>Keys are Minecraft enchantment ids (no <code>minecraft:</code> prefix); values are the levels.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">enchantments:
+  unbreaking: 3
+  sharpness: 5</pre>
+    </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Component</th><th>Type</th><th>Description</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>custom_name</code></td><td>String</td><td>Display name (MiniMessage)</td></tr>
-                    <tr><td><code>lore</code></td><td>List</td><td>Lore lines (MiniMessage)</td></tr>
-                    <tr><td><code>profile</code></td><td>Object</td><td>Head texture (<code>textures</code> key, Base64)</td></tr>
-                    <tr><td><code>enchantments</code></td><td>Map</td><td>Enchantment : level</td></tr>
-                    <tr><td><code>enchantment_glint_override</code></td><td>Boolean</td><td>Force/disable glint</td></tr>
-                    <tr><td><code>custom_model_data</code></td><td>Object</td><td>Resource pack data (floats, flags, strings, colors)</td></tr>
-                    <tr><td><code>item_model</code></td><td>String</td><td>Resource location for item model</td></tr>
-                    <tr><td><code>potion_contents</code></td><td>Object</td><td>Potion type and custom color</td></tr>
-                    <tr><td><code>tooltip_display</code></td><td>Object</td><td>Tooltip visibility control</td></tr>
-                    <tr><td><code>tooltip_style</code></td><td>String</td><td>Custom tooltip style</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <h3>enchantment-glint-override</h3>
+    <p>Forces the enchant glint on or off, regardless of enchantments.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">enchantment-glint-override: true</pre>
+    </div>
 
-            <h3>profile</h3>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">profile:
-  textures: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6...'</pre>
-            </div>
+    <h3>custom-model-data</h3>
+    <p>Four independent optional lists for resource packs. Include only the ones you need. Colors are packed RGB integers.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">custom-model-data:
+  floats:
+    - 0.5
+    - 1.0
+  flags:
+    - true
+  strings:
+    - 'custom_variant'
+  colors:
+    - 16679863</pre>
+    </div>
 
-            <h3>enchantments</h3>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">enchantments:
-  minecraft:unbreaking: 3
-  minecraft:sharpness: 5</pre>
-            </div>
+    <h3>item-model</h3>
+    <p>A namespaced key (<code>namespace:path</code>) pointing to the item model to render.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">item-model: 'minecraft:diamond_sword'</pre>
+    </div>
 
-            <h3>potion_contents</h3>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">potion_contents:
-  custom_color: 16679863</pre>
-            </div>
+    <h3>potion-contents</h3>
+    <p>Sets the potion's custom color (packed RGB integer). Only applies to potion materials.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">potion-contents:
+  custom-color: 16679863</pre>
+    </div>
 
-            <h3>tooltip_display</h3>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml"># Hide entire tooltip
-tooltip_display:
-  hide_tooltip: true
+    <h3>tooltip-display</h3>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml"># Hide entire tooltip
+tooltip-display:
+  hide-tooltip: true
 
 # Or hide specific parts
-tooltip_display:
-  hide_tooltip: false
-  hidden_components:
-    - 'potion_contents'
+tooltip-display:
+  hide-tooltip: false
+  hidden-components:
+    - 'potion-contents'
     - 'enchantments'</pre>
-            </div>
+    </div>
 
-            <h3>custom_model_data</h3>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">custom_model_data:
-  floats:
-    - 1.0
-  strings:
-    - 'custom_variant'</pre>
-            </div>
+    <h3>tooltip-style</h3>
+    <p>A namespaced key (<code>namespace:path</code>) for a custom tooltip style from a resource pack.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">tooltip-style: 'myresourcepack:fancy'</pre>
+    </div>
 
-            <h2>Decorative Icons</h2>
-            <p>Decorative icons fill the non-functional slots in your GUI layout — the ones marked with symbols like <code>J</code>, <code>K</code>, or <code>L</code> in <code>market.layout</code>. They are purely visual: players cannot interact with them, and they have no sell behavior. Their main purpose is to frame the item slots and sell buttons, making the market GUI look polished instead of leaving empty grey slots.</p>
-            <p>It is good practice to set <code>hide-tooltip: true</code> on decorative icons so players do not see a floating item name when hovering over them.</p>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">decorative-icons:
+    <h2>Decorative Icons</h2>
+    <p>Decorative icons fill the non-functional slots in your GUI layout — the ones marked with symbols like <code>J</code>, <code>K</code>, or <code>L</code> in <code>market.layout</code>. They are purely visual: players cannot interact with them, and they have no sell behavior. Their main purpose is to frame the item slots and sell buttons, making the market GUI look polished instead of leaving empty grey slots.</p>
+    <p>It is good practice to set <code>hide-tooltip: true</code> on decorative icons so players do not see a floating item name when hovering over them.</p>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">decorative-icons:
   pink-glass:
     symbol: 'J'
-    material: 'PINK_STAINED_GLASS_PANE'
-    tooltip_display:
-      hide_tooltip: true
+    material: 'pink_stained_glass_pane'
+    components:
+      tooltip-display:
+        hide-tooltip: true
   brain-coral:
     symbol: 'K'
-    material: 'BRAIN_CORAL'
-    tooltip_display:
-      hide_tooltip: true
+    material: 'brain_coral'
+    components:
+      tooltip-display:
+        hide-tooltip: true
   brain-coral-fan:
     symbol: 'L'
-    material: 'BRAIN_CORAL_FAN'
-    tooltip_display:
-      hide_tooltip: true</pre>
-            </div>
-
-            <div class="page-nav">
-                <a href="sell-buttons.html">
-                    <span class="label">Previous</span>
-                    <span class="title">Sell Buttons</span>
-                </a>
-                <a href="database.html" class="next">
-                    <span class="label">Next</span>
-                    <span class="title">Database</span>
-                </a>
-            </div>
-            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
-        </div>
+    material: 'brain_coral_fan'
+    components:
+      tooltip-display:
+        hide-tooltip: true</pre>
     </div>
-</div>
-<script src="js/nav.js"></script>
-<script src="js/main.js"></script>
+</main>
+<script src="js/site.js"></script>
 </body>
 </html>

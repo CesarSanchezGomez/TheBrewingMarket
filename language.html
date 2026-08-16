@@ -7,136 +7,136 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="sidebar-overlay"></div>
-<div class="wrapper">
+<main class="content">
+    <h1>Language</h1>
+    <p class="subtitle">Customize messages and add translations.</p>
 
-    <aside class="sidebar"></aside>
+    <h2>Selecting a Language</h2>
+    <div class="code-block">
+        <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">lang: 'en_US'</pre>
+    </div>
 
-    <div class="main">
-        <header class="header"></header>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>File</th><th>Language</th></tr></thead>
+            <tbody>
+            <tr><td><code>lang/en_US.yml</code></td><td>English</td></tr>
+            <tr><td><code>lang/es_ES.yml</code></td><td>Spanish</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-        <div class="content">
-            <h1>Language</h1>
-            <p class="subtitle">Customize messages and add translations.</p>
+    <div class="info-box note">
+        <strong>Placeholder syntax:</strong> messages use MiniMessage, so dynamic values are tags like <code>&lt;money&gt;</code> and <code>&lt;player&gt;</code> — not <code>{money}</code>. The plugin prefix is inserted with <code>&lt;prefix&gt;</code>.
+    </div>
 
-            <h2>Selecting a Language</h2>
-            <div class="code-block">
-                <div class="code-header"><span>config.yml</span><button class="copy-btn">Copy</button></div>
-                <pre data-lang="yaml">lang: 'en_US'</pre>
-            </div>
+    <h2>Message Keys</h2>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>File</th><th>Language</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>lang/en_US.yml</code></td><td>English</td></tr>
-                    <tr><td><code>lang/es_ES.yml</code></td><td>Spanish</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <h3>General</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
+            <tbody>
+            <tr><td><code>prefix</code></td><td>Plugin prefix (used via <code>&lt;prefix&gt;</code>)</td><td>&mdash;</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-            <h2>Message Keys</h2>
+    <h3>Commands</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Key</th><th>Description</th></tr></thead>
+            <tbody>
+            <tr><td><code>command.only-players</code></td><td>Non-player runs player-only command</td></tr>
+            <tr><td><code>command.no-permission</code></td><td>Missing permission</td></tr>
+            <tr><td><code>command.reload-success</code></td><td>Config reloaded</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-            <h3>General</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>prefix</code></td><td>Plugin prefix</td><td>&mdash;</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <h3>Market</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
+            <tbody>
+            <tr><td><code>market.sell-success</code></td><td>Successful sale</td><td><code>&lt;sold-amount&gt;</code>, <code>&lt;sold-type&gt;</code>, <code>&lt;money&gt;</code></td></tr>
+            <tr><td><code>market.sell-types</code></td><td>Noun inserted as <code>&lt;sold-type&gt;</code> (see below)</td><td>&mdash;</td></tr>
+            <tr><td><code>market.sell-nothing</code></td><td>Nothing valid to sell</td><td>&mdash;</td></tr>
+            <tr><td><code>market.sell-error</code></td><td>Transaction error</td><td>&mdash;</td></tr>
+            <tr><td><code>market.limit-reached</code></td><td>Daily cap reached (list)</td><td><code>&lt;earned&gt;</code>, <code>&lt;limit&gt;</code>, <code>&lt;remaining&gt;</code></td></tr>
+            </tbody>
+        </table>
+    </div>
 
-            <h3>Commands</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Key</th><th>Description</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>command.only-players</code></td><td>Non-player runs player-only command</td></tr>
-                    <tr><td><code>command.no-permission</code></td><td>Missing permission</td></tr>
-                    <tr><td><code>command.reload-success</code></td><td>Config reloaded</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="info-box note">
+        <strong>Adaptive sell noun:</strong> <code>&lt;sold-type&gt;</code> in <code>sell-success</code> is chosen from <code>market.sell-types</code> based on what was sold — <code>brews</code>, <code>fruits</code>, <code>seeds</code>, or <code>mixed</code> when a single sale mixes categories. Translate each noun for your language.
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span>lang/en_US.yml</span><button class="copy-btn">Copy</button></div>
+        <pre data-lang="yaml">market:
+  sell-success: '&lt;prefix&gt; &lt;white&gt;You sold &lt;#FCBDE3&gt;&lt;sold-amount&gt;&lt;/#FCBDE3&gt; &lt;sold-type&gt; for &lt;#FCBDE3&gt;&lt;money&gt;$&lt;/#FCBDE3&gt;!&lt;/white&gt;'
+  sell-types:
+    brews: 'brews'
+    fruits: 'fruits'
+    seeds: 'seeds'
+    mixed: 'items'</pre>
+    </div>
 
-            <h3>Market</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>market.sell-success</code></td><td>Successful sale</td><td><code>{sold_amount}</code>, <code>{money}</code></td></tr>
-                    <tr><td><code>market.sell-nothing</code></td><td>Nothing to sell</td><td>&mdash;</td></tr>
-                    <tr><td><code>market.sell-error</code></td><td>Transaction error</td><td>&mdash;</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <h3>History</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
+            <tbody>
+            <tr><td><code>history.invalid-time</code></td><td>Invalid time format</td><td>&mdash;</td></tr>
+            <tr><td><code>history.empty</code></td><td>No records found</td><td><code>&lt;player&gt;</code></td></tr>
+            <tr><td><code>history.display</code></td><td>Page layout (list)</td><td><code>&lt;entries&gt;</code>, <code>&lt;previous-page&gt;</code>, <code>&lt;next-page&gt;</code>, <code>&lt;page&gt;</code>, <code>&lt;max-page&gt;</code></td></tr>
+            <tr><td><code>history.entry</code></td><td>Single record line</td><td><code>&lt;player-head&gt;</code>, <code>&lt;recipe&gt;</code>, <code>&lt;quantity&gt;</code>, <code>&lt;quality&gt;</code>, <code>&lt;total&gt;</code></td></tr>
+            <tr><td><code>history.entry-hover</code></td><td>Hover tooltip on a record</td><td><code>&lt;player&gt;</code>, <code>&lt;time-ago&gt;</code>, <code>&lt;exact-date&gt;</code></td></tr>
+            <tr><td><code>history.navigation.*</code></td><td>Prev/Next buttons</td><td><code>&lt;page&gt;</code></td></tr>
+            </tbody>
+        </table>
+    </div>
 
-            <h3>History</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Key</th><th>Description</th><th>Placeholders</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>history.invalid-time</code></td><td>Invalid time format</td><td>&mdash;</td></tr>
-                    <tr><td><code>history.empty</code></td><td>No records found</td><td><code>{player}</code></td></tr>
-                    <tr><td><code>history.display</code></td><td>Page layout (list)</td><td><code>{entries}</code>, <code>{previous_page}</code>, <code>{next_page}</code>, <code>{player}</code>, <code>{page}</code>, <code>{max_page}</code></td></tr>
-                    <tr><td><code>history.entry</code></td><td>Single record line</td><td><code>{player_head}</code>, <code>{recipe}</code>, <code>{quantity}</code>, <code>{quality}</code>, <code>{total}</code></td></tr>
-                    <tr><td><code>history.entry_hover</code></td><td>Hover tooltip on a record</td><td><code>{player}</code>, <code>{time_ago}</code>, <code>{exact_date}</code></td></tr>
-                    <tr><td><code>history.navigation.*</code></td><td>Prev/Next buttons</td><td><code>{page}</code></td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <h3>Placeholders (PlaceholderAPI empty fallbacks)</h3>
+    <p>Text shown by each sale-dependent PlaceholderAPI placeholder when there's no data yet. Each key is independent — customize only the ones you care about.</p>
+    <div class="info-box note">
+        <strong>Keep these snake_case:</strong> the keys under <code>placeholders.empty</code> mirror the PlaceholderAPI parameter names, so they use underscores rather than the MiniMessage tag style used elsewhere.
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Key</th><th>When it's shown</th></tr></thead>
+            <tbody>
+            <tr><td><code>placeholders.empty.last_sale_recipe_id</code></td><td>Player has never sold a brew.</td></tr>
+            <tr><td><code>placeholders.empty.last_sale_recipe_name</code></td><td>Player has never sold a brew (also falls back to the recipe id first when the item had no custom name).</td></tr>
+            <tr><td><code>placeholders.empty.last_sale_ago</code></td><td>Player has never sold a brew.</td></tr>
+            <tr><td><code>placeholders.empty.global_top_recipe_id_today</code></td><td>No sales recorded server-wide today.</td></tr>
+            <tr><td><code>placeholders.empty.global_top_recipe_name_today</code></td><td>No sales today (also falls back to the recipe id first when the top sale had no custom name).</td></tr>
+            <tr><td><code>placeholders.empty.global_top_player_today</code></td><td>No sales recorded server-wide today.</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-            <h3>Placeholders (PlaceholderAPI empty fallbacks)</h3>
-            <p>Text shown by each sale-dependent PlaceholderAPI placeholder when there's no data yet. Each key is independent — customize only the ones you care about.</p>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Key</th><th>When it's shown</th></tr></thead>
-                    <tbody>
-                    <tr><td><code>placeholders.empty.last_sale_recipe_id</code></td><td>Player has never sold a brew.</td></tr>
-                    <tr><td><code>placeholders.empty.last_sale_recipe_name</code></td><td>Player has never sold a brew (also falls back to the recipe id first when the item had no custom name).</td></tr>
-                    <tr><td><code>placeholders.empty.last_sale_ago</code></td><td>Player has never sold a brew.</td></tr>
-                    <tr><td><code>placeholders.empty.global_top_recipe_id_today</code></td><td>No sales recorded server-wide today.</td></tr>
-                    <tr><td><code>placeholders.empty.global_top_recipe_name_today</code></td><td>No sales today (also falls back to the recipe id first when the top sale had no custom name).</td></tr>
-                    <tr><td><code>placeholders.empty.global_top_player_today</code></td><td>No sales recorded server-wide today.</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="info-box note">
+        <strong>Note:</strong> All messages use MiniMessage formatting. See the Adventure documentation for the full tag reference.
+    </div>
 
-            <div class="info-box note">
-                <strong>Note:</strong> All messages use MiniMessage formatting. See the Adventure documentation for the full tag reference.
-            </div>
-
-            <h2>Adding a Language</h2>
-            <div class="steps">
-                <div class="step">
-                    <h3>Copy a file</h3>
-                    <p>Duplicate <code>lang/en_US.yml</code> and rename it (e.g., <code>fr_FR.yml</code>).</p>
-                </div>
-                <div class="step">
-                    <h3>Translate</h3>
-                    <p>Translate the values. Keep keys and placeholders unchanged.</p>
-                </div>
-                <div class="step">
-                    <h3>Set in config</h3>
-                    <p>Set <code>lang: 'fr_FR'</code> in <code>config.yml</code> and reload.</p>
-                </div>
-            </div>
-
-            <div class="page-nav">
-                <a href="database.html">
-                    <span class="label">Previous</span>
-                    <span class="title">Database</span>
-                </a>
-                <a href="placeholders.html" class="next">
-                    <span class="label">Next</span>
-                    <span class="title">PlaceholderAPI</span>
-                </a>
-            </div>
-            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
+    <h2>Adding a Language</h2>
+    <div class="steps">
+        <div class="step">
+            <h3>Copy a file</h3>
+            <p>Duplicate <code>lang/en_US.yml</code> and rename it (e.g., <code>fr_FR.yml</code>).</p>
+        </div>
+        <div class="step">
+            <h3>Translate</h3>
+            <p>Translate the values. Keep keys, placeholders, and <code>config-version</code> unchanged.</p>
+        </div>
+        <div class="step">
+            <h3>Set in config</h3>
+            <p>Set <code>lang: 'fr_FR'</code> in <code>config.yml</code> and reload.</p>
         </div>
     </div>
-</div>
-<script src="js/nav.js"></script>
-<script src="js/main.js"></script>
+</main>
+<script src="js/site.js"></script>
 </body>
 </html>

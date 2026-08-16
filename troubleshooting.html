@@ -7,121 +7,112 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="sidebar-overlay"></div>
-<div class="wrapper">
+<main class="content">
+    <h1>Troubleshooting</h1>
+    <p class="subtitle">Common problems and how to fix them.</p>
 
-    <aside class="sidebar"></aside>
-
-    <div class="main">
-        <header class="header"></header>
-
-        <div class="content">
-            <h1>Troubleshooting</h1>
-            <p class="subtitle">Common problems and how to fix them.</p>
-
-            <h2>Plugin does not load</h2>
-            <p>Check the server console for errors on startup. TheBrewingMarket logs its initialization under the prefix <code>[TheBrewingMarket]</code>. Common causes:</p>
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th>Error in console</th><th>Cause</th><th>Fix</th></tr></thead>
-                    <tbody>
-                    <tr>
-                        <td><code>Could not load plugin: Vault</code></td>
-                        <td>Vault is missing or loaded after TheBrewingMarket</td>
-                        <td>Install <strong>Vault</strong> and make sure it is in <code>plugins/</code> before starting</td>
-                    </tr>
-                    <tr>
-                        <td><code>[TheBrewingMarket] Missing TBP/BreweryX. Disabling.</code></td>
-                        <td>Neither brewing plugin is installed (at least one is required)</td>
-                        <td>Install <strong>TheBrewingProject</strong> or <strong>BreweryX</strong> — not both (see <a href="installation.html">Installation</a>)</td>
-                    </tr>
-                    <tr>
-                        <td><code>Unsupported Java version</code> or class file errors</td>
-                        <td>Java version below 25</td>
-                        <td>Upgrade your server JDK to <strong>Java 25</strong></td>
-                    </tr>
-                    <tr>
-                        <td><code>Unknown dependency</code> or plugin ignored</td>
-                        <td>Running on Spigot or CraftBukkit</td>
-                        <td>Switch to <strong>Paper 1.21.9+</strong> — Spigot is not supported</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h2>No economy provider found</h2>
-            <p>Vault is installed but the sell command does nothing or returns an economy error. This means Vault cannot find an economy plugin to connect to.</p>
-            <div class="info-box tip">
-                <strong>Fix:</strong> Install an economy plugin that hooks into Vault, such as <strong>EssentialsX</strong> or <strong>CMI</strong>. Vault itself does not provide economy — it is a bridge.
-            </div>
-
-            <h2>Brews are not recognized / wrong price</h2>
-            <p>A player tries to sell a brew but gets an error, or it sells at the <code>default</code> fallback price instead of the expected one.</p>
-            <ul>
-                <li>Open <code>config.yml</code> and check the recipe ID under <code>market.prices</code>. It must match the recipe identifier in your brewing plugin <strong>exactly</strong> (lowercase, underscores, no spaces).</li>
-                <li>The item must be a valid brew crafted by TheBrewingProject or BreweryX. Regular potions or other items cannot be sold.</li>
-                <li>If the recipe ID is correct but the price is still wrong, the brew may have a very low quality score — brews that failed fermentation or distillation often have quality near <code>0.01</code>, which multiplies the base price down significantly.</li>
-                <li>If both TheBrewingProject and BreweryX are installed, TheBrewingMarket uses <strong>TheBrewingProject</strong> exclusively. Brews from BreweryX will not be recognized in that case.</li>
-            </ul>
-
-            <h2>GUI does not open</h2>
-            <p>Running <code>/thebrewingmarket</code> does nothing or returns "no permission".</p>
-            <ul>
-                <li>The player needs the <code>thebrewingmarket.use</code> permission (granted to everyone by default). Check your permissions plugin for an accidental negation (<code>-thebrewingmarket.use</code>).</li>
-                <li>Confirm the plugin loaded successfully — run <code>/plugins</code> and look for <strong>TheBrewingMarket</strong> in green.</li>
-            </ul>
-
-            <h2>Config changes not applying</h2>
-            <p>You edited <code>config.yml</code> but the server still uses the old values.</p>
-            <div class="info-box tip">
-                <strong>Fix:</strong> Run <code>/thebrewingmarket reload</code> (requires <code>thebrewingmarket.admin</code>). A full server restart also works.
-            </div>
-
-            <h2>Database connection error (MySQL / MariaDB)</h2>
-            <p>The plugin loads but logs a database error and sell history does not record.</p>
-            <ul>
-                <li>Double-check <code>host</code>, <code>port</code>, <code>user</code>, <code>password</code>, and <code>database</code> in <code>database.yml</code>.</li>
-                <li>Make sure the database server is reachable from the Minecraft server (firewall, bind address).</li>
-                <li>The database user must have <code>CREATE</code>, <code>INSERT</code>, and <code>SELECT</code> privileges on the target database.</li>
-                <li>If you recently switched from SQLite to MySQL, remember that <strong>history data is not migrated automatically</strong>.</li>
-            </ul>
-
-            <h2>Placeholders return nothing or stay as <code>%tbm_...%</code></h2>
-            <p>You added a TheBrewingMarket placeholder to a hologram, scoreboard or chat plugin, but it either shows an empty string or the raw <code>%tbm_...%</code> text.</p>
-            <ul>
-                <li>Make sure <strong>PlaceholderAPI 2.11+</strong> is installed and listed in <code>/plugins</code>. Without it, TheBrewingMarket silently skips expansion registration.</li>
-                <li>On startup the console should print <code>PlaceholderAPI expansions registered: tbm, thebrewingmarket</code>. If it does not, PAPI was not present when TheBrewingMarket loaded — install PAPI and restart.</li>
-                <li>Run <code>/papi info tbm</code> to confirm the expansion is live. If the command replies "unknown expansion", the registration failed.</li>
-                <li>Placeholders are case-sensitive. Use <code>%tbm_daily_earned%</code>, not <code>%TBM_Daily_Earned%</code>.</li>
-                <li>Per-recipe placeholders like <code>%tbm_price_wine%</code> require the recipe ID to match your <code>config.yml</code> exactly. Unknown recipes return an empty string.</li>
-            </ul>
-
-            <h2>Lifetime or global placeholders show 0</h2>
-            <p><code>%tbm_lifetime_earned%</code> or <code>%tbm_global_total_today%</code> return <code>0</code> even though sales exist in the database.</p>
-            <ul>
-                <li>Lifetime stats are cached per player and seeded <strong>on join</strong>. For players who were already online when the plugin was first installed or reloaded, the cache fills on their next login.</li>
-                <li>Global analytics refresh asynchronously <strong>once every 60 seconds</strong>. A fresh sale will not show up in <code>%tbm_global_*%</code> placeholders until the next refresh tick.</li>
-                <li>Confirm that <code>sell_history</code> is actually being written — if the history table is empty, all lifetime/global placeholders will legitimately read as 0. See the database section above.</li>
-            </ul>
-
-            <h2>Still stuck?</h2>
-            <p>Open an issue on the <a href="https://github.com/CesarSanchezGomez/TheBrewingMarket" target="_blank">GitHub repository</a> and include the relevant lines from your server console and your <code>database.yml</code> (remove passwords before posting).</p>
-
-            <div class="page-nav">
-                <a href="commands.html">
-                    <span class="label">Previous</span>
-                    <span class="title">Commands</span>
-                </a>
-                <a href="configuration.html" class="next">
-                    <span class="label">Next</span>
-                    <span class="title">Configuration</span>
-                </a>
-            </div>
-            <div class="footer">TheBrewingMarket Wiki &mdash; by CesarCosmico</div>
-        </div>
+    <h2>Plugin does not load</h2>
+    <p>Check the server console for errors on startup. TheBrewingMarket logs its initialization under the prefix <code>[TheBrewingMarket]</code>. Common causes:</p>
+    <div class="table-wrapper">
+        <table>
+            <thead><tr><th>Error in console</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+            <tr>
+                <td><code>Could not load plugin: Vault</code></td>
+                <td>Vault is missing or loaded after TheBrewingMarket</td>
+                <td>Install <strong>Vault</strong> and make sure it is in <code>plugins/</code> before starting</td>
+            </tr>
+            <tr>
+                <td><code>[TheBrewingMarket] Missing TBP/BreweryX. Disabling.</code></td>
+                <td>Neither brewing plugin is installed (at least one is required)</td>
+                <td>Install <strong>TheBrewingProject</strong> or <strong>BreweryX</strong> — not both (see <a href="installation.html">Installation</a>)</td>
+            </tr>
+            <tr>
+                <td><code>Unsupported Java version</code> or class file errors</td>
+                <td>Java version below 25</td>
+                <td>Upgrade your server JDK to <strong>Java 25+</strong></td>
+            </tr>
+            <tr>
+                <td><code>Unknown dependency</code> or plugin ignored</td>
+                <td>Running on Spigot or CraftBukkit</td>
+                <td>Switch to <strong>Paper 26.2+</strong> — Spigot is not supported</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-</div>
-<script src="js/nav.js"></script>
-<script src="js/main.js"></script>
+
+    <h2>Library download fails on first start</h2>
+    <p>The console reports it cannot resolve or download a library such as <code>HikariCP</code>, <code>sqlite-jdbc</code>, <code>mysql-connector-j</code>, or <code>mariadb-java-client</code>.</p>
+    <p>Database drivers are <strong>not bundled</strong> in the JAR — they are downloaded on demand by Paper's library loader the first time the plugin starts.</p>
+    <div class="info-box tip">
+        <strong>Fix:</strong> Give the server internet access on its first launch. The libraries are cached under Paper's <code>libraries/</code> folder, so subsequent restarts work offline. Behind a proxy or air-gapped host, allow access to Paper's Maven mirror.
+    </div>
+
+    <h2>No economy provider found</h2>
+    <p>Vault is installed but the sell command does nothing or returns an economy error. This means Vault cannot find an economy plugin to connect to.</p>
+    <div class="info-box tip">
+        <strong>Fix:</strong> Install an economy plugin that hooks into Vault, such as <strong>EssentialsX</strong> or <strong>CMI</strong>. Vault itself does not provide economy — it is a bridge.
+    </div>
+
+    <h2>Brews are not recognized / wrong price</h2>
+    <p>A player tries to sell a brew but gets an error, or it sells at the <code>default</code> fallback price instead of the expected one.</p>
+    <ul>
+        <li>Open <code>config.yml</code> and check the recipe ID under <code>market.brews</code>. It must match the recipe identifier in your brewing plugin <strong>exactly</strong> (lowercase, underscores, no spaces).</li>
+        <li>The item must be a valid brew crafted by TheBrewingProject or BreweryX. Regular potions or other items cannot be sold.</li>
+        <li>If the recipe ID is correct but the price is still wrong, the brew may have a very low quality score — brews that failed fermentation or distillation often have quality near <code>0.01</code>, which multiplies the base price down significantly.</li>
+        <li>If both TheBrewingProject and BreweryX are installed, TheBrewingMarket uses <strong>TheBrewingProject</strong> exclusively. Brews from BreweryX will not be recognized in that case.</li>
+    </ul>
+
+    <h2>Garden fruits or seeds will not sell</h2>
+    <p>A player holds a Garden fruit or seed but the market refuses it or values it at 0.</p>
+    <ul>
+        <li>Garden produce uses a separate price table under <code>market.garden</code>, and its <code>default</code> is <code>0</code> — unlisted produce is intentionally unsellable. Add the item id (for example <code>strawberry_fruit</code> or <code>strawberry_seeds</code>) with a price. See <a href="prices.html">Prices</a>.</li>
+        <li>The <strong>Garden</strong> plugin must be installed; without it these items are ordinary Minecraft items and cannot be sold.</li>
+    </ul>
+
+    <h2>GUI does not open</h2>
+    <p>Running <code>/thebrewingmarket</code> does nothing or returns "no permission".</p>
+    <ul>
+        <li>The player needs the <code>thebrewingmarket.use</code> permission (granted to everyone by default). Check your permissions plugin for an accidental negation (<code>-thebrewingmarket.use</code>).</li>
+        <li>Confirm the plugin loaded successfully — run <code>/plugins</code> and look for <strong>TheBrewingMarket</strong> in green.</li>
+    </ul>
+
+    <h2>Config changes not applying</h2>
+    <p>You edited <code>config.yml</code> but the server still uses the old values.</p>
+    <div class="info-box tip">
+        <strong>Fix:</strong> Run <code>/thebrewingmarket reload</code> (requires <code>thebrewingmarket.admin</code>). A full server restart also works.
+    </div>
+
+    <h2>Database connection error (MySQL / MariaDB)</h2>
+    <p>The plugin loads but logs a database error and sell history does not record.</p>
+    <ul>
+        <li>Double-check <code>host</code>, <code>port</code>, <code>user</code>, <code>password</code>, and <code>database</code> in <code>database.yml</code>.</li>
+        <li>Make sure the database server is reachable from the Minecraft server (firewall, bind address).</li>
+        <li>The database user must have <code>CREATE</code>, <code>INSERT</code>, and <code>SELECT</code> privileges on the target database.</li>
+        <li>If you recently switched from SQLite to MySQL, remember that <strong>history data is not migrated automatically</strong>.</li>
+    </ul>
+
+    <h2>Placeholders return nothing or stay as <code>%tbm_...%</code></h2>
+    <p>You added a TheBrewingMarket placeholder to a hologram, scoreboard or chat plugin, but it either shows an empty string or the raw <code>%tbm_...%</code> text.</p>
+    <ul>
+        <li>Make sure <strong>PlaceholderAPI 2.12.3+</strong> is installed and listed in <code>/plugins</code>. Without it, TheBrewingMarket silently skips expansion registration.</li>
+        <li>On startup the console should print <code>PlaceholderAPI expansions registered: tbm, thebrewingmarket</code>. If it does not, PAPI was not present when TheBrewingMarket loaded — install PAPI and restart.</li>
+        <li>Run <code>/papi info tbm</code> to confirm the expansion is live. If the command replies "unknown expansion", the registration failed.</li>
+        <li>Placeholders are case-sensitive. Use <code>%tbm_daily_earned%</code>, not <code>%TBM_Daily_Earned%</code>.</li>
+        <li>Per-recipe placeholders like <code>%tbm_price_wine%</code> require the recipe ID to match your <code>config.yml</code> exactly. Unknown recipes return an empty string.</li>
+    </ul>
+
+    <h2>Lifetime or global placeholders show 0</h2>
+    <p><code>%tbm_lifetime_earned%</code> or <code>%tbm_global_total_today%</code> return <code>0</code> even though sales exist in the database.</p>
+    <ul>
+        <li>Lifetime stats are cached per player and seeded <strong>on join</strong>. For players who were already online when the plugin was first installed or reloaded, the cache fills on their next login.</li>
+        <li>Global analytics refresh asynchronously <strong>once every 60 seconds</strong>. A fresh sale will not show up in <code>%tbm_global_*%</code> placeholders until the next refresh tick.</li>
+        <li>Confirm that <code>sell_history</code> is actually being written — if the history table is empty, all lifetime/global placeholders will legitimately read as 0. See the database section above.</li>
+    </ul>
+
+    <h2>Still stuck?</h2>
+    <p>Open an issue on the <a href="https://github.com/CesarSanchezGomez/BreweryMarket" target="_blank">GitHub repository</a> and include the relevant lines from your server console and your <code>database.yml</code> (remove passwords before posting).</p>
+</main>
+<script src="js/site.js"></script>
 </body>
 </html>
