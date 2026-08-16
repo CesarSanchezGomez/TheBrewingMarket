@@ -4,7 +4,7 @@ authors:
   - CesarCosmico
 main: com.cesarcosmico.thebrewingmarket.TheBrewingMarketPlugin
 description: Sell your TheBrewingProject brews for money
-api-version: '26.1'
+api-version: '26.2'
 
 dependencies:
   server:

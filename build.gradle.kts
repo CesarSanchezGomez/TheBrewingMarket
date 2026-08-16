@@ -37,12 +37,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.53-stable")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.112-stable")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.0.0")
-    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.0.0")
-    compileOnly("com.dre.brewery:BreweryX:3.6.5")
-    compileOnly("me.clip:placeholderapi:2.12.2")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-api:3.3.3")
+    compileOnly("dev.jsinco.brewery:thebrewingproject-bukkit:3.3.3")
+    compileOnly("com.dre.brewery:BreweryX:3.7.0")
+    compileOnly("me.clip:placeholderapi:2.12.3")
 
     // Bundled via shadowJar
     implementation("com.zaxxer:HikariCP:7.0.2")
