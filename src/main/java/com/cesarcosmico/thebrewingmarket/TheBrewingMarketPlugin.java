@@ -9,15 +9,19 @@ import com.cesarcosmico.thebrewingmarket.listener.MarketGUIListener;
 import com.cesarcosmico.thebrewingmarket.brew.BrewResolver;
 import com.cesarcosmico.thebrewingmarket.brew.BreweryXBrewResolver;
 import com.cesarcosmico.thebrewingmarket.brew.TBPBrewResolver;
+import com.cesarcosmico.thebrewingmarket.integration.placeholderapi.PapiPlaceholderResolver;
 import com.cesarcosmico.thebrewingmarket.integration.placeholderapi.TBMExpansion;
 import com.cesarcosmico.thebrewingmarket.service.BrewEvaluator;
 import com.cesarcosmico.thebrewingmarket.service.DailyEarningsTracker;
 import com.cesarcosmico.thebrewingmarket.service.EconomyService;
 import com.cesarcosmico.thebrewingmarket.service.MarketAnalyticsCache;
+import com.cesarcosmico.thebrewingmarket.service.MoneyFormatter;
 import com.cesarcosmico.thebrewingmarket.service.PlayerStatsCache;
 import com.cesarcosmico.thebrewingmarket.service.SellService;
 import com.cesarcosmico.thebrewingmarket.storage.SellHistoryService;
 import com.cesarcosmico.thebrewingmarket.storage.StorageFactory;
+import com.cesarcosmico.thebrewingmarket.text.PlaceholderResolver;
+import com.cesarcosmico.thebrewingmarket.text.TextRenderer;
 import dev.jsinco.brewery.bukkit.api.TheBrewingProjectApi;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.milkbowl.vault.economy.Economy;
@@ -29,15 +33,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Set;
 import java.util.logging.Level;
 
 public final class TheBrewingMarketPlugin extends JavaPlugin {
+
+    private static final Set<String> CONFIG_REQUIRED_KEYS = Set.of(
+            "lang",
+            "history-per-page",
+            "market.shulker-selling",
+            "market.money-format",
+            "market.title",
+            "market.limitation",
+            "market.item-slot");
 
     private EconomyService economyService;
     private BrewEvaluator brewEvaluator;
     private SellService sellService;
     private MarketConfig marketConfig;
     private LangConfig langConfig;
+    private TextRenderer textRenderer;
     private SellHistoryService historyService;
     private BrewResolver brewResolver;
     private DailyEarningsTracker dailyEarningsTracker;
@@ -72,13 +87,19 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
 
         saveDefaultConfig();
         ConfigVersionChecker.check(getConfig(), "config.yml",
-                MarketConfig.CURRENT_VERSION, this, getLogger());
+                MarketConfig.CURRENT_VERSION, this, getLogger(), CONFIG_REQUIRED_KEYS);
 
-        this.langConfig = new LangConfig(this);
+        final boolean hasPlaceholderApi = getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
+        final PlaceholderResolver placeholderResolver =
+                hasPlaceholderApi ? new PapiPlaceholderResolver() : PlaceholderResolver.NONE;
+        this.textRenderer = new TextRenderer(placeholderResolver);
+
+        this.langConfig = new LangConfig(this, textRenderer);
         this.economyService = new EconomyService(economy);
-        this.marketConfig = new MarketConfig(getConfig(), getLogger());
+        this.marketConfig = new MarketConfig(getConfig(), getLogger(), textRenderer);
         this.brewEvaluator = new BrewEvaluator(marketConfig, brewResolver);
-        this.sellService = new SellService(brewEvaluator, economyService);
+        this.sellService = new SellService(brewEvaluator, economyService,
+                new MoneyFormatter(marketConfig.getMoneyFormatPattern()));
 
         final File dbFile = new File(getDataFolder(), "database.yml");
         if (!dbFile.exists()) {
@@ -112,7 +133,7 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
                 new MarketGUIListener(this, langConfig, historyService,
                         dailyEarningsTracker, playerStatsCache, this::getMarketConfig), this);
 
-        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (hasPlaceholderApi) {
             for (String id : new String[] {"tbm", "thebrewingmarket"}) {
                 new TBMExpansion(id, this, this::getMarketConfig, langConfig,
                         dailyEarningsTracker, playerStatsCache,
@@ -138,11 +159,12 @@ public final class TheBrewingMarketPlugin extends JavaPlugin {
     public void reload() {
         reloadConfig();
         ConfigVersionChecker.check(getConfig(), "config.yml",
-                MarketConfig.CURRENT_VERSION, this, getLogger());
+                MarketConfig.CURRENT_VERSION, this, getLogger(), CONFIG_REQUIRED_KEYS);
         this.langConfig.load();
-        this.marketConfig = new MarketConfig(getConfig(), getLogger());
+        this.marketConfig = new MarketConfig(getConfig(), getLogger(), textRenderer);
         this.brewEvaluator = new BrewEvaluator(marketConfig, brewResolver);
-        this.sellService = new SellService(brewEvaluator, economyService);
+        this.sellService = new SellService(brewEvaluator, economyService,
+                new MoneyFormatter(marketConfig.getMoneyFormatPattern()));
     }
 
     private void registerCommands() {
