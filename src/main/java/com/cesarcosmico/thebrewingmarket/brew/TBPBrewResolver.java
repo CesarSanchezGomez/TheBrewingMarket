@@ -37,8 +37,7 @@ public final class TBPBrewResolver implements BrewResolver {
         try {
             return api.getBrewManager().fromItem(item)
                     .flatMap(brew -> brew.closestRecipe(api.getRecipeRegistry())
-                            .map(recipe -> new ResolvedItem(recipe.getRecipeName(), brew.score(recipe).score())));
-        } catch (final RuntimeException ex) {
+                            .map(recipe -> new ResolvedItem(recipe.getRecipeName(), brew.score(recipe).score(), PriceCategory.BREW)));        } catch (final RuntimeException ex) {
             return Optional.empty();
         }
     }
@@ -54,6 +53,5 @@ public final class TBPBrewResolver implements BrewResolver {
             return Optional.empty();
         }
         final Double score = pdc.get(SCORE_KEY, PersistentDataType.DOUBLE);
-        return Optional.of(new ResolvedItem(recipeName, score != null ? score : 0.0));
-    }
+        return Optional.of(new ResolvedItem(recipeName, score != null ? score : 0.0, PriceCategory.BREW));    }
 }

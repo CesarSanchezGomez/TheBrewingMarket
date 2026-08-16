@@ -19,12 +19,12 @@ public final class BreweryXBrewResolver implements BrewResolver {
                 final String id = recipe.getId();
                 final String name = id != null ? id : recipe.getRecipeName();
                 if (name != null && !name.isEmpty()) {
-                    return Optional.of(new ResolvedItem(name, brew.getQuality() / MAX_QUALITY));
+                    return Optional.of(new ResolvedItem(name, brew.getQuality() / MAX_QUALITY, PriceCategory.BREW));
                 }
             }
         }
         return BreweryXRawDecoder.decode(item)
                 .filter(data -> data.recipeName() != null && !data.recipeName().isEmpty())
-                .map(data -> new ResolvedItem(data.recipeName(), data.quality() / MAX_QUALITY));
+                .map(data -> new ResolvedItem(data.recipeName(), data.quality() / MAX_QUALITY, PriceCategory.BREW));
     }
 }
