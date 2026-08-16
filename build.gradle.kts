@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.cesarcosmico"
-version = "2.2.2"
+version = "3.0.0"
 
 java {
     toolchain {

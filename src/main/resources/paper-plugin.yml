@@ -1,5 +1,5 @@
 name: TheBrewingMarket
-version: '2.2.2'
+version: '3.0.0'
 authors:
   - CesarCosmico
 main: com.cesarcosmico.thebrewingmarket.TheBrewingMarketPlugin
